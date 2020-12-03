@@ -12,11 +12,11 @@ import session from "express-session";
 import connectRedis from "connect-redis";
 import { __prod__ } from "./constants";
 import { MyContext } from "./types";
-import passport from "passport";
 import auth from "./auth";
 import { DeviceResolver } from "./resolvers/DeviceResolver";
 import { ProblemResolver } from "./resolvers/ProblemResolver";
 import { SolutionResolver } from "./resolvers/SolutionResolver";
+import { ReviewResolver } from "./resolvers/ReviewResolver";
 
 (async () => {
   await createConnection();
@@ -63,6 +63,7 @@ import { SolutionResolver } from "./resolvers/SolutionResolver";
         DeviceResolver,
         ProblemResolver,
         SolutionResolver,
+        ReviewResolver,
       ],
       validate: false,
     }),

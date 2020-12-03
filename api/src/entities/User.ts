@@ -7,9 +7,12 @@ import {
   UpdateDateColumn,
   OneToMany,
 } from "typeorm";
+import { DeviceFollower } from "./DeviceFollower";
 import { DeviceProblem } from "./DeviceProblem";
 import { DeviceProblemStar } from "./DeviceProblemStar";
+import { Review } from "./Review";
 import { Solution } from "./Solution";
+import { SolutionStar } from "./SolutionStar";
 
 @ObjectType()
 @Entity()
@@ -53,4 +56,16 @@ export class User {
   @Field(() => [Solution], { nullable: true })
   @OneToMany(() => Solution, (solution) => solution.author)
   solutions: Solution[];
+
+  @Field(() => [SolutionStar], { nullable: true })
+  @OneToMany(() => SolutionStar, (star) => star.user)
+  solutionStars: SolutionStar[];
+
+  @Field(() => [DeviceFollower], { nullable: true })
+  @OneToMany(() => DeviceFollower, (follow) => follow.user)
+  follows: DeviceFollower[];
+
+  @Field(() => [Review], { nullable: true })
+  @OneToMany(() => Review, (review) => review.author)
+  reviews: Review[];
 }

@@ -1,4 +1,5 @@
-import { MyContext } from "src/types";
+import { DeviceFollower } from "../entities/DeviceFollower";
+import { MyContext } from "../types";
 import {
   Arg,
   Ctx,
@@ -23,6 +24,7 @@ class UpdateUserInput {
 @Resolver()
 export class UserResolver {
   userRepo = getRepository(User);
+  followRepo = getRepository(DeviceFollower);
 
   @Mutation(() => User)
   async updateUser(
@@ -37,6 +39,29 @@ export class UserResolver {
   async deleteUser(@Arg("id") id: string) {
     await this.userRepo.delete({ id });
     return true;
+  }
+
+  @Mutation(() => Boolean)
+  async toggleDeviceFollow(
+    @Arg("userId") userId: string,
+    @Arg("deviceId") deviceId: string
+  ) {
+    const follow = await this.followRepo.findOne({ userId, deviceId });
+    console.log("follow: ", follow);
+    if (follow) {
+      await this.followRepo.delete({ userId, deviceId }).catch((err) => {
+        console.log("Error when follow device: ", err);
+        return false;
+      });
+      return true;
+    } else {
+      const newFollow = this.followRepo.create({ userId, deviceId });
+      await this.followRepo.save(newFollow).catch((err) => {
+        console.log("Error when follow device: ", err);
+        return false;
+      });
+      return true;
+    }
   }
 
   @Query(() => [User])

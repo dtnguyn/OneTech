@@ -6,8 +6,13 @@ import {
   CreateDateColumn,
   UpdateDateColumn,
   OneToMany,
+  OneToOne,
 } from "typeorm";
+import { DeviceFollower } from "./DeviceFollower";
 import { DeviceProblem } from "./DeviceProblem";
+import { DeviceSpec } from "./DeviceSpec";
+import { Review } from "./Review";
+import { ReviewRating } from "./ReviewRating";
 
 @ObjectType()
 @Entity()
@@ -40,7 +45,23 @@ export class Device {
   @UpdateDateColumn()
   updatedAt: Date;
 
+  @Field(() => DeviceSpec, { nullable: true })
+  @OneToOne(() => DeviceSpec, (spec) => spec.device)
+  spec: DeviceSpec;
+
   @Field(() => [DeviceProblem], { nullable: true })
   @OneToMany(() => DeviceProblem, (deviceProblem) => deviceProblem.device)
   problems: DeviceProblem[];
+
+  @Field(() => [DeviceFollower], { nullable: true })
+  @OneToMany(() => DeviceFollower, (follower) => follower.device)
+  followers: DeviceFollower[];
+
+  @Field(() => [Review], { nullable: true })
+  @OneToMany(() => Review, (review) => review.device)
+  reviews: Review[];
+
+  @Field(() => [ReviewRating], { nullable: true })
+  @OneToMany(() => ReviewRating, (rating) => rating.device)
+  ratings: ReviewRating[];
 }
