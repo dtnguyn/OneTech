@@ -7,26 +7,26 @@ import {
   UpdateDateColumn,
   ManyToOne,
   JoinColumn,
-  OneToMany,
+  OneToOne,
 } from "typeorm";
-import { DeviceProblem } from "./DeviceProblem";
-import { SolutionStar } from "./SolutionStar";
+import { Device } from "./Device";
+import { ReviewRating } from "./ReviewRating";
 import { User } from "./User";
 
 @ObjectType()
 @Entity()
-export class Solution {
+export class Review {
   @Field()
   @PrimaryGeneratedColumn("uuid")
   id: string;
 
+  @Field()
+  @Column()
+  title: string;
+
   @Field(() => String)
   @Column()
   content: string;
-
-  @Field(() => Boolean)
-  @Column({ default: false })
-  isPicked?: boolean;
 
   @Field(() => String)
   @CreateDateColumn()
@@ -36,27 +36,27 @@ export class Solution {
   @UpdateDateColumn()
   updatedAt: Date;
 
+  @Field(() => ReviewRating)
+  @OneToOne(() => ReviewRating, (rating) => rating.review)
+  rating: ReviewRating;
+
   @Field()
   @Column()
   authorId: string;
-  @ManyToOne(() => User, (user) => user.solutions, {
+  @ManyToOne(() => User, (user) => user.reviews, {
     onDelete: "CASCADE",
     onUpdate: "CASCADE",
   })
   @JoinColumn({ name: "authorId" })
   author: User;
 
-  @Field(() => String)
+  @Field()
   @Column()
-  problemId: string;
-  @ManyToOne(() => DeviceProblem, (problem) => problem.stars, {
+  deviceId: string;
+  @ManyToOne(() => Device, (device) => device.reviews, {
     onDelete: "CASCADE",
     onUpdate: "CASCADE",
   })
-  @JoinColumn({ name: "problemId" })
-  problem: DeviceProblem;
-
-  @Field(() => [SolutionStar], { nullable: true })
-  @OneToMany(() => SolutionStar, (star) => star.solution)
-  stars: SolutionStar[];
+  @JoinColumn({ name: "deviceId" })
+  device: Device;
 }
