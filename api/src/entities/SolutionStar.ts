@@ -7,7 +7,6 @@ import {
   JoinColumn,
   PrimaryColumn,
 } from "typeorm";
-import { DeviceProblem } from "./DeviceProblem";
 import { Solution } from "./Solution";
 import { User } from "./User";
 

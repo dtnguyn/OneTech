@@ -63,7 +63,7 @@ export class DeviceResolver {
     @Arg("buyLink", { nullable: true }) buyLink: string,
     @Arg("coverImage", { nullable: true }) coverImage: string
   ) {
-    const newDevice = await this.deviceRepo.create({
+    const newDevice = this.deviceRepo.create({
       name,
       category,
       buyLink,
@@ -75,6 +75,46 @@ export class DeviceResolver {
       return null;
     });
     return newDevice;
+  }
+
+  @Mutation(() => Device)
+  async updateDevice(
+    @Arg("id") id: string,
+    @Arg("input") input: UpdateDeviceInput
+  ) {
+    await this.deviceRepo.update({ id }, input);
+    return await this.deviceRepo.findOne({ id });
+  }
+
+  @Mutation(() => Boolean)
+  async deleteDevice(@Arg("id") id: string) {
+    await this.deviceRepo.delete({ id });
+    return true;
+  }
+
+  @Query(() => [Device])
+  devices(@Arg("category") category: string) {
+    return this.deviceRepo
+      .createQueryBuilder("device")
+      .leftJoinAndSelect("device.followers", "followers")
+      .leftJoinAndSelect("device.problems", "problems")
+      .leftJoinAndSelect("device.reviews", "reviews")
+      .where("device.category = :category", { category })
+      .getMany();
+  }
+
+  @Query(() => Device, { nullable: true })
+  singleDevice(@Arg("id") id: string) {
+    return this.deviceRepo
+      .createQueryBuilder("device")
+      .leftJoinAndSelect("device.problems", "problems")
+      .leftJoinAndSelect("problems.stars", "stars")
+      .leftJoinAndSelect("problems.solutions", "solutions")
+      .leftJoinAndSelect("device.spec", "spec")
+      .leftJoinAndSelect("device.reviews", "reviews")
+      .leftJoinAndSelect("reviews.rating", "rating")
+      .where("device.id = :id", { id })
+      .getOne();
   }
 
   @Mutation(() => DeviceSpec, { nullable: true })
@@ -97,7 +137,7 @@ export class DeviceResolver {
     @Arg("processor_simplify", () => String, { nullable: true })
     processorSimplify: string | null
   ) {
-    const newSpec = await this.specRepo.create({
+    const newSpec = this.specRepo.create({
       deviceId,
       display,
       displaySimplify,
@@ -109,21 +149,12 @@ export class DeviceResolver {
       cameraSimplify,
       processor,
       processorSimplify,
-    });
+    } as DeviceSpec);
 
     await this.specRepo.save(newSpec).catch(() => {
       return null;
     });
     return newSpec;
-  }
-
-  @Mutation(() => Device)
-  async updateDevice(
-    @Arg("id") id: string,
-    @Arg("input") input: UpdateDeviceInput
-  ) {
-    await this.deviceRepo.update({ id }, input);
-    return await this.deviceRepo.findOne({ id });
   }
 
   @Mutation(() => DeviceSpec)
@@ -136,41 +167,8 @@ export class DeviceResolver {
   }
 
   @Mutation(() => Boolean)
-  async deleteDevice(@Arg("id") id: string) {
-    await this.deviceRepo.delete({ id });
-    return true;
-  }
-
-  @Mutation(() => Boolean)
   async deleteDeviceSpec(@Arg("deviceId") deviceId: string) {
     await this.specRepo.delete({ deviceId });
     return true;
-  }
-
-  @Query(() => [Device])
-  devices() {
-    return this.deviceRepo.find();
-  }
-
-  @Query(() => [DeviceSpec])
-  specs() {
-    return this.specRepo.find();
-  }
-
-  @Query(() => Device, { nullable: true })
-  async singleDevice(@Arg("id") id: string) {
-    const device = await this.deviceRepo
-      .createQueryBuilder("device")
-      .leftJoinAndSelect("device.problems", "problems")
-      .leftJoinAndSelect("problems.stars", "stars")
-      .leftJoinAndSelect("problems.solutions", "solutions")
-      .leftJoinAndSelect("device.spec", "spec")
-      .leftJoinAndSelect("device.reviews", "reviews")
-      .leftJoinAndSelect("reviews.rating", "rating")
-      .where("device.id = :id", { id })
-      .getOne();
-    console.log("device: ", device);
-
-    return device;
   }
 }

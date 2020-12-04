@@ -72,6 +72,22 @@ export class ReviewResolver {
     return this.reviewRepo.findOne({ id });
   }
 
+  @Mutation(() => Boolean)
+  async deleteReview(@Arg("id") id: string) {
+    await this.reviewRepo.delete({ id });
+    return true;
+  }
+
+  @Query(() => [Review])
+  reviews(@Arg("deviceId") deviceId: string) {
+    return this.reviewRepo.find({ deviceId });
+  }
+
+  @Query(() => Review)
+  singleReview(@Arg("id") id: string) {
+    return this.reviewRepo.find({ id });
+  }
+
   @Mutation(() => ReviewRating, { nullable: true })
   async createRating(
     @Arg("reviewId") reviewId: string,
@@ -95,7 +111,7 @@ export class ReviewResolver {
     });
 
     await this.ratingRepo.save(newRating).catch((err) => {
-      console.log("err");
+      console.log(err);
       newRating = null;
     });
     return newRating;
@@ -110,24 +126,8 @@ export class ReviewResolver {
     return this.ratingRepo.findOne({ reviewId });
   }
 
-  @Mutation(() => Boolean)
-  async deleteReview(@Arg("id") id: string) {
-    await this.reviewRepo.delete({ id });
-    return true;
-  }
-
-  @Query(() => [Review])
-  reviews() {
-    return this.reviewRepo.find();
-  }
-
   @Query(() => [ReviewRating])
-  ratings() {
-    return this.ratingRepo.find();
-  }
-
-  @Query(() => Review)
-  singleReview(@Arg("id") id: string) {
-    return this.reviewRepo.find({ id });
+  ratings(@Arg("deviceId") deviceId: string) {
+    return this.ratingRepo.find({ deviceId });
   }
 }
