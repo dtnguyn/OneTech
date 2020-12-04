@@ -1,7 +1,16 @@
 import { Solution } from "../entities/Solution";
-import { Arg, Mutation, Query, Resolver } from "type-graphql";
+import { Arg, Field, InputType, Mutation, Query, Resolver } from "type-graphql";
 import { getRepository } from "typeorm";
 import { SolutionStar } from "../entities/SolutionStar";
+
+@InputType()
+class UpdateSolutionInput {
+  @Field(() => String, { nullable: true })
+  content?: string;
+
+  @Field(() => Boolean, { nullable: true })
+  isPicked?: boolean;
+}
 
 @Resolver()
 export class SolutionResolver {
@@ -21,6 +30,31 @@ export class SolutionResolver {
     });
     await this.solutionRepo.save(solution);
     return solution;
+  }
+
+  @Mutation(() => Solution)
+  async updateSolution(
+    @Arg("id") id: string,
+    @Arg("input") input: UpdateSolutionInput
+  ) {
+    await this.solutionRepo.update({ id }, input);
+    return await this.solutionRepo.findOne({ id });
+  }
+
+  @Mutation(() => Boolean)
+  async deleteSolution(@Arg("id") id: string) {
+    await this.solutionRepo.delete({ id });
+    return true;
+  }
+
+  @Query(() => [Solution])
+  solutions(@Arg("problemId") problemId: string) {
+    return this.solutionRepo.find({ problemId });
+  }
+
+  @Query(() => [Solution])
+  singleSolution(@Arg("id") id: string) {
+    return this.solutionRepo.findOne({ id });
   }
 
   @Mutation(() => Boolean)
@@ -46,8 +80,8 @@ export class SolutionResolver {
     }
   }
 
-  @Query(() => [Solution])
-  solutions() {
-    return this.solutionRepo.find();
+  @Query(() => [SolutionStar])
+  findSolutionStars(@Arg("solutionId") solutionId: string) {
+    return this.starRepo.find({ solutionId });
   }
 }

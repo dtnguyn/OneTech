@@ -75,7 +75,7 @@ export class UserResolver {
   }
 
   @Query(() => User, { nullable: true })
-  async me(@Ctx() { req, res }: MyContext) {
+  async me(@Ctx() { req }: MyContext) {
     return await this.userRepo.findOne({ id: (req.session as any).userId });
   }
 }

@@ -1,9 +1,20 @@
-import e from "express";
-import { Arg, Mutation, Query, Resolver } from "type-graphql";
+import { Arg, Field, InputType, Mutation, Query, Resolver } from "type-graphql";
 import { getRepository } from "typeorm";
 
 import { DeviceProblem } from "../entities/DeviceProblem";
 import { DeviceProblemStar } from "../entities/DeviceProblemStar";
+
+@InputType()
+class UpdateProblemInput {
+  @Field(() => String, { nullable: true })
+  title?: string;
+
+  @Field(() => String, { nullable: true })
+  content?: string;
+
+  @Field(() => Boolean, { nullable: true })
+  isSolve?: boolean;
+}
 
 @Resolver()
 export class ProblemResolver {
@@ -36,6 +47,30 @@ export class ProblemResolver {
     return true;
   }
 
+  @Mutation(() => DeviceProblem)
+  async updateProblem(
+    @Arg("id") id: string,
+    @Arg("input") input: UpdateProblemInput
+  ) {
+    await this.problemRepo.update({ id }, input);
+    return this.problemRepo.findOne({ id });
+  }
+
+  @Query(() => [DeviceProblem])
+  problems(@Arg("deviceId") deviceId: string) {
+    return this.problemRepo.find({ deviceId });
+  }
+
+  @Query(() => DeviceProblem)
+  singleProblem(@Arg("id") id: string) {
+    return this.problemRepo
+      .createQueryBuilder("problem")
+      .leftJoinAndSelect("problem.stars", "problemStars")
+      .leftJoinAndSelect("problem.solutions", "solutions")
+      .leftJoinAndSelect("solutions.stars", "solutionStars")
+      .where("problem.id = :id", { id });
+  }
+
   @Mutation(() => Boolean)
   async toggleProblemStar(
     @Arg("userId") userId: string,
@@ -59,18 +94,8 @@ export class ProblemResolver {
     }
   }
 
-  @Query(() => [DeviceProblem])
-  problems() {
-    return this.problemRepo.find();
-  }
-
-  @Query(() => DeviceProblem)
-  singleProblem(@Arg("id") id: string) {
-    return this.problemRepo.find({ id });
-  }
-
   @Query(() => [DeviceProblemStar])
-  findStars() {
-    return this.starRepo.find();
+  findProblemStars(@Arg("problemId") problemId: string) {
+    return this.starRepo.find({ problemId });
   }
 }
