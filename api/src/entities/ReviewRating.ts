@@ -66,3 +66,15 @@ export class ReviewRating {
   @UpdateDateColumn()
   updatedAt: Date;
 }
+
+@ObjectType()
+export class ReviewRatingResponse {
+  @Field()
+  status: boolean;
+
+  @Field()
+  message: string;
+
+  @Field(() => [ReviewRating], { nullable: true })
+  data?: ReviewRating[] | null;
+}

@@ -8,7 +8,6 @@ import {
   PrimaryColumn,
 } from "typeorm";
 import { Device } from "./Device";
-import { DeviceProblem } from "./DeviceProblem";
 import { User } from "./User";
 
 @ObjectType()

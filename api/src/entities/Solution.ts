@@ -60,3 +60,15 @@ export class Solution {
   @OneToMany(() => SolutionStar, (star) => star.solution)
   stars: SolutionStar[];
 }
+
+@ObjectType()
+export class SolutionResponse {
+  @Field()
+  status: boolean;
+
+  @Field()
+  message: string;
+
+  @Field(() => [Solution], { nullable: true })
+  data?: Solution[] | null;
+}

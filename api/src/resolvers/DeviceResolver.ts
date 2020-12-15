@@ -1,7 +1,8 @@
-import { Device } from "../entities/Device";
+import { Device, DeviceResponse } from "../entities/Device";
 import { Arg, Field, InputType, Mutation, Query, Resolver } from "type-graphql";
 import { getRepository } from "typeorm";
-import { DeviceSpec } from "../entities/DeviceSpec";
+import { DeviceSpec, DeviceSpecResponse } from "../entities/DeviceSpec";
+import { DeviceFollower } from "../entities/DeviceFollower";
 
 @InputType()
 class UpdateDeviceInput {
@@ -55,8 +56,9 @@ class UpdateDeviceSpecInput {
 export class DeviceResolver {
   deviceRepo = getRepository(Device);
   specRepo = getRepository(DeviceSpec);
+  followRepo = getRepository(DeviceFollower);
 
-  @Mutation(() => Device, { nullable: true })
+  @Mutation(() => DeviceResponse, { nullable: true })
   async createDevice(
     @Arg("name") name: string,
     @Arg("category") category: string,
@@ -71,53 +73,151 @@ export class DeviceResolver {
     });
 
     console.log("new device: ", newDevice);
-    await this.deviceRepo.save(newDevice).catch(() => {
-      return null;
+    await this.deviceRepo.save(newDevice).catch((e) => {
+      return {
+        status: false,
+        message: e.message,
+      };
     });
-    return newDevice;
+    return {
+      status: true,
+      message: "Create device successfully.",
+      data: [newDevice],
+    };
   }
 
-  @Mutation(() => Device)
+  @Mutation(() => DeviceResponse)
   async updateDevice(
     @Arg("id") id: string,
     @Arg("input") input: UpdateDeviceInput
   ) {
-    await this.deviceRepo.update({ id }, input);
-    return await this.deviceRepo.findOne({ id });
+    await this.deviceRepo.update({ id }, input).catch((e) => {
+      return {
+        status: false,
+        message: e.message,
+      };
+    });
+    const device = await this.deviceRepo.findOne({ id }).catch((e) => {
+      return {
+        status: false,
+        message: e.message,
+      };
+    });
+
+    return {
+      status: true,
+      message: "Update device successfully.",
+      data: [device],
+    };
   }
 
-  @Mutation(() => Boolean)
+  @Mutation(() => DeviceResponse)
   async deleteDevice(@Arg("id") id: string) {
-    await this.deviceRepo.delete({ id });
-    return true;
+    await this.deviceRepo.delete({ id }).catch((e) => {
+      return {
+        status: false,
+        message: e.message,
+      };
+    });
+
+    return {
+      status: true,
+      message: "Delete device successfully.",
+    };
   }
 
-  @Query(() => [Device])
-  devices(@Arg("category") category: string) {
-    return this.deviceRepo
-      .createQueryBuilder("device")
-      .leftJoinAndSelect("device.followers", "followers")
-      .leftJoinAndSelect("device.problems", "problems")
-      .leftJoinAndSelect("device.reviews", "reviews")
-      .where("device.category = :category", { category })
-      .getMany();
+  @Mutation(() => DeviceResponse)
+  async toggleDeviceFollow(
+    @Arg("userId") userId: string,
+    @Arg("deviceId") deviceId: string
+  ) {
+    const follow = await this.followRepo.findOne({ userId, deviceId });
+    console.log("follow: ", follow);
+    if (follow) {
+      await this.followRepo.delete({ userId, deviceId }).catch((err) => {
+        console.log("Error when un-follow device: ", err);
+        return {
+          status: false,
+          message: err.message,
+        };
+      });
+      return {
+        status: true,
+        message: "Un-follow device successfully.",
+      };
+    } else {
+      const newFollow = this.followRepo.create({ userId, deviceId });
+      await this.followRepo.save(newFollow).catch((err) => {
+        console.log("Error when follow device: ", err);
+        return {
+          status: false,
+          message: err.message,
+        };
+      });
+      return {
+        status: true,
+        message: "Follow device successfully.",
+      };
+    }
   }
 
-  @Query(() => Device, { nullable: true })
-  singleDevice(@Arg("id") id: string) {
-    return this.deviceRepo
-      .createQueryBuilder("device")
-      .leftJoinAndSelect("device.problems", "problems")
-      .leftJoinAndSelect("problems.stars", "stars")
-      .leftJoinAndSelect("problems.solutions", "solutions")
-      .leftJoinAndSelect("device.spec", "spec")
-      .leftJoinAndSelect("device.reviews", "reviews")
-      .leftJoinAndSelect("reviews.rating", "rating")
-      .where("device.id = :id", { id })
-      .getOne();
+  @Query(() => [DeviceResponse])
+  async devices(
+    @Arg("category", { nullable: true }) category: string,
+    @Arg("userId", { nullable: true }) userId: string
+  ) {
+    try {
+      const builder = this.deviceRepo
+        .createQueryBuilder("device")
+        .leftJoinAndSelect("device.followers", "followers")
+        .leftJoinAndSelect("device.problems", "problems")
+        .leftJoinAndSelect("device.reviews", "reviews");
+
+      if (category) builder.where("device.category = :category", { category });
+      if (userId) builder.where("followers.userId = :userId", { userId });
+
+      const devices = await builder.getMany();
+      return {
+        status: true,
+        message: "Get devices successfully.",
+        data: devices,
+      };
+    } catch (e) {
+      return {
+        status: false,
+        message: e.message,
+      };
+    }
   }
 
-  @Mutation(() => DeviceSpec, { nullable: true })
+  @Query(() => DeviceResponse, { nullable: true })
+  async singleDevice(@Arg("id") id: string) {
+    try {
+      const device = await this.deviceRepo
+        .createQueryBuilder("device")
+        .leftJoinAndSelect("device.problems", "problems")
+        .leftJoinAndSelect("problems.stars", "stars")
+        .leftJoinAndSelect("problems.solutions", "solutions")
+        .leftJoinAndSelect("device.spec", "spec")
+        .leftJoinAndSelect("device.reviews", "reviews")
+        .leftJoinAndSelect("reviews.rating", "rating")
+        .where("device.id = :id", { id })
+        .getOne();
+
+      return {
+        status: true,
+        message: "Get a device successfully.",
+        data: [device],
+      };
+    } catch (e) {
+      return {
+        status: false,
+        message: e.message,
+      };
+    }
+  }
+
+  @Mutation(() => DeviceSpecResponse, { nullable: true })
   async createSpec(
     @Arg("deviceId") deviceId: string,
     @Arg("display", () => String, { nullable: true }) display: string | null,
@@ -151,24 +251,55 @@ export class DeviceResolver {
       processorSimplify,
     } as DeviceSpec);
 
-    await this.specRepo.save(newSpec).catch(() => {
-      return null;
+    await this.specRepo.save(newSpec).catch((e) => {
+      return {
+        status: false,
+        message: e.message,
+      };
     });
-    return newSpec;
+    return {
+      status: true,
+      message: "Create spec successfully.",
+      data: [newSpec],
+    };
   }
 
-  @Mutation(() => DeviceSpec)
+  @Mutation(() => DeviceSpecResponse)
   async updateDeviceSpec(
     @Arg("deviceId") deviceId: string,
     @Arg("input") input: UpdateDeviceSpecInput
   ) {
-    await this.specRepo.update({ deviceId }, input);
-    return await this.specRepo.findOne({ deviceId });
+    await this.specRepo.update({ deviceId }, input).catch((e) => {
+      return {
+        status: false,
+        message: e.message,
+      };
+    });
+    const deviceSpec = await this.specRepo.findOne({ deviceId }).catch((e) => {
+      return {
+        status: false,
+        message: e.message,
+      };
+    });
+
+    return {
+      status: true,
+      message: "Update spec successfully.",
+      data: [deviceSpec],
+    };
   }
 
-  @Mutation(() => Boolean)
+  @Mutation(() => DeviceSpecResponse)
   async deleteDeviceSpec(@Arg("deviceId") deviceId: string) {
-    await this.specRepo.delete({ deviceId });
-    return true;
+    await this.specRepo.delete({ deviceId }).catch((e) => {
+      return {
+        status: false,
+        message: e.message,
+      };
+    });
+    return {
+      status: true,
+      message: "Delete spec successfully.",
+    };
   }
 }

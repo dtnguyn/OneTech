@@ -3,35 +3,34 @@ import {
   Entity,
   CreateDateColumn,
   UpdateDateColumn,
-  ManyToOne,
   JoinColumn,
   PrimaryColumn,
+  Column,
+  OneToOne,
 } from "typeorm";
-import { Solution } from "./Solution";
+
 import { User } from "./User";
 
 @ObjectType()
 @Entity()
-export class SolutionStar {
+export class UserSetting {
   @Field()
   @PrimaryColumn()
   userId: string;
-  @ManyToOne(() => User, (user) => user.solutionStars, {
+  @OneToOne(() => User, (user) => user.setting, {
     onDelete: "CASCADE",
     onUpdate: "CASCADE",
   })
   @JoinColumn({ name: "userId" })
   user: User;
 
-  @Field(() => String)
-  @PrimaryColumn()
-  solutionId: string;
-  @ManyToOne(() => Solution, (solution) => solution.stars, {
-    onDelete: "CASCADE",
-    onUpdate: "CASCADE",
-  })
-  @JoinColumn({ name: "solutionId" })
-  solution: Solution;
+  @Field(() => Boolean, { nullable: true })
+  @Column({ default: "false" })
+  isPrivate: boolean;
+
+  @Field(() => Boolean, { nullable: true })
+  @Column({ default: "false" })
+  isDarkMode: boolean;
 
   @Field(() => String)
   @CreateDateColumn()
@@ -43,13 +42,13 @@ export class SolutionStar {
 }
 
 @ObjectType()
-export class SolutionStarResponse {
+export class UserSettingResponse {
   @Field()
   status: boolean;
 
   @Field()
   message: string;
 
-  @Field(() => [SolutionStar], { nullable: true })
-  data?: SolutionStar[] | null;
+  @Field(() => [UserSetting], { nullable: true })
+  data?: UserSetting[] | null;
 }

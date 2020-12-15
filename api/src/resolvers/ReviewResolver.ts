@@ -1,5 +1,5 @@
-import { Review } from "../entities/Review";
-import { ReviewRating } from "../entities/ReviewRating";
+import { Review, ReviewResponse } from "../entities/Review";
+import { ReviewRating, ReviewRatingResponse } from "../entities/ReviewRating";
 import {
   Arg,
   Field,
@@ -43,7 +43,7 @@ export class ReviewResolver {
   reviewRepo = getRepository(Review);
   ratingRepo = getRepository(ReviewRating);
 
-  @Mutation(() => Review, { nullable: true })
+  @Mutation(() => ReviewResponse, { nullable: true })
   async createReview(
     @Arg("title") title: string,
     @Arg("content") content: string,
@@ -57,38 +57,91 @@ export class ReviewResolver {
       deviceId,
     });
 
-    await this.reviewRepo.save(newReview).catch(() => {
-      return null;
+    await this.reviewRepo.save(newReview).catch((e) => {
+      return {
+        status: false,
+        message: e.message,
+      };
     });
-    return newReview;
+    return {
+      status: true,
+      message: "Create review successfully.",
+      data: [newReview],
+    };
   }
 
-  @Mutation(() => Review, { nullable: true })
+  @Mutation(() => ReviewResponse, { nullable: true })
   async updateReview(
     @Arg("id") id: string,
     @Arg("input") input: UpdateReviewInput
   ) {
-    await this.reviewRepo.update({ id }, input);
-    return this.reviewRepo.findOne({ id });
+    await this.reviewRepo.update({ id }, input).catch((e) => {
+      return {
+        status: false,
+        message: e.message,
+      };
+    });
+    const review = this.reviewRepo.findOne({ id }).catch((e) => {
+      return {
+        status: false,
+        message: e.message,
+      };
+    });
+
+    return {
+      status: true,
+      message: "Update review successfully.",
+      data: [review],
+    };
   }
 
-  @Mutation(() => Boolean)
+  @Mutation(() => ReviewResponse)
   async deleteReview(@Arg("id") id: string) {
-    await this.reviewRepo.delete({ id });
-    return true;
+    await this.reviewRepo.delete({ id }).catch((e) => {
+      return {
+        status: false,
+        message: e.message,
+      };
+    });
+    return {
+      status: true,
+      message: "Delete review successfully.",
+    };
   }
 
-  @Query(() => [Review])
-  reviews(@Arg("deviceId") deviceId: string) {
-    return this.reviewRepo.find({ deviceId });
+  @Query(() => ReviewResponse)
+  async reviews(@Arg("deviceId") deviceId: string) {
+    const reviews = await this.reviewRepo.find({ deviceId }).catch((e) => {
+      return {
+        status: false,
+        message: e.message,
+      };
+    });
+
+    return {
+      status: true,
+      message: "Getting reviews successfully.",
+      data: reviews,
+    };
   }
 
-  @Query(() => Review)
-  singleReview(@Arg("id") id: string) {
-    return this.reviewRepo.find({ id });
+  @Query(() => ReviewResponse)
+  async singleReview(@Arg("id") id: string) {
+    const review = await this.reviewRepo.findOne({ id }).catch((e) => {
+      return {
+        status: false,
+        message: e.message,
+      };
+    });
+
+    return {
+      status: true,
+      message: "Getting a review successfully.",
+      data: [review],
+    };
   }
 
-  @Mutation(() => ReviewRating, { nullable: true })
+  @Mutation(() => ReviewRatingResponse, { nullable: true })
   async createRating(
     @Arg("reviewId") reviewId: string,
     @Arg("deviceId") deviceId: string,
@@ -99,7 +152,7 @@ export class ReviewResolver {
     @Arg("camera", () => Float, { nullable: true }) camera: number | null,
     @Arg("processor", () => Float, { nullable: true }) processor: number | null
   ) {
-    let newRating: ReviewRating | null = await this.ratingRepo.create({
+    let newRating = await this.ratingRepo.create({
       deviceId,
       overall,
       reviewId,
@@ -110,24 +163,57 @@ export class ReviewResolver {
       processor,
     });
 
-    await this.ratingRepo.save(newRating).catch((err) => {
-      console.log(err);
-      newRating = null;
+    await this.ratingRepo.save(newRating).catch((e) => {
+      return {
+        status: false,
+        message: e.message,
+      };
     });
-    return newRating;
+    return {
+      status: true,
+      message: "Create rating successfully.",
+      data: [newRating],
+    };
   }
 
-  @Mutation(() => Review, { nullable: true })
+  @Mutation(() => ReviewRatingResponse, { nullable: true })
   async updateRating(
     @Arg("reviewId") reviewId: string,
     @Arg("input") input: UpdateRatingInput
   ) {
-    await this.ratingRepo.update({ reviewId }, input);
-    return this.ratingRepo.findOne({ reviewId });
+    await this.ratingRepo.update({ reviewId }, input).catch((e) => {
+      return {
+        status: false,
+        message: e.message,
+      };
+    });
+    const rating = await this.ratingRepo.findOne({ reviewId }).catch((e) => {
+      return {
+        status: false,
+        message: e.message,
+      };
+    });
+
+    return {
+      status: true,
+      message: "Update rating successfully.",
+      data: [rating],
+    };
   }
 
-  @Query(() => [ReviewRating])
+  @Query(() => [ReviewRatingResponse])
   ratings(@Arg("deviceId") deviceId: string) {
-    return this.ratingRepo.find({ deviceId });
+    const ratings = this.ratingRepo.find({ deviceId }).catch((e) => {
+      return {
+        status: false,
+        message: e.message,
+      };
+    });
+
+    return {
+      status: true,
+      message: "Get ratings successfully.",
+      data: ratings,
+    };
   }
 }

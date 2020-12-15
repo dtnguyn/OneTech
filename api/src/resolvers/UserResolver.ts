@@ -10,7 +10,8 @@ import {
   Resolver,
 } from "type-graphql";
 import { getRepository } from "typeorm";
-import { User } from "../entities/User";
+import { User, UserResponse } from "../entities/User";
+import { UserSetting, UserSettingResponse } from "../entities/UserSetting";
 
 @InputType()
 class UpdateUserInput {
@@ -21,61 +22,171 @@ class UpdateUserInput {
   email?: string;
 }
 
+@InputType()
+class UpdateSettingInput {
+  @Field(() => Boolean, { nullable: true })
+  isPrivate?: boolean;
+
+  @Field(() => String, { nullable: true })
+  isDarkMode?: boolean;
+}
+
 @Resolver()
 export class UserResolver {
   userRepo = getRepository(User);
   followRepo = getRepository(DeviceFollower);
+  settingRepo = getRepository(UserSetting);
 
-  @Mutation(() => User)
+  @Mutation(() => UserResponse)
   async updateUser(
     @Arg("id") id: string,
     @Arg("input") input: UpdateUserInput
   ) {
-    await this.userRepo.update({ id }, input);
-    return await this.userRepo.findOne({ id });
+    await this.userRepo.update({ id }, input).catch((e) => {
+      return {
+        status: false,
+        message: e.message,
+      };
+    });
+
+    const user = await this.userRepo.findOne({ id }).catch((e) => {
+      return {
+        status: false,
+        message: e.message,
+      };
+    });
+
+    return {
+      status: true,
+      message: "Update user successfully.",
+      data: [user],
+    };
   }
 
-  @Mutation(() => Boolean)
+  @Mutation(() => UserResponse)
   async deleteUser(@Arg("id") id: string) {
-    await this.userRepo.delete({ id });
-    return true;
+    await this.userRepo.delete({ id }).catch((e) => {
+      return {
+        status: false,
+        message: e.message,
+      };
+    });
+    return {
+      status: true,
+      message: "Delete user successfully.",
+    };
   }
 
-  @Mutation(() => Boolean)
-  async toggleDeviceFollow(
-    @Arg("userId") userId: string,
-    @Arg("deviceId") deviceId: string
-  ) {
-    const follow = await this.followRepo.findOne({ userId, deviceId });
-    console.log("follow: ", follow);
-    if (follow) {
-      await this.followRepo.delete({ userId, deviceId }).catch((err) => {
-        console.log("Error when follow device: ", err);
-        return false;
+  @Query(() => UserResponse)
+  async users() {
+    const users = await this.userRepo.find().catch((e) => {
+      return {
+        status: false,
+        message: e.message,
+      };
+    });
+    return {
+      status: true,
+      message: "Getting users successfully.",
+      data: users,
+    };
+  }
+
+  @Query(() => UserResponse)
+  async singleUser(@Arg("id") id: string) {
+    const user = await this.userRepo.findOne({ id }).catch((e) => {
+      return {
+        status: false,
+        message: e.message,
+      };
+    });
+
+    return {
+      status: true,
+      message: "Getting users successfully.",
+      data: [user],
+    };
+  }
+
+  @Query(() => UserResponse, { nullable: true })
+  async me(@Ctx() { req }: MyContext) {
+    const user = await this.userRepo
+      .findOne({ id: (req.session as any).userId })
+      .catch((e) => {
+        return {
+          status: false,
+          message: e.message,
+        };
       });
-      return true;
+
+    if (user) {
+      return {
+        status: true,
+        message: "User already logged in.",
+        data: [user],
+      };
     } else {
-      const newFollow = this.followRepo.create({ userId, deviceId });
-      await this.followRepo.save(newFollow).catch((err) => {
-        console.log("Error when follow device: ", err);
-        return false;
-      });
-      return true;
+      return {
+        status: false,
+        message: "User not logged in.",
+      };
     }
   }
 
-  @Query(() => [User])
-  users() {
-    return this.userRepo.find();
+  @Mutation(() => UserSettingResponse)
+  async createSetting(@Arg("userId") userId: string) {
+    const setting = this.settingRepo.create({ userId });
+    await this.settingRepo.save(setting).catch((e) => {
+      return {
+        status: false,
+        message: e.message,
+      };
+    });
+    return {
+      status: true,
+      message: "Create settings successfully.",
+      data: [setting],
+    };
   }
 
-  @Query(() => User)
-  singleUser(@Arg("id") id: string) {
-    return this.userRepo.find({ id });
+  @Mutation(() => UserSetting)
+  async updateSetting(
+    @Arg("userId") userId: string,
+    @Arg("input") input: UpdateSettingInput
+  ) {
+    await this.settingRepo.update({ userId }, input).catch((e) => {
+      return {
+        status: false,
+        message: e.message,
+      };
+    });
+    const setting = await this.settingRepo.findOne({ userId }).catch((e) => {
+      return {
+        status: false,
+        message: e.message,
+      };
+    });
+
+    return {
+      status: true,
+      message: "Update setting successfully.",
+      data: [setting],
+    };
   }
 
-  @Query(() => User, { nullable: true })
-  async me(@Ctx() { req }: MyContext) {
-    return await this.userRepo.findOne({ id: (req.session as any).userId });
+  @Query(() => UserSettingResponse, { nullable: true })
+  async setting(@Arg("userId") userId: string) {
+    const setting = await this.settingRepo.findOne({ userId }).catch((e) => {
+      return {
+        status: false,
+        message: e.message,
+      };
+    });
+
+    return {
+      status: true,
+      message: "Get setting successfully.",
+      data: [setting],
+    };
   }
 }
