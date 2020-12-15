@@ -71,3 +71,15 @@ export class DeviceSpec {
   @UpdateDateColumn()
   updatedAt: Date;
 }
+
+@ObjectType()
+export class DeviceSpecResponse {
+  @Field()
+  status: boolean;
+
+  @Field()
+  message: string;
+
+  @Field(() => [DeviceSpec], { nullable: true })
+  data?: DeviceSpec[] | null;
+}

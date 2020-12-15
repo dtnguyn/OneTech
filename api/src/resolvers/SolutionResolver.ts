@@ -1,7 +1,7 @@
-import { Solution } from "../entities/Solution";
+import { Solution, SolutionResponse } from "../entities/Solution";
 import { Arg, Field, InputType, Mutation, Query, Resolver } from "type-graphql";
 import { getRepository } from "typeorm";
-import { SolutionStar } from "../entities/SolutionStar";
+import { SolutionStar, SolutionStarResponse } from "../entities/SolutionStar";
 
 @InputType()
 class UpdateSolutionInput {
@@ -17,7 +17,7 @@ export class SolutionResolver {
   solutionRepo = getRepository(Solution);
   starRepo = getRepository(SolutionStar);
 
-  @Mutation(() => Solution)
+  @Mutation(() => SolutionResponse)
   async createSolution(
     @Arg("content") content: string,
     @Arg("authorId") authorId: string,
@@ -28,36 +28,102 @@ export class SolutionResolver {
       authorId,
       problemId,
     });
-    await this.solutionRepo.save(solution);
-    return solution;
+    await this.solutionRepo.save(solution).catch((e) => {
+      return {
+        status: false,
+        message: e.message,
+      };
+    });
+
+    return {
+      status: true,
+      message: "Create solution successfully.",
+      data: [solution],
+    };
   }
 
-  @Mutation(() => Solution)
+  @Mutation(() => SolutionResponse)
   async updateSolution(
     @Arg("id") id: string,
     @Arg("input") input: UpdateSolutionInput
   ) {
-    await this.solutionRepo.update({ id }, input);
-    return await this.solutionRepo.findOne({ id });
+    await this.solutionRepo.update({ id }, input).catch((e) => {
+      return {
+        status: false,
+        message: e.message,
+      };
+    });
+    const solution = await this.solutionRepo.findOne({ id }).catch((e) => {
+      return {
+        status: false,
+        message: e.message,
+      };
+    });
+
+    return {
+      status: true,
+      message: "Update solution successfully.",
+      data: [solution],
+    };
   }
 
-  @Mutation(() => Boolean)
+  @Mutation(() => SolutionResponse)
   async deleteSolution(@Arg("id") id: string) {
-    await this.solutionRepo.delete({ id });
-    return true;
+    await this.solutionRepo.delete({ id }).catch((e) => {
+      return {
+        status: false,
+        message: e.message,
+      };
+    });
+    return {
+      status: true,
+      message: "Delete solution successfully.",
+    };
   }
 
-  @Query(() => [Solution])
-  solutions(@Arg("problemId") problemId: string) {
-    return this.solutionRepo.find({ problemId });
+  @Query(() => SolutionResponse)
+  async solutions(
+    @Arg("problemId", { nullable: true }) problemId: string,
+    @Arg("userId", { nullable: true }) userId: string
+  ) {
+    try {
+      const builder = this.solutionRepo.createQueryBuilder("solution");
+      if (problemId)
+        builder.where("solution.problemId = :problemId", { problemId });
+      if (userId) builder.where("solution.authorId = :userId", { userId });
+
+      const solutions = await builder.getMany();
+
+      return {
+        status: true,
+        message: "Get solutions successfully.",
+        data: solutions,
+      };
+    } catch (e) {
+      return {
+        status: false,
+        message: e.message,
+      };
+    }
   }
 
-  @Query(() => [Solution])
-  singleSolution(@Arg("id") id: string) {
-    return this.solutionRepo.findOne({ id });
+  @Query(() => SolutionResponse)
+  async singleSolution(@Arg("id") id: string) {
+    const solution = await this.solutionRepo.findOne({ id }).catch((e) => {
+      return {
+        status: false,
+        message: e.message,
+      };
+    });
+
+    return {
+      status: true,
+      message: "Get solution successfully.",
+      data: [solution],
+    };
   }
 
-  @Mutation(() => Boolean)
+  @Mutation(() => SolutionResponse)
   async toggleSolutionStar(
     @Arg("userId") userId: string,
     @Arg("solutionId") solutionId: string
@@ -67,21 +133,44 @@ export class SolutionResolver {
     if (star) {
       await this.starRepo.delete({ userId, solutionId }).catch((err) => {
         console.log("Error when star solution: ", err);
-        return false;
+        return {
+          status: false,
+          message: err.message,
+        };
       });
-      return true;
+      return {
+        status: true,
+        message: "Un-star solution successfully.",
+      };
     } else {
       const newStar = this.starRepo.create({ userId, solutionId });
       await this.starRepo.save(newStar).catch((err) => {
         console.log("Error when star solution: ", err);
-        return false;
+        return {
+          status: false,
+          message: err.message,
+        };
       });
-      return true;
+      return {
+        status: true,
+        message: "Star solution successfully.",
+      };
     }
   }
 
-  @Query(() => [SolutionStar])
-  findSolutionStars(@Arg("solutionId") solutionId: string) {
-    return this.starRepo.find({ solutionId });
+  @Query(() => SolutionStarResponse)
+  async findSolutionStars(@Arg("solutionId") solutionId: string) {
+    const stars = await this.starRepo.find({ solutionId }).catch((e) => {
+      return {
+        status: false,
+        message: e.message,
+      };
+    });
+
+    return {
+      status: true,
+      message: "Get solution stars successfully.",
+      data: stars,
+    };
   }
 }

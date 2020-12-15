@@ -60,3 +60,15 @@ export class Review {
   @JoinColumn({ name: "deviceId" })
   device: Device;
 }
+
+@ObjectType()
+export class ReviewResponse {
+  @Field()
+  status: boolean;
+
+  @Field()
+  message: string;
+
+  @Field(() => [Review], { nullable: true })
+  data?: Review[] | null;
+}

@@ -65,3 +65,15 @@ export class Device {
   @OneToMany(() => ReviewRating, (rating) => rating.device)
   ratings: ReviewRating[];
 }
+
+@ObjectType()
+export class DeviceResponse {
+  @Field()
+  status: boolean;
+
+  @Field()
+  message: string;
+
+  @Field(() => [Device], { nullable: true })
+  data?: Device[] | null;
+}

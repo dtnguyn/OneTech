@@ -6,6 +6,7 @@ import {
   CreateDateColumn,
   UpdateDateColumn,
   OneToMany,
+  OneToOne,
 } from "typeorm";
 import { DeviceFollower } from "./DeviceFollower";
 import { DeviceProblem } from "./DeviceProblem";
@@ -13,6 +14,7 @@ import { DeviceProblemStar } from "./DeviceProblemStar";
 import { Review } from "./Review";
 import { Solution } from "./Solution";
 import { SolutionStar } from "./SolutionStar";
+import { UserSetting } from "./UserSetting";
 
 @ObjectType()
 @Entity()
@@ -45,6 +47,10 @@ export class User {
   @UpdateDateColumn()
   updatedAt: Date;
 
+  @Field(() => UserSetting, { nullable: true })
+  @OneToOne(() => UserSetting, (setting) => setting.user)
+  setting: UserSetting;
+
   @Field(() => [DeviceProblem], { nullable: true })
   @OneToMany(() => DeviceProblem, (deviceProblem) => deviceProblem.author)
   problems: DeviceProblem[];
@@ -68,4 +74,16 @@ export class User {
   @Field(() => [Review], { nullable: true })
   @OneToMany(() => Review, (review) => review.author)
   reviews: Review[];
+}
+
+@ObjectType()
+export class UserResponse {
+  @Field()
+  status: boolean;
+
+  @Field()
+  message: string;
+
+  @Field(() => [User], { nullable: true })
+  data?: User[] | null;
 }

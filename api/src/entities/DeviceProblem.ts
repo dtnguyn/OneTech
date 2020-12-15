@@ -69,3 +69,15 @@ export class DeviceProblem {
   @OneToMany(() => Solution, (solution) => solution.problem)
   solutions: Solution[];
 }
+
+@ObjectType()
+export class ProblemResponse {
+  @Field()
+  status: boolean;
+
+  @Field()
+  message: string;
+
+  @Field(() => [DeviceProblem], { nullable: true })
+  data?: DeviceProblem[] | null;
+}

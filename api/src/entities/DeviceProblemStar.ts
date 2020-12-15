@@ -41,3 +41,15 @@ export class DeviceProblemStar {
   @UpdateDateColumn()
   updatedAt: Date;
 }
+
+@ObjectType()
+export class ProblemStarResponse {
+  @Field()
+  status: boolean;
+
+  @Field()
+  message: string;
+
+  @Field(() => [DeviceProblemStar], { nullable: true })
+  data?: DeviceProblemStar[] | null;
+}
