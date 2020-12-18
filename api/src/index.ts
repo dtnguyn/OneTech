@@ -17,6 +17,7 @@ import { DeviceResolver } from "./resolvers/DeviceResolver";
 import { ProblemResolver } from "./resolvers/ProblemResolver";
 import { SolutionResolver } from "./resolvers/SolutionResolver";
 import { ReviewResolver } from "./resolvers/ReviewResolver";
+import cors from "cors";
 
 (async () => {
   await createConnection();
@@ -33,6 +34,13 @@ import { ReviewResolver } from "./resolvers/ReviewResolver";
   redisClient.on("error", function (err) {
     console.log("Redis error: " + err);
   });
+
+  app.use(
+    cors({
+      origin: "http://localhost:3000",
+      credentials: true,
+    })
+  );
 
   app.use(
     session({
@@ -72,7 +80,7 @@ import { ReviewResolver } from "./resolvers/ReviewResolver";
     },
   });
 
-  apolloServer.applyMiddleware({ app });
+  apolloServer.applyMiddleware({ app, cors: false });
 
   app.listen(4000, () => {
     console.log("One-tech server running on port 4000");

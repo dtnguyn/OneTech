@@ -1,0 +1,21 @@
+.container {
+  background-color: white;
+  position: relative;
+  z-index: 1;
+}
+
+.navbarLink {
+  color: #949090;
+  font-family: MLight;
+  margin: 0 35px 0 35px;
+}
+
+.navbarBrand {
+  font-family: MRegular;
+  font-size: 24px;
+  color: black;
+}
+.navbarBrand:hover {
+  text-decoration: none;
+  color: black;
+}

@@ -1,0 +1,99 @@
+html,
+body {
+  padding: 0;
+  margin: 0;
+  font-family: MMedium, -apple-system, BlinkMacSystemFont, Segoe UI, Roboto,
+    Oxygen, Ubuntu, Cantarell, Fira Sans, Droid Sans, Helvetica Neue, sans-serif !important;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+input {
+  width: 100%;
+  padding: 10px 20px;
+  margin: 10px 0 10px 0 !important;
+  display: inline-block;
+  border: 1px solid #ccc;
+  border-radius: 10px;
+  box-sizing: border-box;
+  font-family: MMedium;
+}
+
+input::placeholder {
+  color: #a4a2a2;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+.slick-prev {
+  left: 10px !important;
+  z-index: 1;
+}
+.slick-next {
+  right: 15px !important;
+  z-index: 1;
+}
+
+.slick-prev:before,
+.slick-next:before {
+  color: black !important;
+  font-size: 1.75rem !important;
+}
+.slick-slide > div {
+  margin: 0 27px !important;
+}
+.slick-list {
+  margin: 0 27px !important;
+}
+
+@font-face {
+  font-family: "MExtraLight";
+  src: url("/fonts/Montserrat/Montserrat-ExtraLight.ttf");
+  font-style: normal;
+  font-weight: 200;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "MLight";
+  src: url("/fonts/Montserrat/Montserrat-Light.ttf");
+  font-style: normal;
+  font-weight: 300;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "MRegular";
+  src: url("/fonts/Montserrat/Montserrat-Regular.ttf");
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+}
+@font-face {
+  font-family: "MMedium";
+  src: url("/fonts/Montserrat/Montserrat-Medium.ttf");
+  font-style: medium;
+  font-weight: 500;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "MSemiBold";
+  src: url("/fonts/Montserrat/Montserrat-SemiBold.ttf");
+  font-style: medium;
+  font-weight: 600;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "MBold";
+  src: url("/fonts/Montserrat/Montserrat-Bold.ttf");
+  font-style: medium;
+  font-weight: 700;
+  font-display: swap;
+}

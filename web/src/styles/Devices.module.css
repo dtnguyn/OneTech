@@ -1,0 +1,106 @@
+.headerContainer {
+  width: 100%;
+  height: 500px;
+  background-color: #a8d8ad;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.headerTitle {
+  margin-top: 100px;
+}
+
+.headerInputContainer {
+  width: fit-content;
+
+  position: relative;
+}
+
+.headerInput {
+  width: 400px;
+  padding-right: 40px;
+}
+
+.headerInputIcon {
+  position: absolute;
+  right: 5px;
+  top: 50%;
+  width: 30px;
+  height: 30px;
+  transform: translateY(-50%);
+}
+
+.deviceCategoryContainer {
+  margin-top: 50px;
+  display: flex;
+  flex-direction: row;
+  width: 400px;
+  align-items: center;
+  justify-content: space-evenly;
+}
+
+.deviceCategoryIconContainer {
+  display: flex;
+  height: 85px;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+  filter: invert(0.4);
+  cursor: pointer;
+}
+
+.deviceCategoryIconContainer:hover {
+  filter: invert(0);
+}
+
+.deviceCategoryIconContainerPicked {
+  display: flex;
+  height: 85px;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+  filter: invert(0);
+  cursor: pointer;
+}
+
+.deviceCategoryIcon {
+  width: 60px;
+  height: 60px;
+}
+
+.deviceCarouselContainer {
+  margin: 50px 10px;
+  overflow: hidden !important;
+}
+
+.deviceCarouselTitle {
+  margin: 0 55px 15px;
+  font-family: MSemiBold;
+}
+
+.deviceCarouselItem {
+  height: 400px;
+}
+
+.deviceItemContainer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.deviceItemTitle {
+  font-size: 20px;
+  margin-bottom: 10px;
+}
+
+.deviceItemSub {
+  font-family: MRegular;
+  line-height: 10px;
+}
+
+.deviceItemImage {
+  object-fit: contain;
+  height: 300px;
+  padding: 10px;
+}

@@ -1,0 +1,22 @@
+query Devices($all: Boolean, $category: String, $userId: String) {
+  devices(all: $all, category: $category, userId: $userId) {
+    status
+    message
+    data {
+      id
+      brand
+      name
+      category
+      coverImage
+      followers {
+        userId
+      }
+      problems {
+        id
+      }
+      reviews {
+        id
+      }
+    }
+  }
+}
