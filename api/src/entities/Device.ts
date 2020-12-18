@@ -27,7 +27,15 @@ export class Device {
 
   @Field()
   @Column()
+  brand: string;
+
+  @Field()
+  @Column()
   category: string;
+
+  @Field({ nullable: true })
+  @Column({ nullable: true })
+  subCategory?: string;
 
   @Field(() => String, { nullable: true })
   @Column({ unique: true, nullable: true })

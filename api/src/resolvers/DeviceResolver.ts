@@ -61,14 +61,18 @@ export class DeviceResolver {
   @Mutation(() => DeviceResponse, { nullable: true })
   async createDevice(
     @Arg("name") name: string,
+    @Arg("brand") brand: string,
     @Arg("category") category: string,
+    @Arg("subCategory", { nullable: true }) subCategory: string,
     @Arg("buyLink", { nullable: true }) buyLink: string,
     @Arg("coverImage", { nullable: true }) coverImage: string
   ) {
     const newDevice = this.deviceRepo.create({
       name,
       category,
+      brand,
       buyLink,
+      subCategory,
       coverImage,
     });
 
@@ -161,8 +165,9 @@ export class DeviceResolver {
     }
   }
 
-  @Query(() => [DeviceResponse])
+  @Query(() => DeviceResponse)
   async devices(
+    @Arg("all", { nullable: true }) all: boolean,
     @Arg("category", { nullable: true }) category: string,
     @Arg("userId", { nullable: true }) userId: string
   ) {
@@ -172,9 +177,11 @@ export class DeviceResolver {
         .leftJoinAndSelect("device.followers", "followers")
         .leftJoinAndSelect("device.problems", "problems")
         .leftJoinAndSelect("device.reviews", "reviews");
-
-      if (category) builder.where("device.category = :category", { category });
-      if (userId) builder.where("followers.userId = :userId", { userId });
+      if (!all) {
+        if (category)
+          builder.where("device.category = :category", { category });
+        if (userId) builder.where("followers.userId = :userId", { userId });
+      }
 
       const devices = await builder.getMany();
       return {

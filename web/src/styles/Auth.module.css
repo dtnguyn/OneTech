@@ -1,0 +1,142 @@
+.container {
+  background-color: #e5e5e5;
+}
+
+.authContainer {
+  width: 400px;
+  position: absolute;
+  height: 500px;
+  top: 50%;
+  right: 50%;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  transform: translate(50%, -50%);
+  background-color: #f5f5f5;
+  box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
+}
+
+.authSwitch {
+  width: 200px;
+  height: 40px;
+  background-color: #ebebeb;
+  position: absolute;
+  top: -20px;
+  right: 50%;
+  border-radius: 40px;
+  transform: translate(50%, 0);
+  box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
+  display: flex;
+  flex-direction: row;
+}
+
+.loginSwitchContainer {
+  flex: 1;
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  border-right: 1px solid #c9c7c7;
+  cursor: pointer;
+  border-radius: 40px 0 0 40px;
+}
+
+.loginSwitchContainer:hover {
+  background-color: #a8d8ad;
+}
+
+.loginSwitchContainerPicked {
+  flex: 1;
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  border-right: 1px solid #c9c7c7;
+  cursor: pointer;
+  border-radius: 40px 0 0 40px;
+  background-color: #a8d8ad;
+}
+
+.loginContainer {
+  position: absolute;
+  top: 50%;
+  right: 50%;
+  transform: translate(50%, -60%);
+}
+
+.registerSwitchContainer {
+  flex: 1;
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+  border-radius: 0 40px 40px 0;
+}
+
+.registerSwitchContainer:hover {
+  background-color: #57a4ff;
+}
+
+.registerSwitchContainerPicked {
+  flex: 1;
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+  border-radius: 0 40px 40px 0;
+  background-color: #57a4ff;
+}
+
+.registerContainer {
+  position: absolute;
+  top: 50%;
+  right: 50%;
+  transform: translate(50%, -50%);
+}
+
+.authButton {
+  width: 270px;
+  height: 50px;
+  background: #e0e0e0;
+  margin: 10px 0 25px 0;
+  box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
+  border-radius: 15px;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  cursor: pointer;
+}
+
+.authButton:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 1rem 2rem rgba(0, 0, 0, 0.2);
+}
+
+.authButton:active {
+  transform: translateY(-1px);
+  box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.2);
+}
+
+.authTitle {
+  margin-bottom: 30px;
+  font-size: 1.4rem;
+  font-family: MSemiBold;
+}
+
+.logoSmall {
+  width: 30px;
+  height: 30px;
+  margin: 10px;
+}
+
+.stepText {
+  color: #a4a2a2;
+}
+
+.stepTextError {
+  color: #e03e15;
+}

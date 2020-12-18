@@ -8,6 +8,7 @@ import { Strategy as FacebookStrategy } from "passport-facebook";
 import { Strategy as TwitterStrategy } from "passport-twitter";
 
 import { Router } from "express";
+
 const router = Router();
 
 const handleAuth = async (
@@ -24,23 +25,36 @@ const handleAuth = async (
     console.log("Already sign up: ", user);
     return cb("", { id: user.id });
   } else {
-    const newUser = await repo.create({
+    return cb("", {
       oauthId: id as string,
       email: emails ? emails[0].value : null,
       username: displayName,
       avatar: photos ? photos[0].value : null,
     });
-    await repo
-      .insert(newUser)
-      .then(() => {
-        console.log("Create user: ", newUser);
-        return cb("", { id: newUser.id });
-      })
-      .catch((err) => {
-        console.log("Fail to create user: ", err);
-        return cb(err, null);
-      });
   }
+};
+
+const handleRegister = async (
+  oauthId: string,
+  email: string,
+  username: string,
+  avatar: string
+) => {
+  const repo = getRepository(User);
+  const newUser = await repo.create({
+    oauthId,
+    email,
+    username,
+    avatar,
+  });
+  await repo.insert(newUser);
+
+  return repo.findOne({ oauthId });
+};
+
+const updateUserEmail = (id: string, email: string) => {
+  const repo = getRepository(User);
+  repo.update({ id }, { email });
 };
 
 passport.use(
@@ -80,6 +94,47 @@ passport.use(
 
 router.use(passport.initialize());
 
+router.get("/register", (req, res) => {
+  (req.session as any).email = req.query.email;
+
+  switch (req.query.method) {
+    case "google": {
+      res.redirect("/auth/google");
+      break;
+    }
+    case "facebook": {
+      res.redirect("/auth/facebook");
+      break;
+    }
+    case "twitter": {
+      res.redirect("/auth/twitter");
+      break;
+    }
+  }
+});
+
+router.get("/login", (req, res) => {
+  switch (req.query.method) {
+    case "google": {
+      res.redirect("/auth/google");
+      break;
+    }
+    case "facebook": {
+      res.redirect("/auth/facebook");
+      break;
+    }
+    case "twitter": {
+      res.redirect("/auth/twitter");
+      break;
+    }
+  }
+});
+
+router.get(
+  "/google",
+  passport.authenticate("google", { scope: ["profile", "email"] })
+);
+
 router.get(
   "/google",
   passport.authenticate("google", { scope: ["profile", "email"] })
@@ -88,11 +143,37 @@ router.get(
 router.get(
   "/google/callback",
   passport.authenticate("google", { session: false }),
-  (req, res) => {
+  async (req, res) => {
     // Successful authentication, redirect home.
-    console.log("Successful authentication!");
-    (req.session as any).userId = (req.user as any).id;
-    res.redirect("/graphql");
+    if ((req.user as any).id) {
+      //If user log in
+      console.log("Successful Login!");
+      (req.session as any).userId = (req.user as any).id;
+    } else {
+      //If user register
+      if ((req.session as any).email) {
+        try {
+          console.log("user: ", req.user);
+          const user = await handleRegister(
+            (req.user as any).oauthId,
+            (req.session as any).email,
+            (req.user as any).username,
+            (req.user as any).avatar
+          );
+          (req.session as any).userId = user?.id;
+          console.log("Successful register!");
+        } catch (e) {
+          console.log("Fail to register", e.message);
+          (req.session as any).email = undefined;
+          return res.redirect(500, "http://localhost:3000/auth");
+        }
+      } else {
+        console.log("Register must provide email");
+        return res.redirect(404, "http://localhost:3000/auth");
+      }
+    }
+    if ((req.session as any).email) (req.session as any).email = undefined;
+    res.redirect(301, "http://localhost:3000/");
   }
 );
 
@@ -104,11 +185,36 @@ router.get(
 router.get(
   "/facebook/callback",
   passport.authenticate("facebook", { session: false }),
-  function (req, res) {
-    // Successful authentication, redirect home.
-    console.log("Successful authentication!");
-    (req.session as any).userId = (req.user as any).id;
-    res.redirect("/graphql");
+  async (req, res) => {
+    if ((req.user as any).id) {
+      //If user log in
+      console.log("Successful Login!");
+      (req.session as any).userId = (req.user as any).id;
+    } else {
+      //If user register
+      if ((req.session as any).email) {
+        try {
+          console.log("user: ", req.user);
+          const user = await handleRegister(
+            (req.user as any).oauthId,
+            (req.session as any).email,
+            (req.user as any).username,
+            (req.user as any).avatar
+          );
+          (req.session as any).userId = user?.id;
+          console.log("Successful register!");
+        } catch (e) {
+          console.log("Fail to register", e.message);
+          (req.session as any).email = undefined;
+          return res.redirect(500, "http://localhost:3000/auth");
+        }
+      } else {
+        console.log("Register must provide email");
+        return res.redirect(404, "http://localhost:3000/auth");
+      }
+    }
+    if ((req.session as any).email) (req.session as any).email = undefined;
+    res.redirect(301, "http://localhost:3000/");
   }
 );
 
@@ -117,11 +223,36 @@ router.get("/twitter", passport.authenticate("twitter"));
 router.get(
   "/twitter/callback",
   passport.authenticate("twitter", { session: false }),
-  function (req, res) {
-    // Successful authentication, redirect home.
-    console.log("Successful authentication!");
-    (req.session as any).userId = (req.user as any).id;
-    res.redirect("/graphql");
+  async (req, res) => {
+    if ((req.user as any).id) {
+      //If user log in
+      console.log("Successful Login!");
+      (req.session as any).userId = (req.user as any).id;
+    } else {
+      //If user register
+      if ((req.session as any).email) {
+        try {
+          console.log("user: ", req.user);
+          const user = await handleRegister(
+            (req.user as any).oauthId,
+            (req.session as any).email,
+            (req.user as any).username,
+            (req.user as any).avatar
+          );
+          (req.session as any).userId = user?.id;
+          console.log("Successful register!");
+        } catch (e) {
+          console.log("Fail to register", e.message);
+          (req.session as any).email = undefined;
+          return res.redirect(500, "http://localhost:3000/auth");
+        }
+      } else {
+        console.log("Register must provide email");
+        return res.redirect(404, "http://localhost:3000/auth");
+      }
+    }
+    if ((req.session as any).email) (req.session as any).email = undefined;
+    res.redirect(301, "http://localhost:3000/");
   }
 );
 
