@@ -12,23 +12,21 @@ const Body: React.FC<BodyProps> = ({}) => {
   const [devicesArr, setDevicesArr] = useState<Array<Device[]>>();
 
   useEffect(() => {
-    devices.map((device) => {
-      console.log("here");
+    setBrands(new Map());
+    setDevicesArr([]);
+    devices?.map((device) => {
       if (brands.get(device.brand)) {
         brands.get(device.brand)?.push(device);
       } else {
         brands.set(device.brand, [device]);
       }
     });
-    console.log(devices);
-    console.log(brands);
     const arr: Array<Device[]> = [];
     for (const [key, value] of brands.entries()) {
       arr.push(value);
     }
-    console.log(arr);
     setDevicesArr(arr);
-  }, []);
+  }, [devices]);
 
   return (
     <div>

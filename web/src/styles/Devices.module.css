@@ -20,6 +20,7 @@
 .headerInput {
   width: 400px;
   padding-right: 40px;
+  text-transform: lowercase;
 }
 
 .headerInputIcon {
@@ -28,6 +29,15 @@
   top: 50%;
   width: 30px;
   height: 30px;
+  transform: translateY(-50%);
+}
+
+.headerInputAutoComplete {
+  position: absolute;
+  left: 21px;
+  top: 50%;
+  color: #a4a2a247;
+  z-index: 0;
   transform: translateY(-50%);
 }
 

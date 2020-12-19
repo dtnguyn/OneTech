@@ -17,11 +17,10 @@ const Devices: React.FC<DeviceProps> = ({}) => {
   });
 
   useEffect(() => {
-    console.log("here", data?.devices.data);
     setDevices(data?.devices.data as Device[]);
-  }, []);
+  }, [data]);
 
-  if (devices?.length === 0) return null;
+  if (!devices) return null;
 
   return (
     <DeviceContext.Provider value={{ devices, setDevices }}>

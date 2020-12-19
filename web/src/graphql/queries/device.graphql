@@ -1,5 +1,10 @@
-query Devices($all: Boolean, $category: String, $userId: String) {
-  devices(all: $all, category: $category, userId: $userId) {
+query Devices(
+  $all: Boolean
+  $category: String
+  $userId: String
+  $name: String
+) {
+  devices(all: $all, category: $category, userId: $userId, name: $name) {
     status
     message
     data {

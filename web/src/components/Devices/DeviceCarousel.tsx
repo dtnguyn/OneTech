@@ -52,8 +52,8 @@ const DeviceCarousel: React.FC<DeviceCarouselProps> = ({ devices }) => {
       <h4 className={styles.deviceCarouselTitle}>{devices[0].brand}</h4>
       <Slider {...settings}>
         {devices.map((device) => (
-          <div className={styles.deviceCarouselItem}>
-            <DeviceItem device={device} />
+          <div key={device.id} className={styles.deviceCarouselItem}>
+            <DeviceItem key={device.id} device={device} />
           </div>
         ))}
       </Slider>
