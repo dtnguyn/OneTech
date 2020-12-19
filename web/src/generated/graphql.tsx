@@ -47,6 +47,7 @@ export type QuerySettingArgs = {
 
 
 export type QueryDevicesArgs = {
+  name?: Maybe<Scalars['String']>;
   userId?: Maybe<Scalars['String']>;
   category?: Maybe<Scalars['String']>;
   all?: Maybe<Scalars['Boolean']>;
@@ -560,6 +561,7 @@ export type DevicesQueryVariables = Exact<{
   all?: Maybe<Scalars['Boolean']>;
   category?: Maybe<Scalars['String']>;
   userId?: Maybe<Scalars['String']>;
+  name?: Maybe<Scalars['String']>;
 }>;
 
 
@@ -587,8 +589,8 @@ export type DevicesQuery = (
 
 
 export const DevicesDocument = gql`
-    query Devices($all: Boolean, $category: String, $userId: String) {
-  devices(all: $all, category: $category, userId: $userId) {
+    query Devices($all: Boolean, $category: String, $userId: String, $name: String) {
+  devices(all: $all, category: $category, userId: $userId, name: $name) {
     status
     message
     data {
@@ -626,6 +628,7 @@ export const DevicesDocument = gql`
  *      all: // value for 'all'
  *      category: // value for 'category'
  *      userId: // value for 'userId'
+ *      name: // value for 'name'
  *   },
  * });
  */

@@ -169,7 +169,8 @@ export class DeviceResolver {
   async devices(
     @Arg("all", { nullable: true }) all: boolean,
     @Arg("category", { nullable: true }) category: string,
-    @Arg("userId", { nullable: true }) userId: string
+    @Arg("userId", { nullable: true }) userId: string,
+    @Arg("name", { nullable: true }) name: string
   ) {
     try {
       const builder = this.deviceRepo
@@ -180,7 +181,11 @@ export class DeviceResolver {
       if (!all) {
         if (category)
           builder.where("device.category = :category", { category });
-        if (userId) builder.where("followers.userId = :userId", { userId });
+        if (userId) builder.andWhere("followers.userId = :userId", { userId });
+        if (name)
+          builder.andWhere("LOWER(device.name) LIKE LOWER(:name)", {
+            name: "%" + name + "%",
+          });
       }
 
       const devices = await builder.getMany();
