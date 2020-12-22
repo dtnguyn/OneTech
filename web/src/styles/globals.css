@@ -46,9 +46,16 @@ input::placeholder {
 }
 .slick-slide > div {
   margin: 0 27px !important;
+  touch-action: pan-y;
 }
 .slick-list {
   margin: 0 27px !important;
+  touch-action: pan-y;
+}
+
+.slick-list,
+.slick-track {
+  touch-action: pan-y !important;
 }
 
 @font-face {

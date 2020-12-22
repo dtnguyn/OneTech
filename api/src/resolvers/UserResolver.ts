@@ -77,6 +77,27 @@ export class UserResolver {
     };
   }
 
+  @Mutation(() => UserResponse)
+  async logout(@Ctx() { req, res }: MyContext) {
+    return new Promise((resolve) => {
+      req.session.destroy((err) => {
+        if (err) {
+          console.log(err);
+          resolve({
+            status: false,
+            message: err.message,
+          });
+          return;
+        }
+        res.clearCookie("qid");
+        resolve({
+          status: true,
+          message: "Successfully logout.",
+        });
+      });
+    });
+  }
+
   @Query(() => UserResponse)
   async users() {
     const users = await this.userRepo.find().catch((e) => {

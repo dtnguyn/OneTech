@@ -48,12 +48,12 @@ const Login: React.FC<LoginProps> = ({}) => {
       <AuthButton
         logoSrc="./images/facebook.png"
         text="Login with Facebook"
-        onClick={() => onLoginClick("google")}
+        onClick={() => onLoginClick("facebook")}
       />
       <AuthButton
         logoSrc="./images/twitter.png"
         text="Login with Twitter"
-        onClick={() => onLoginClick("google")}
+        onClick={() => onLoginClick("twitter")}
       />
     </div>
   );

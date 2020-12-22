@@ -52,6 +52,7 @@ class UpdateDeviceSpecInput {
   cameraSimplify?: string;
 }
 
+const sleep = (ms: number) => new Promise((res) => setTimeout(res, ms));
 @Resolver()
 export class DeviceResolver {
   deviceRepo = getRepository(Device);

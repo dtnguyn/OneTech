@@ -8,6 +8,6 @@ export type DeviceContextType = {
 
 export const DeviceContext = createContext<DeviceContextType>({
   devices: [],
-  setDevices: (devices) => console.log("no device provider"),
+  setDevices: (_) => console.log("no device provider"),
 });
 export const useDevice = () => useContext(DeviceContext);

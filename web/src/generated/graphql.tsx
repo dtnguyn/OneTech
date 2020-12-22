@@ -311,6 +311,7 @@ export type Mutation = {
   __typename?: 'Mutation';
   updateUser: UserResponse;
   deleteUser: UserResponse;
+  logout: UserResponse;
   createSetting: UserSettingResponse;
   updateSetting: UserSetting;
   createDevice?: Maybe<DeviceResponse>;
@@ -557,6 +558,17 @@ export type UpdateRatingInput = {
   battery?: Maybe<Scalars['Float']>;
 };
 
+export type LogoutMutationVariables = Exact<{ [key: string]: never; }>;
+
+
+export type LogoutMutation = (
+  { __typename?: 'Mutation' }
+  & { logout: (
+    { __typename?: 'UserResponse' }
+    & Pick<UserResponse, 'status' | 'message'>
+  ) }
+);
+
 export type DevicesQueryVariables = Exact<{
   all?: Maybe<Scalars['Boolean']>;
   category?: Maybe<Scalars['String']>;
@@ -587,7 +599,84 @@ export type DevicesQuery = (
   ) }
 );
 
+export type DeviceDetailQueryVariables = Exact<{
+  id: Scalars['String'];
+}>;
 
+
+export type DeviceDetailQuery = (
+  { __typename?: 'Query' }
+  & { singleDevice?: Maybe<(
+    { __typename?: 'DeviceResponse' }
+    & Pick<DeviceResponse, 'status' | 'message'>
+    & { data?: Maybe<Array<(
+      { __typename?: 'Device' }
+      & Pick<Device, 'id' | 'brand' | 'name' | 'category' | 'coverImage'>
+      & { followers?: Maybe<Array<(
+        { __typename?: 'DeviceFollower' }
+        & Pick<DeviceFollower, 'userId'>
+      )>>, problems?: Maybe<Array<(
+        { __typename?: 'DeviceProblem' }
+        & Pick<DeviceProblem, 'id'>
+      )>>, reviews?: Maybe<Array<(
+        { __typename?: 'Review' }
+        & Pick<Review, 'id'>
+      )>>, spec?: Maybe<(
+        { __typename?: 'DeviceSpec' }
+        & Pick<DeviceSpec, 'display' | 'battery' | 'software' | 'camera' | 'processor' | 'displaySimplify' | 'batterySimplify' | 'softwareSimplify' | 'cameraSimplify' | 'processorSimplify'>
+      )> }
+    )>> }
+  )> }
+);
+
+export type MeQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type MeQuery = (
+  { __typename?: 'Query' }
+  & { me?: Maybe<(
+    { __typename?: 'UserResponse' }
+    & Pick<UserResponse, 'status'>
+    & { data?: Maybe<Array<(
+      { __typename?: 'User' }
+      & Pick<User, 'id' | 'oauthId' | 'username' | 'email' | 'avatar'>
+    )>> }
+  )> }
+);
+
+
+export const LogoutDocument = gql`
+    mutation Logout {
+  logout {
+    status
+    message
+  }
+}
+    `;
+export type LogoutMutationFn = Apollo.MutationFunction<LogoutMutation, LogoutMutationVariables>;
+
+/**
+ * __useLogoutMutation__
+ *
+ * To run a mutation, you first call `useLogoutMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useLogoutMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [logoutMutation, { data, loading, error }] = useLogoutMutation({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useLogoutMutation(baseOptions?: Apollo.MutationHookOptions<LogoutMutation, LogoutMutationVariables>) {
+        return Apollo.useMutation<LogoutMutation, LogoutMutationVariables>(LogoutDocument, baseOptions);
+      }
+export type LogoutMutationHookResult = ReturnType<typeof useLogoutMutation>;
+export type LogoutMutationResult = Apollo.MutationResult<LogoutMutation>;
+export type LogoutMutationOptions = Apollo.BaseMutationOptions<LogoutMutation, LogoutMutationVariables>;
 export const DevicesDocument = gql`
     query Devices($all: Boolean, $category: String, $userId: String, $name: String) {
   devices(all: $all, category: $category, userId: $userId, name: $name) {
@@ -641,3 +730,104 @@ export function useDevicesLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<De
 export type DevicesQueryHookResult = ReturnType<typeof useDevicesQuery>;
 export type DevicesLazyQueryHookResult = ReturnType<typeof useDevicesLazyQuery>;
 export type DevicesQueryResult = Apollo.QueryResult<DevicesQuery, DevicesQueryVariables>;
+export const DeviceDetailDocument = gql`
+    query DeviceDetail($id: String!) {
+  singleDevice(id: $id) {
+    status
+    message
+    data {
+      id
+      brand
+      name
+      category
+      coverImage
+      followers {
+        userId
+      }
+      problems {
+        id
+      }
+      reviews {
+        id
+      }
+      spec {
+        display
+        battery
+        software
+        camera
+        processor
+        displaySimplify
+        batterySimplify
+        softwareSimplify
+        cameraSimplify
+        processorSimplify
+      }
+    }
+  }
+}
+    `;
+
+/**
+ * __useDeviceDetailQuery__
+ *
+ * To run a query within a React component, call `useDeviceDetailQuery` and pass it any options that fit your needs.
+ * When your component renders, `useDeviceDetailQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useDeviceDetailQuery({
+ *   variables: {
+ *      id: // value for 'id'
+ *   },
+ * });
+ */
+export function useDeviceDetailQuery(baseOptions: Apollo.QueryHookOptions<DeviceDetailQuery, DeviceDetailQueryVariables>) {
+        return Apollo.useQuery<DeviceDetailQuery, DeviceDetailQueryVariables>(DeviceDetailDocument, baseOptions);
+      }
+export function useDeviceDetailLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<DeviceDetailQuery, DeviceDetailQueryVariables>) {
+          return Apollo.useLazyQuery<DeviceDetailQuery, DeviceDetailQueryVariables>(DeviceDetailDocument, baseOptions);
+        }
+export type DeviceDetailQueryHookResult = ReturnType<typeof useDeviceDetailQuery>;
+export type DeviceDetailLazyQueryHookResult = ReturnType<typeof useDeviceDetailLazyQuery>;
+export type DeviceDetailQueryResult = Apollo.QueryResult<DeviceDetailQuery, DeviceDetailQueryVariables>;
+export const MeDocument = gql`
+    query Me {
+  me {
+    status
+    data {
+      id
+      oauthId
+      username
+      email
+      avatar
+    }
+  }
+}
+    `;
+
+/**
+ * __useMeQuery__
+ *
+ * To run a query within a React component, call `useMeQuery` and pass it any options that fit your needs.
+ * When your component renders, `useMeQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useMeQuery({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useMeQuery(baseOptions?: Apollo.QueryHookOptions<MeQuery, MeQueryVariables>) {
+        return Apollo.useQuery<MeQuery, MeQueryVariables>(MeDocument, baseOptions);
+      }
+export function useMeLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<MeQuery, MeQueryVariables>) {
+          return Apollo.useLazyQuery<MeQuery, MeQueryVariables>(MeDocument, baseOptions);
+        }
+export type MeQueryHookResult = ReturnType<typeof useMeQuery>;
+export type MeLazyQueryHookResult = ReturnType<typeof useMeLazyQuery>;
+export type MeQueryResult = Apollo.QueryResult<MeQuery, MeQueryVariables>;

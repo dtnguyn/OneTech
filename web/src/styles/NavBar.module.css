@@ -4,6 +4,10 @@
   z-index: 1;
 }
 
+.navbarLinkContainer {
+  align-items: center;
+}
+
 .navbarLink {
   color: #949090;
   font-family: MLight;
@@ -18,4 +22,33 @@
 .navbarBrand:hover {
   text-decoration: none;
   color: black;
+}
+
+.navbarAvatar {
+  margin: 0 35px 0 35px;
+}
+
+.dropdownMenu {
+  background-color: white;
+  width: 200px;
+  height: 150px;
+  position: absolute;
+  display: flex;
+  flex-direction: column;
+  margin: 5px;
+  padding: 10px;
+  line-height: 0;
+  font-family: MRegular;
+  border-radius: 5px;
+  right: 0;
+}
+
+.dropdownItem {
+  margin-top: 10px;
+  padding: 10px 2px;
+  cursor: pointer;
+}
+
+.dropdownItem:hover {
+  background-color: #fafafa;
 }

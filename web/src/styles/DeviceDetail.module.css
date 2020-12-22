@@ -1,0 +1,140 @@
+.deviceDetailHeaderContainer {
+  width: 100vw;
+  height: fit-content;
+  padding-bottom: 10px;
+}
+
+.deviceDetailHeaderSection {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.deviceDetailImage {
+  object-fit: contain;
+  height: 500px;
+}
+
+.deviceDetailTitle {
+  font-family: MSemiBold;
+  margin: 50px 0 0;
+}
+
+.deviceDetailText {
+  font-family: MRegular;
+  margin: 0;
+  font-size: 18px;
+}
+
+.deviceDetailHeaderSwitch {
+  width: 300px;
+  height: 40px;
+  background-color: #ebebeb;
+  border-radius: 40px;
+  display: flex;
+  margin-top: 50px;
+  flex-direction: row;
+}
+
+.headerSwitch {
+  flex: 1;
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+}
+
+.headerSwitchPicked,
+.headerSwitch:hover {
+  background-color: #a8d8ad;
+  flex: 1;
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  justify-content: center;
+  align-items: center;
+
+  cursor: pointer;
+}
+
+#technicalSwitch {
+  border-right: 1px solid #c9c7c7;
+  border-radius: 40px 0 0 40px;
+}
+
+#simplifySwitch {
+  border-right: 1px solid #c9c7c7;
+}
+
+#ratingSwitch {
+  border-radius: 0 40px 40px 0;
+}
+
+.specsTableContainer {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  margin-top: 50px;
+  margin-bottom: 50px;
+  width: 90%;
+}
+
+.specsTableRow {
+  width: 100%;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+}
+
+.specsTableRowTitle {
+  margin: 10px 0 10px 10px;
+  flex: 1;
+}
+
+.specsTableRowContent {
+  margin: 10px 10px 10px 0;
+  width: 100%;
+  flex: 5;
+  display: flex;
+  flex-direction: row;
+  font-family: MRegular;
+  font-size: 14px;
+}
+
+.ratingBar {
+  border-radius: 40px;
+  height: 20px;
+  width: 80%;
+  background-color: #d8d6a8;
+  animation-name: moveFromLeft;
+  display: inline-flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  font-family: MRegular;
+  font-size: 13px;
+  animation-duration: 0.5s;
+}
+
+@keyframes moveFromLeft {
+  0% {
+    width: 0;
+  }
+  20% {
+    transform: 20%;
+  }
+  40% {
+    transform: 40%;
+  }
+  60% {
+    transform: 60%;
+  }
+  80% {
+    transform: 80%;
+  }
+  100% {
+    transform: 100%;
+  }
+}

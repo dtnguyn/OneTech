@@ -1,3 +1,4 @@
+import { useRouter } from "next/router";
 import { Device } from "../../generated/graphql";
 import styles from "../../styles/Devices.module.css";
 
@@ -6,8 +7,15 @@ interface DeviceItemProps {
 }
 
 const DeviceItem: React.FC<DeviceItemProps> = ({ device }) => {
+  const router = useRouter();
+
   return (
-    <div className={styles.deviceItemContainer}>
+    <div
+      className={styles.deviceItemContainer}
+      onClick={() => {
+        router.push(`device/${device.id}`);
+      }}
+    >
       <img className={styles.deviceItemImage} src={device.coverImage} />
       <h6 className={styles.deviceItemTitle}>{device.name}</h6>
       <p className={styles.deviceItemSub}>
