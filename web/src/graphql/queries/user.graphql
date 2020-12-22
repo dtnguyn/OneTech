@@ -1,0 +1,12 @@
+query Me {
+  me {
+    status
+    data {
+      id
+      oauthId
+      username
+      email
+      avatar
+    }
+  }
+}

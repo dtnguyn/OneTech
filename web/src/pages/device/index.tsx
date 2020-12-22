@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from "react";
-import NavBar from "../../components/Auth/NavBar";
 import Body from "../../components/Devices/Body";
 import Header from "../../components/Devices/Header";
 import { DeviceContext } from "../../context/DeviceContext";
@@ -25,7 +24,6 @@ const Devices: React.FC<DeviceProps> = ({}) => {
   return (
     <DeviceContext.Provider value={{ devices, setDevices }}>
       <div>
-        <NavBar />
         <Header />
         <Body />
       </div>

@@ -25,3 +25,38 @@ query Devices(
     }
   }
 }
+
+query DeviceDetail($id: String!) {
+  singleDevice(id: $id) {
+    status
+    message
+    data {
+      id
+      brand
+      name
+      category
+      coverImage
+      followers {
+        userId
+      }
+      problems {
+        id
+      }
+      reviews {
+        id
+      }
+      spec {
+        display
+        battery
+        software
+        camera
+        processor
+        displaySimplify
+        batterySimplify
+        softwareSimplify
+        cameraSimplify
+        processorSimplify
+      }
+    }
+  }
+}
