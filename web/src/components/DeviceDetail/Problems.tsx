@@ -21,6 +21,7 @@ const Problems: React.FC<ProblemsProps> = ({}) => {
   ] = useToggleProblemStarMutation();
 
   const isStarred = (stars: DeviceProblemStar[]) => {
+    console.log("hehe");
     for (const star of stars) {
       if (star.userId === user?.id) {
         return true;
@@ -68,7 +69,12 @@ const Problems: React.FC<ProblemsProps> = ({}) => {
                     break;
                   }
                 }
-                _problem.stars!.splice(index, 1);
+                if (index > 0) _problem.stars!.splice(index, 1);
+                if (index === 0)
+                  return {
+                    ..._problem,
+                    stars: [],
+                  };
                 return _problem;
               }
             }
