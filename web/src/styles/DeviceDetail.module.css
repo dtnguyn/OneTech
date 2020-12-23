@@ -13,6 +13,7 @@
 .deviceDetailImage {
   object-fit: contain;
   height: 500px;
+  margin-bottom: 10px;
 }
 
 .deviceDetailTitle {
@@ -26,58 +27,13 @@
   font-size: 18px;
 }
 
-.deviceDetailHeaderSwitch {
-  width: 300px;
-  height: 40px;
-  background-color: #ebebeb;
-  border-radius: 40px;
-  display: flex;
-  margin-top: 50px;
-  flex-direction: row;
-}
-
-.headerSwitch {
-  flex: 1;
-  display: flex;
-  flex-direction: row;
-  justify-content: center;
-  justify-content: center;
-  align-items: center;
-  cursor: pointer;
-}
-
-.headerSwitchPicked,
-.headerSwitch:hover {
-  background-color: #a8d8ad;
-  flex: 1;
-  display: flex;
-  flex-direction: row;
-  justify-content: center;
-  justify-content: center;
-  align-items: center;
-
-  cursor: pointer;
-}
-
-#technicalSwitch {
-  border-right: 1px solid #c9c7c7;
-  border-radius: 40px 0 0 40px;
-}
-
-#simplifySwitch {
-  border-right: 1px solid #c9c7c7;
-}
-
-#ratingSwitch {
-  border-radius: 0 40px 40px 0;
-}
-
 .specsTableContainer {
   display: flex;
   flex-direction: column;
   align-items: flex-start;
   margin-top: 50px;
   margin-bottom: 50px;
+  margin-left: 50px;
   width: 90%;
 }
 
@@ -85,7 +41,6 @@
   width: 100%;
   display: flex;
   flex-direction: row;
-  align-items: center;
 }
 
 .specsTableRowTitle {
@@ -116,6 +71,70 @@
   font-family: MRegular;
   font-size: 13px;
   animation-duration: 0.5s;
+}
+
+.deviceDetailBodyContainer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.problemsContainer {
+  margin: 30px;
+  display: flex;
+  flex-direction: column;
+  /* align-self: flex-start; */
+}
+
+.problemItemContainer {
+  width: 80vw;
+  height: fit-content;
+  display: flex;
+  flex-direction: row;
+  cursor: pointer;
+}
+
+.problemItemStatsContainer {
+  display: flex;
+  flex-direction: column;
+}
+
+.problemItemPostContainer {
+  display: flex;
+  flex-direction: column;
+  margin: 0 15px;
+}
+
+.problemItemTitle {
+  font-family: MSemiBold;
+  color: #e35427;
+  margin: 0;
+}
+
+.problemItemTitle:hover {
+  text-decoration: underline;
+}
+
+.problemItemDate {
+  font-family: MLight;
+}
+
+.problemItemContent {
+  font-family: MMedium;
+}
+
+.problemItemButtonsContainer {
+  display: flex;
+  flex-direction: row;
+}
+
+.problemItemButton {
+  width: 32px;
+  margin: 10px 15px;
+}
+
+.problemItemButton:active {
+  padding: 4px;
 }
 
 @keyframes moveFromLeft {

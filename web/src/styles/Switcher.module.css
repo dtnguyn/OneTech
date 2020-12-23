@@ -1,0 +1,45 @@
+.switchContainer {
+  width: 300px;
+  height: 40px;
+  background-color: #ebebeb;
+  border-radius: 40px;
+  display: flex;
+  margin-top: 50px;
+  flex-direction: row;
+}
+
+.itemSwitch {
+  flex: 1;
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+}
+
+.itemSwitchPicked,
+.itemSwitch:hover {
+  background-color: #a8d8ad;
+  flex: 1;
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  justify-content: center;
+  align-items: center;
+
+  cursor: pointer;
+}
+
+#startSwitch {
+  border-right: 1px solid #c9c7c7;
+  border-radius: 40px 0 0 40px;
+}
+
+#midSwitch {
+  border-right: 1px solid #c9c7c7;
+}
+
+#endSwitch {
+  border-radius: 0 40px 40px 0;
+}

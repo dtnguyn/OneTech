@@ -19,8 +19,6 @@ const Devices: React.FC<DeviceProps> = ({}) => {
     setDevices(data?.devices.data as Device[]);
   }, [data]);
 
-  if (!devices) return null;
-
   return (
     <DeviceContext.Provider value={{ devices, setDevices }}>
       <div>

@@ -1,12 +1,12 @@
 import React, { useEffect, useState } from "react";
 import { Dropdown, Nav, Navbar, NavDropdown } from "react-bootstrap";
-import styles from "../../styles/NavBar.module.css";
+import styles from "../styles/NavBar.module.css";
 import Link from "next/link";
-import { useAuth } from "../../context/AuthContext";
+import { useAuth } from "../context/AuthContext";
 import { Avatar, Divider } from "@material-ui/core";
 import UserDropdown from "./UserDropdown";
-import { useLogoutMutation } from "../../generated/graphql";
-import { client } from "../../utils/withApollo";
+import { useLogoutMutation } from "../generated/graphql";
+import { client } from "../utils/withApollo";
 import { Router, useRouter } from "next/router";
 
 interface NavBarProps {}

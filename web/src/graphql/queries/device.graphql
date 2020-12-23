@@ -41,6 +41,22 @@ query DeviceDetail($id: String!) {
       }
       problems {
         id
+        title
+        content
+        isSolve
+        createdAt
+        updatedAt
+        author {
+          id
+          username
+        }
+        stars {
+          problemId
+          userId
+        }
+        solutions {
+          id
+        }
       }
       reviews {
         id

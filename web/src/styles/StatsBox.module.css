@@ -1,0 +1,28 @@
+.statsBoxContainer {
+  position: relative;
+  width: 100px;
+  height: 100px;
+}
+
+#yellowStatsBox {
+  background-color: #eef227;
+}
+
+#greenStatsBox {
+  background-color: #62d67b;
+}
+
+.statsBoxNumber {
+  position: absolute;
+  top: 50%;
+  right: 50%;
+  transform: translate(50%, -60%);
+  font-size: 1.5rem;
+}
+
+.statsBoxTitle {
+  position: absolute;
+  bottom: 5px;
+  right: 50%;
+  transform: translateX(50%);
+}

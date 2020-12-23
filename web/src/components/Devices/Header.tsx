@@ -1,7 +1,8 @@
-import { ChangeEvent, useEffect, useRef, useState } from "react";
+import { ChangeEvent, KeyboardEvent, useEffect, useRef, useState } from "react";
 import { useDevice } from "../../context/DeviceContext";
 import { Device, useDevicesQuery } from "../../generated/graphql";
 import styles from "../../styles/Devices.module.css";
+import SearchBar from "../SearchBar";
 
 interface HeaderProps {}
 
@@ -31,6 +32,15 @@ const Header: React.FC<HeaderProps> = ({}) => {
     }, 700);
   };
 
+  const handleKeyPress: (event: KeyboardEvent<HTMLInputElement>) => void = (
+    event
+  ) => {
+    if (event.key === "Enter" && autoComplete) {
+      setInputValue(autoComplete);
+      setSearchValue(autoComplete);
+    }
+  };
+
   useEffect(() => {
     const arr = data?.devices.data as Device[];
     if (arr) console.log("useEffect", arr, searchValue);
@@ -56,26 +66,13 @@ const Header: React.FC<HeaderProps> = ({}) => {
   return (
     <div className={styles.headerContainer}>
       <h4 className={styles.headerTitle}>Find your devices</h4>
-      <div className={styles.headerInputContainer}>
-        <input
-          value={inputValue}
-          className={styles.headerInput}
-          placeholder="Enter your device..."
-          onChange={handleSearchDevice}
-          onKeyPress={(event) => {
-            if (event.key === "Enter" && autoComplete) {
-              setInputValue(autoComplete);
-              setSearchValue(autoComplete);
-            }
-          }}
-        />
-
-        <p className={styles.headerInputAutoComplete}>{autoComplete}</p>
-        <img
-          className={styles.headerInputIcon}
-          src="./images/search-icon.svg"
-        />
-      </div>
+      <SearchBar
+        inputValue={inputValue}
+        placeHolder="Enter your device..."
+        autoComplete={autoComplete}
+        handleSearchDevice={handleSearchDevice}
+        handleKeyPress={handleKeyPress}
+      />
       <div className={styles.deviceCategoryContainer}>
         <div
           className={
