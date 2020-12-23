@@ -24,9 +24,9 @@ export type Query = {
   setting?: Maybe<UserSettingResponse>;
   devices: DeviceResponse;
   singleDevice?: Maybe<DeviceResponse>;
-  problems: Array<ProblemResponse>;
+  problems?: Maybe<ProblemResponse>;
   singleProblem: ProblemResponse;
-  findProblemStars: Array<ProblemStarResponse>;
+  findProblemStars: ProblemStarResponse;
   solutions: SolutionResponse;
   singleSolution: SolutionResponse;
   findSolutionStars: SolutionStarResponse;
@@ -60,6 +60,8 @@ export type QuerySingleDeviceArgs = {
 
 
 export type QueryProblemsArgs = {
+  content?: Maybe<Scalars['String']>;
+  title?: Maybe<Scalars['String']>;
   authorId?: Maybe<Scalars['String']>;
   deviceId?: Maybe<Scalars['String']>;
 };
@@ -146,38 +148,47 @@ export type DeviceProblem = {
   title: Scalars['String'];
   content: Scalars['String'];
   isSolve: Scalars['Boolean'];
-  createdAt: Scalars['String'];
+  createdAt: Scalars['DateTime'];
   updatedAt: Scalars['DateTime'];
   authorId: Scalars['String'];
+  author: User;
   deviceId: Scalars['String'];
+  device: Device;
   stars?: Maybe<Array<DeviceProblemStar>>;
   solutions?: Maybe<Array<Solution>>;
 };
 
-export type DeviceProblemStar = {
-  __typename?: 'DeviceProblemStar';
-  userId: Scalars['String'];
-  problemId: Scalars['String'];
-  createdAt: Scalars['String'];
-  updatedAt: Scalars['DateTime'];
-};
-
-export type Solution = {
-  __typename?: 'Solution';
+export type Device = {
+  __typename?: 'Device';
   id: Scalars['String'];
-  content: Scalars['String'];
-  isPicked: Scalars['Boolean'];
+  name: Scalars['String'];
+  brand: Scalars['String'];
+  category: Scalars['String'];
+  subCategory?: Maybe<Scalars['String']>;
+  buyLink?: Maybe<Scalars['String']>;
+  coverImage: Scalars['String'];
   createdAt: Scalars['String'];
   updatedAt: Scalars['DateTime'];
-  authorId: Scalars['String'];
-  problemId: Scalars['String'];
-  stars?: Maybe<Array<SolutionStar>>;
+  spec?: Maybe<DeviceSpec>;
+  problems?: Maybe<Array<DeviceProblem>>;
+  followers?: Maybe<Array<DeviceFollower>>;
+  reviews?: Maybe<Array<Review>>;
+  ratings?: Maybe<Array<ReviewRating>>;
 };
 
-export type SolutionStar = {
-  __typename?: 'SolutionStar';
-  userId: Scalars['String'];
-  solutionId: Scalars['String'];
+export type DeviceSpec = {
+  __typename?: 'DeviceSpec';
+  deviceId: Scalars['String'];
+  display?: Maybe<Scalars['String']>;
+  displaySimplify?: Maybe<Scalars['String']>;
+  battery?: Maybe<Scalars['String']>;
+  batterySimplify?: Maybe<Scalars['String']>;
+  software?: Maybe<Scalars['String']>;
+  softwareSimplify?: Maybe<Scalars['String']>;
+  camera?: Maybe<Scalars['String']>;
+  cameraSimplify?: Maybe<Scalars['String']>;
+  processor?: Maybe<Scalars['String']>;
+  processorSimplify?: Maybe<Scalars['String']>;
   createdAt: Scalars['String'];
   updatedAt: Scalars['DateTime'];
 };
@@ -216,6 +227,34 @@ export type ReviewRating = {
   updatedAt: Scalars['DateTime'];
 };
 
+export type DeviceProblemStar = {
+  __typename?: 'DeviceProblemStar';
+  userId: Scalars['String'];
+  problemId: Scalars['String'];
+  createdAt: Scalars['String'];
+  updatedAt: Scalars['DateTime'];
+};
+
+export type Solution = {
+  __typename?: 'Solution';
+  id: Scalars['String'];
+  content: Scalars['String'];
+  isPicked: Scalars['Boolean'];
+  createdAt: Scalars['String'];
+  updatedAt: Scalars['DateTime'];
+  authorId: Scalars['String'];
+  problemId: Scalars['String'];
+  stars?: Maybe<Array<SolutionStar>>;
+};
+
+export type SolutionStar = {
+  __typename?: 'SolutionStar';
+  userId: Scalars['String'];
+  solutionId: Scalars['String'];
+  createdAt: Scalars['String'];
+  updatedAt: Scalars['DateTime'];
+};
+
 export type UserSettingResponse = {
   __typename?: 'UserSettingResponse';
   status: Scalars['Boolean'];
@@ -228,41 +267,6 @@ export type DeviceResponse = {
   status: Scalars['Boolean'];
   message: Scalars['String'];
   data?: Maybe<Array<Device>>;
-};
-
-export type Device = {
-  __typename?: 'Device';
-  id: Scalars['String'];
-  name: Scalars['String'];
-  brand: Scalars['String'];
-  category: Scalars['String'];
-  subCategory?: Maybe<Scalars['String']>;
-  buyLink?: Maybe<Scalars['String']>;
-  coverImage: Scalars['String'];
-  createdAt: Scalars['String'];
-  updatedAt: Scalars['DateTime'];
-  spec?: Maybe<DeviceSpec>;
-  problems?: Maybe<Array<DeviceProblem>>;
-  followers?: Maybe<Array<DeviceFollower>>;
-  reviews?: Maybe<Array<Review>>;
-  ratings?: Maybe<Array<ReviewRating>>;
-};
-
-export type DeviceSpec = {
-  __typename?: 'DeviceSpec';
-  deviceId: Scalars['String'];
-  display?: Maybe<Scalars['String']>;
-  displaySimplify?: Maybe<Scalars['String']>;
-  battery?: Maybe<Scalars['String']>;
-  batterySimplify?: Maybe<Scalars['String']>;
-  software?: Maybe<Scalars['String']>;
-  softwareSimplify?: Maybe<Scalars['String']>;
-  camera?: Maybe<Scalars['String']>;
-  cameraSimplify?: Maybe<Scalars['String']>;
-  processor?: Maybe<Scalars['String']>;
-  processorSimplify?: Maybe<Scalars['String']>;
-  createdAt: Scalars['String'];
-  updatedAt: Scalars['DateTime'];
 };
 
 export type ProblemResponse = {
@@ -558,6 +562,20 @@ export type UpdateRatingInput = {
   battery?: Maybe<Scalars['Float']>;
 };
 
+export type ToggleProblemStarMutationVariables = Exact<{
+  problemId: Scalars['String'];
+  userId: Scalars['String'];
+}>;
+
+
+export type ToggleProblemStarMutation = (
+  { __typename?: 'Mutation' }
+  & { toggleProblemStar: (
+    { __typename?: 'ProblemResponse' }
+    & Pick<ProblemResponse, 'status'>
+  ) }
+);
+
 export type LogoutMutationVariables = Exact<{ [key: string]: never; }>;
 
 
@@ -617,7 +635,17 @@ export type DeviceDetailQuery = (
         & Pick<DeviceFollower, 'userId'>
       )>>, problems?: Maybe<Array<(
         { __typename?: 'DeviceProblem' }
-        & Pick<DeviceProblem, 'id'>
+        & Pick<DeviceProblem, 'id' | 'title' | 'content' | 'isSolve' | 'createdAt' | 'updatedAt'>
+        & { author: (
+          { __typename?: 'User' }
+          & Pick<User, 'id' | 'username'>
+        ), stars?: Maybe<Array<(
+          { __typename?: 'DeviceProblemStar' }
+          & Pick<DeviceProblemStar, 'problemId' | 'userId'>
+        )>>, solutions?: Maybe<Array<(
+          { __typename?: 'Solution' }
+          & Pick<Solution, 'id'>
+        )>> }
       )>>, reviews?: Maybe<Array<(
         { __typename?: 'Review' }
         & Pick<Review, 'id'>
@@ -625,6 +653,35 @@ export type DeviceDetailQuery = (
         { __typename?: 'DeviceSpec' }
         & Pick<DeviceSpec, 'display' | 'battery' | 'software' | 'camera' | 'processor' | 'displaySimplify' | 'batterySimplify' | 'softwareSimplify' | 'cameraSimplify' | 'processorSimplify'>
       )> }
+    )>> }
+  )> }
+);
+
+export type ProblemsQueryVariables = Exact<{
+  deviceId?: Maybe<Scalars['String']>;
+  authorId?: Maybe<Scalars['String']>;
+  content?: Maybe<Scalars['String']>;
+  title?: Maybe<Scalars['String']>;
+}>;
+
+
+export type ProblemsQuery = (
+  { __typename?: 'Query' }
+  & { problems?: Maybe<(
+    { __typename?: 'ProblemResponse' }
+    & { data?: Maybe<Array<(
+      { __typename?: 'DeviceProblem' }
+      & Pick<DeviceProblem, 'id' | 'title' | 'content' | 'isSolve' | 'createdAt' | 'updatedAt'>
+      & { author: (
+        { __typename?: 'User' }
+        & Pick<User, 'id' | 'username'>
+      ), stars?: Maybe<Array<(
+        { __typename?: 'DeviceProblemStar' }
+        & Pick<DeviceProblemStar, 'problemId' | 'userId'>
+      )>>, solutions?: Maybe<Array<(
+        { __typename?: 'Solution' }
+        & Pick<Solution, 'id'>
+      )>> }
     )>> }
   )> }
 );
@@ -645,6 +702,39 @@ export type MeQuery = (
 );
 
 
+export const ToggleProblemStarDocument = gql`
+    mutation ToggleProblemStar($problemId: String!, $userId: String!) {
+  toggleProblemStar(problemId: $problemId, userId: $userId) {
+    status
+  }
+}
+    `;
+export type ToggleProblemStarMutationFn = Apollo.MutationFunction<ToggleProblemStarMutation, ToggleProblemStarMutationVariables>;
+
+/**
+ * __useToggleProblemStarMutation__
+ *
+ * To run a mutation, you first call `useToggleProblemStarMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useToggleProblemStarMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [toggleProblemStarMutation, { data, loading, error }] = useToggleProblemStarMutation({
+ *   variables: {
+ *      problemId: // value for 'problemId'
+ *      userId: // value for 'userId'
+ *   },
+ * });
+ */
+export function useToggleProblemStarMutation(baseOptions?: Apollo.MutationHookOptions<ToggleProblemStarMutation, ToggleProblemStarMutationVariables>) {
+        return Apollo.useMutation<ToggleProblemStarMutation, ToggleProblemStarMutationVariables>(ToggleProblemStarDocument, baseOptions);
+      }
+export type ToggleProblemStarMutationHookResult = ReturnType<typeof useToggleProblemStarMutation>;
+export type ToggleProblemStarMutationResult = Apollo.MutationResult<ToggleProblemStarMutation>;
+export type ToggleProblemStarMutationOptions = Apollo.BaseMutationOptions<ToggleProblemStarMutation, ToggleProblemStarMutationVariables>;
 export const LogoutDocument = gql`
     mutation Logout {
   logout {
@@ -746,6 +836,22 @@ export const DeviceDetailDocument = gql`
       }
       problems {
         id
+        title
+        content
+        isSolve
+        createdAt
+        updatedAt
+        author {
+          id
+          username
+        }
+        stars {
+          problemId
+          userId
+        }
+        solutions {
+          id
+        }
       }
       reviews {
         id
@@ -792,6 +898,65 @@ export function useDeviceDetailLazyQuery(baseOptions?: Apollo.LazyQueryHookOptio
 export type DeviceDetailQueryHookResult = ReturnType<typeof useDeviceDetailQuery>;
 export type DeviceDetailLazyQueryHookResult = ReturnType<typeof useDeviceDetailLazyQuery>;
 export type DeviceDetailQueryResult = Apollo.QueryResult<DeviceDetailQuery, DeviceDetailQueryVariables>;
+export const ProblemsDocument = gql`
+    query Problems($deviceId: String, $authorId: String, $content: String, $title: String) {
+  problems(
+    deviceId: $deviceId
+    authorId: $authorId
+    content: $content
+    title: $title
+  ) {
+    data {
+      id
+      title
+      content
+      isSolve
+      createdAt
+      updatedAt
+      author {
+        id
+        username
+      }
+      stars {
+        problemId
+        userId
+      }
+      solutions {
+        id
+      }
+    }
+  }
+}
+    `;
+
+/**
+ * __useProblemsQuery__
+ *
+ * To run a query within a React component, call `useProblemsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useProblemsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useProblemsQuery({
+ *   variables: {
+ *      deviceId: // value for 'deviceId'
+ *      authorId: // value for 'authorId'
+ *      content: // value for 'content'
+ *      title: // value for 'title'
+ *   },
+ * });
+ */
+export function useProblemsQuery(baseOptions?: Apollo.QueryHookOptions<ProblemsQuery, ProblemsQueryVariables>) {
+        return Apollo.useQuery<ProblemsQuery, ProblemsQueryVariables>(ProblemsDocument, baseOptions);
+      }
+export function useProblemsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<ProblemsQuery, ProblemsQueryVariables>) {
+          return Apollo.useLazyQuery<ProblemsQuery, ProblemsQueryVariables>(ProblemsDocument, baseOptions);
+        }
+export type ProblemsQueryHookResult = ReturnType<typeof useProblemsQuery>;
+export type ProblemsLazyQueryHookResult = ReturnType<typeof useProblemsLazyQuery>;
+export type ProblemsQueryResult = Apollo.QueryResult<ProblemsQuery, ProblemsQueryVariables>;
 export const MeDocument = gql`
     query Me {
   me {

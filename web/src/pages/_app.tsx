@@ -7,7 +7,7 @@ import { useEffect, useState } from "react";
 import { useMeQuery, User } from "../generated/graphql";
 import { AuthContext } from "../context/AuthContext";
 import { client } from "../utils/withApollo";
-import NavBar from "../components/NavBar/NavBar";
+import NavBar from "../components/NavBar";
 
 function MyApp({ Component, pageProps }: any) {
   const [user, setUser] = useState<User | null>(null);

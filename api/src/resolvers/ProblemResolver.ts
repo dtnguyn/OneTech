@@ -19,6 +19,7 @@ class UpdateProblemInput {
   isSolve?: boolean;
 }
 
+const sleep = (ms: number) => new Promise((res) => setTimeout(res, ms));
 @Resolver()
 export class ProblemResolver {
   problemRepo = getRepository(DeviceProblem);
@@ -90,18 +91,42 @@ export class ProblemResolver {
     };
   }
 
-  @Query(() => [ProblemResponse])
+  @Query(() => ProblemResponse, { nullable: true })
   async problems(
     @Arg("deviceId", { nullable: true }) deviceId: string,
-    @Arg("authorId", { nullable: true }) authorId: string
+    @Arg("authorId", { nullable: true }) authorId: string,
+    @Arg("title", { nullable: true }) title: string,
+    @Arg("content", { nullable: true }) content: string
   ) {
     try {
+      //await sleep(3000);
       const builder = this.problemRepo.createQueryBuilder("problem");
+      builder
+        .leftJoinAndSelect("problem.author", "author")
+        .leftJoinAndSelect("problem.stars", "stars")
+        .leftJoinAndSelect("problem.solutions", "solutions");
       if (authorId) builder.where("problem.authorId = :authorId", { authorId });
       if (deviceId) builder.where("problem.deviceId = :deviceId", { deviceId });
 
-      const problems = await builder.getMany();
+      if (title && content) {
+        builder
+          .andWhere("LOWER(problem.title) LIKE LOWER(:title)", {
+            title: "%" + title + "%",
+          })
+          .orWhere("LOWER(problem.content) LIKE LOWER(:content)", {
+            content: "%" + content + "%",
+          });
+      } else if (title)
+        builder.andWhere("LOWER(problem.title) LIKE LOWER(:title)", {
+          title: "%" + title + "%",
+        });
+      else if (content)
+        builder.andWhere("LOWER(problem.content) LIKE LOWER(:content)", {
+          content: "%" + content + "%",
+        });
 
+      const problems = await builder.getMany();
+      console.log("problems: ", problems);
       return {
         status: true,
         message: "Get problems successfully.",
@@ -174,7 +199,7 @@ export class ProblemResolver {
     }
   }
 
-  @Query(() => [ProblemStarResponse])
+  @Query(() => ProblemStarResponse)
   async findProblemStars(@Arg("problemId") problemId: string) {
     const stars = await this.starRepo.find({ problemId }).catch((e) => {
       return {

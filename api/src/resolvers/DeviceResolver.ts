@@ -211,12 +211,13 @@ export class DeviceResolver {
         .leftJoinAndSelect("device.problems", "problems")
         .leftJoinAndSelect("problems.stars", "stars")
         .leftJoinAndSelect("problems.solutions", "solutions")
+        .leftJoinAndSelect("problems.author", "author")
         .leftJoinAndSelect("device.spec", "spec")
         .leftJoinAndSelect("device.reviews", "reviews")
         .leftJoinAndSelect("reviews.rating", "rating")
         .where("device.id = :id", { id })
         .getOne();
-
+      console.log("single device: ", device?.problems);
       return {
         status: true,
         message: "Get a device successfully.",

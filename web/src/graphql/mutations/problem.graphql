@@ -1,0 +1,5 @@
+mutation ToggleProblemStar($problemId: String!, $userId: String!) {
+  toggleProblemStar(problemId: $problemId, userId: $userId) {
+    status
+  }
+}

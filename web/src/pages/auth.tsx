@@ -1,6 +1,6 @@
 import { useState } from "react";
 import Login from "../components/Auth/Login";
-import NavBar from "../components/NavBar/NavBar";
+import NavBar from "../components/NavBar";
 import Register from "../components/Auth/Register";
 import styles from "../styles/Auth.module.css";
 import { useAuth } from "../context/AuthContext";

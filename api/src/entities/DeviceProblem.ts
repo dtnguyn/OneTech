@@ -33,7 +33,7 @@ export class DeviceProblem {
   @Column({ default: false })
   isSolve?: boolean;
 
-  @Field(() => String)
+  @Field()
   @CreateDateColumn()
   createdAt: Date;
 
@@ -48,6 +48,7 @@ export class DeviceProblem {
     onDelete: "CASCADE",
     onUpdate: "CASCADE",
   })
+  @Field()
   @JoinColumn({ name: "authorId" })
   author: User;
 
@@ -58,6 +59,7 @@ export class DeviceProblem {
     onDelete: "CASCADE",
     onUpdate: "CASCADE",
   })
+  @Field(() => Device)
   @JoinColumn({ name: "deviceId" })
   device: Device;
 
