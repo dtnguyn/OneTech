@@ -1,9 +1,10 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Button } from "react-bootstrap";
-import { Device } from "../../generated/graphql";
+import { Device, useToggleDeviceFollowMutation } from "../../generated/graphql";
 import styles from "../../styles/DeviceDetail.module.css";
 import SpecsTable from "./SpecsTable";
 import Switcher from "../Switcher";
+import { useAuth } from "../../context/AuthContext";
 
 interface HeaderProps {
   device: Device;
@@ -11,6 +12,42 @@ interface HeaderProps {
 
 const Header: React.FC<HeaderProps> = ({ device }) => {
   const [switchState, setSwitchState] = useState("technical");
+  const [followed, setFollowed] = useState(false);
+  const { user } = useAuth();
+
+  const [toggleDeviceFollowMutation, {}] = useToggleDeviceFollowMutation();
+
+  const handleToggleFollowDevice = async (
+    deviceId: string,
+    userId: string,
+    followState: boolean
+  ) => {
+    await toggleDeviceFollowMutation({
+      variables: {
+        deviceId,
+        userId,
+      },
+    }).then((res) => {
+      if (res.data?.toggleDeviceFollow.status) {
+        setFollowed(!followState);
+      }
+    });
+  };
+
+  useEffect(() => {
+    if (!user) {
+      setFollowed(false);
+      return;
+    }
+    for (const follower of device.followers!) {
+      console.log(follower.userId, user.id);
+      if (follower.userId === user.id) {
+        setFollowed(true);
+        return;
+      }
+    }
+    setFollowed(false);
+  }, [user]);
 
   return (
     <div className={`row ${styles.deviceDetailHeaderContainer}`}>
@@ -25,8 +62,15 @@ const Header: React.FC<HeaderProps> = ({ device }) => {
           spec={device.spec}
           category={device.category}
         />
-        <Button variant="success" size="lg">
-          Follow this device
+        <Button
+          onClick={() => {
+            if (!user) return;
+            handleToggleFollowDevice(device.id, user.id, followed);
+          }}
+          variant={followed ? "secondary" : "success"}
+          size="lg"
+        >
+          {followed ? "Unfollow this device" : "Follow this device"}
         </Button>
       </div>
 

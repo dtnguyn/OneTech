@@ -70,7 +70,7 @@ const Header: React.FC<HeaderProps> = ({}) => {
         inputValue={inputValue}
         placeHolder="Enter your device..."
         autoComplete={autoComplete}
-        handleSearchDevice={handleSearchDevice}
+        handleSearch={handleSearchDevice}
         handleKeyPress={handleKeyPress}
       />
       <div className={styles.deviceCategoryContainer}>

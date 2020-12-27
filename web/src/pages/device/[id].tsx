@@ -1,4 +1,5 @@
 import { Divider } from "@material-ui/core";
+import { GetServerSideProps } from "next";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import Body from "../../components/DeviceDetail/DeviceDetailBody";
@@ -26,6 +27,7 @@ const DeviceDetail: React.FC<DeviceDetailProps> = ({}) => {
   });
 
   useEffect(() => {
+    console.log("Get device detail...");
     const devices = data?.singleDevice?.data as Device[];
 
     if (devices && devices.length != 0) {
@@ -34,7 +36,7 @@ const DeviceDetail: React.FC<DeviceDetailProps> = ({}) => {
         setProblems(devices[0].problems);
       }
     }
-  }, []);
+  }, [data]);
 
   if (!device) return null;
 

@@ -11,6 +11,7 @@ import {
 } from "typeorm";
 import { Device } from "./Device";
 import { DeviceProblemStar } from "./DeviceProblemStar";
+import { ProblemImage } from "./ProblemImage";
 import { Solution } from "./Solution";
 import { User } from "./User";
 
@@ -48,7 +49,7 @@ export class DeviceProblem {
     onDelete: "CASCADE",
     onUpdate: "CASCADE",
   })
-  @Field()
+  @Field({ nullable: true })
   @JoinColumn({ name: "authorId" })
   author: User;
 
@@ -70,6 +71,10 @@ export class DeviceProblem {
   @Field(() => [Solution], { nullable: true })
   @OneToMany(() => Solution, (solution) => solution.problem)
   solutions: Solution[];
+
+  @Field(() => [ProblemImage], { nullable: true })
+  @OneToMany(() => ProblemImage, (image) => image.problem)
+  images: ProblemImage[];
 }
 
 @ObjectType()

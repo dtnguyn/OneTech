@@ -33,6 +33,7 @@ export type Query = {
   reviews: ReviewResponse;
   singleReview: ReviewResponse;
   ratings: Array<ReviewRatingResponse>;
+  problemImages: ProblemImageResponse;
 };
 
 
@@ -151,11 +152,12 @@ export type DeviceProblem = {
   createdAt: Scalars['DateTime'];
   updatedAt: Scalars['DateTime'];
   authorId: Scalars['String'];
-  author: User;
+  author?: Maybe<User>;
   deviceId: Scalars['String'];
   device: Device;
   stars?: Maybe<Array<DeviceProblemStar>>;
   solutions?: Maybe<Array<Solution>>;
+  images?: Maybe<Array<ProblemImage>>;
 };
 
 export type Device = {
@@ -255,6 +257,15 @@ export type SolutionStar = {
   updatedAt: Scalars['DateTime'];
 };
 
+export type ProblemImage = {
+  __typename?: 'ProblemImage';
+  path: Scalars['String'];
+  createdAt: Scalars['String'];
+  updatedAt: Scalars['DateTime'];
+  problemId: Scalars['String'];
+  problem: DeviceProblem;
+};
+
 export type UserSettingResponse = {
   __typename?: 'UserSettingResponse';
   status: Scalars['Boolean'];
@@ -311,6 +322,13 @@ export type ReviewRatingResponse = {
   data?: Maybe<Array<ReviewRating>>;
 };
 
+export type ProblemImageResponse = {
+  __typename?: 'ProblemImageResponse';
+  status: Scalars['Boolean'];
+  message: Scalars['String'];
+  data?: Maybe<Array<ProblemImage>>;
+};
+
 export type Mutation = {
   __typename?: 'Mutation';
   updateUser: UserResponse;
@@ -338,6 +356,8 @@ export type Mutation = {
   deleteReview: ReviewResponse;
   createRating?: Maybe<ReviewRatingResponse>;
   updateRating?: Maybe<ReviewRatingResponse>;
+  uploadImage: UploadImageResponse;
+  deleteImages: UploadImageResponse;
 };
 
 
@@ -417,6 +437,7 @@ export type MutationDeleteDeviceSpecArgs = {
 
 
 export type MutationCreateProblemArgs = {
+  images: Array<Scalars['String']>;
   deviceId: Scalars['String'];
   authorId: Scalars['String'];
   content: Scalars['String'];
@@ -430,6 +451,7 @@ export type MutationDeleteProblemArgs = {
 
 
 export type MutationUpdateProblemArgs = {
+  images: Array<Scalars['String']>;
   input: UpdateProblemInput;
   id: Scalars['String'];
 };
@@ -501,6 +523,17 @@ export type MutationUpdateRatingArgs = {
   reviewId: Scalars['String'];
 };
 
+
+export type MutationUploadImageArgs = {
+  imageId: Scalars['String'];
+  image: Scalars['String'];
+};
+
+
+export type MutationDeleteImagesArgs = {
+  imageIds: Array<Scalars['String']>;
+};
+
 export type UpdateUserInput = {
   username?: Maybe<Scalars['String']>;
   email?: Maybe<Scalars['String']>;
@@ -562,6 +595,54 @@ export type UpdateRatingInput = {
   battery?: Maybe<Scalars['Float']>;
 };
 
+export type UploadImageResponse = {
+  __typename?: 'UploadImageResponse';
+  status: Scalars['Boolean'];
+  message: Scalars['String'];
+  data?: Maybe<Array<Scalars['String']>>;
+};
+
+export type ToggleDeviceFollowMutationVariables = Exact<{
+  deviceId: Scalars['String'];
+  userId: Scalars['String'];
+}>;
+
+
+export type ToggleDeviceFollowMutation = (
+  { __typename?: 'Mutation' }
+  & { toggleDeviceFollow: (
+    { __typename?: 'DeviceResponse' }
+    & Pick<DeviceResponse, 'status' | 'message'>
+  ) }
+);
+
+export type UploadImageMutationVariables = Exact<{
+  image: Scalars['String'];
+  imageId: Scalars['String'];
+}>;
+
+
+export type UploadImageMutation = (
+  { __typename?: 'Mutation' }
+  & { uploadImage: (
+    { __typename?: 'UploadImageResponse' }
+    & Pick<UploadImageResponse, 'status' | 'message' | 'data'>
+  ) }
+);
+
+export type DeleteImagesMutationVariables = Exact<{
+  imageIds: Array<Scalars['String']>;
+}>;
+
+
+export type DeleteImagesMutation = (
+  { __typename?: 'Mutation' }
+  & { deleteImages: (
+    { __typename?: 'UploadImageResponse' }
+    & Pick<UploadImageResponse, 'status' | 'message'>
+  ) }
+);
+
 export type ToggleProblemStarMutationVariables = Exact<{
   problemId: Scalars['String'];
   userId: Scalars['String'];
@@ -572,7 +653,104 @@ export type ToggleProblemStarMutation = (
   { __typename?: 'Mutation' }
   & { toggleProblemStar: (
     { __typename?: 'ProblemResponse' }
-    & Pick<ProblemResponse, 'status'>
+    & Pick<ProblemResponse, 'status' | 'message'>
+    & { data?: Maybe<Array<(
+      { __typename?: 'DeviceProblem' }
+      & Pick<DeviceProblem, 'id' | 'title' | 'content' | 'isSolve' | 'createdAt' | 'updatedAt'>
+      & { author?: Maybe<(
+        { __typename?: 'User' }
+        & Pick<User, 'id' | 'username' | 'avatar'>
+      )>, stars?: Maybe<Array<(
+        { __typename?: 'DeviceProblemStar' }
+        & Pick<DeviceProblemStar, 'problemId' | 'userId'>
+      )>>, solutions?: Maybe<Array<(
+        { __typename?: 'Solution' }
+        & Pick<Solution, 'id'>
+      )>>, images?: Maybe<Array<(
+        { __typename?: 'ProblemImage' }
+        & Pick<ProblemImage, 'path'>
+      )>> }
+    )>> }
+  ) }
+);
+
+export type CreateProblemMutationVariables = Exact<{
+  deviceId: Scalars['String'];
+  authorId: Scalars['String'];
+  title: Scalars['String'];
+  content: Scalars['String'];
+  images: Array<Scalars['String']>;
+}>;
+
+
+export type CreateProblemMutation = (
+  { __typename?: 'Mutation' }
+  & { createProblem?: Maybe<(
+    { __typename?: 'ProblemResponse' }
+    & Pick<ProblemResponse, 'status' | 'message'>
+    & { data?: Maybe<Array<(
+      { __typename?: 'DeviceProblem' }
+      & Pick<DeviceProblem, 'id' | 'title' | 'content' | 'isSolve' | 'createdAt' | 'updatedAt'>
+      & { author?: Maybe<(
+        { __typename?: 'User' }
+        & Pick<User, 'id' | 'username' | 'avatar'>
+      )>, stars?: Maybe<Array<(
+        { __typename?: 'DeviceProblemStar' }
+        & Pick<DeviceProblemStar, 'problemId' | 'userId'>
+      )>>, solutions?: Maybe<Array<(
+        { __typename?: 'Solution' }
+        & Pick<Solution, 'id'>
+      )>>, images?: Maybe<Array<(
+        { __typename?: 'ProblemImage' }
+        & Pick<ProblemImage, 'path'>
+      )>> }
+    )>> }
+  )> }
+);
+
+export type DeleteProblemMutationVariables = Exact<{
+  id: Scalars['String'];
+}>;
+
+
+export type DeleteProblemMutation = (
+  { __typename?: 'Mutation' }
+  & { deleteProblem: (
+    { __typename?: 'ProblemResponse' }
+    & Pick<ProblemResponse, 'status' | 'message'>
+  ) }
+);
+
+export type UpdateProblemMutationVariables = Exact<{
+  id: Scalars['String'];
+  title: Scalars['String'];
+  content: Scalars['String'];
+  images: Array<Scalars['String']>;
+}>;
+
+
+export type UpdateProblemMutation = (
+  { __typename?: 'Mutation' }
+  & { updateProblem: (
+    { __typename?: 'ProblemResponse' }
+    & Pick<ProblemResponse, 'status' | 'message'>
+    & { data?: Maybe<Array<(
+      { __typename?: 'DeviceProblem' }
+      & Pick<DeviceProblem, 'id' | 'title' | 'content' | 'isSolve' | 'createdAt' | 'updatedAt'>
+      & { author?: Maybe<(
+        { __typename?: 'User' }
+        & Pick<User, 'id' | 'username' | 'avatar'>
+      )>, stars?: Maybe<Array<(
+        { __typename?: 'DeviceProblemStar' }
+        & Pick<DeviceProblemStar, 'problemId' | 'userId'>
+      )>>, solutions?: Maybe<Array<(
+        { __typename?: 'Solution' }
+        & Pick<Solution, 'id'>
+      )>>, images?: Maybe<Array<(
+        { __typename?: 'ProblemImage' }
+        & Pick<ProblemImage, 'path'>
+      )>> }
+    )>> }
   ) }
 );
 
@@ -636,10 +814,10 @@ export type DeviceDetailQuery = (
       )>>, problems?: Maybe<Array<(
         { __typename?: 'DeviceProblem' }
         & Pick<DeviceProblem, 'id' | 'title' | 'content' | 'isSolve' | 'createdAt' | 'updatedAt'>
-        & { author: (
+        & { author?: Maybe<(
           { __typename?: 'User' }
-          & Pick<User, 'id' | 'username'>
-        ), stars?: Maybe<Array<(
+          & Pick<User, 'id' | 'username' | 'avatar'>
+        )>, stars?: Maybe<Array<(
           { __typename?: 'DeviceProblemStar' }
           & Pick<DeviceProblemStar, 'problemId' | 'userId'>
         )>>, solutions?: Maybe<Array<(
@@ -672,10 +850,13 @@ export type ProblemsQuery = (
     & { data?: Maybe<Array<(
       { __typename?: 'DeviceProblem' }
       & Pick<DeviceProblem, 'id' | 'title' | 'content' | 'isSolve' | 'createdAt' | 'updatedAt'>
-      & { author: (
+      & { images?: Maybe<Array<(
+        { __typename?: 'ProblemImage' }
+        & Pick<ProblemImage, 'path'>
+      )>>, author?: Maybe<(
         { __typename?: 'User' }
-        & Pick<User, 'id' | 'username'>
-      ), stars?: Maybe<Array<(
+        & Pick<User, 'id' | 'avatar' | 'username'>
+      )>, stars?: Maybe<Array<(
         { __typename?: 'DeviceProblemStar' }
         & Pick<DeviceProblemStar, 'problemId' | 'userId'>
       )>>, solutions?: Maybe<Array<(
@@ -702,10 +883,136 @@ export type MeQuery = (
 );
 
 
+export const ToggleDeviceFollowDocument = gql`
+    mutation ToggleDeviceFollow($deviceId: String!, $userId: String!) {
+  toggleDeviceFollow(deviceId: $deviceId, userId: $userId) {
+    status
+    message
+  }
+}
+    `;
+export type ToggleDeviceFollowMutationFn = Apollo.MutationFunction<ToggleDeviceFollowMutation, ToggleDeviceFollowMutationVariables>;
+
+/**
+ * __useToggleDeviceFollowMutation__
+ *
+ * To run a mutation, you first call `useToggleDeviceFollowMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useToggleDeviceFollowMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [toggleDeviceFollowMutation, { data, loading, error }] = useToggleDeviceFollowMutation({
+ *   variables: {
+ *      deviceId: // value for 'deviceId'
+ *      userId: // value for 'userId'
+ *   },
+ * });
+ */
+export function useToggleDeviceFollowMutation(baseOptions?: Apollo.MutationHookOptions<ToggleDeviceFollowMutation, ToggleDeviceFollowMutationVariables>) {
+        return Apollo.useMutation<ToggleDeviceFollowMutation, ToggleDeviceFollowMutationVariables>(ToggleDeviceFollowDocument, baseOptions);
+      }
+export type ToggleDeviceFollowMutationHookResult = ReturnType<typeof useToggleDeviceFollowMutation>;
+export type ToggleDeviceFollowMutationResult = Apollo.MutationResult<ToggleDeviceFollowMutation>;
+export type ToggleDeviceFollowMutationOptions = Apollo.BaseMutationOptions<ToggleDeviceFollowMutation, ToggleDeviceFollowMutationVariables>;
+export const UploadImageDocument = gql`
+    mutation UploadImage($image: String!, $imageId: String!) {
+  uploadImage(image: $image, imageId: $imageId) {
+    status
+    message
+    data
+  }
+}
+    `;
+export type UploadImageMutationFn = Apollo.MutationFunction<UploadImageMutation, UploadImageMutationVariables>;
+
+/**
+ * __useUploadImageMutation__
+ *
+ * To run a mutation, you first call `useUploadImageMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useUploadImageMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [uploadImageMutation, { data, loading, error }] = useUploadImageMutation({
+ *   variables: {
+ *      image: // value for 'image'
+ *      imageId: // value for 'imageId'
+ *   },
+ * });
+ */
+export function useUploadImageMutation(baseOptions?: Apollo.MutationHookOptions<UploadImageMutation, UploadImageMutationVariables>) {
+        return Apollo.useMutation<UploadImageMutation, UploadImageMutationVariables>(UploadImageDocument, baseOptions);
+      }
+export type UploadImageMutationHookResult = ReturnType<typeof useUploadImageMutation>;
+export type UploadImageMutationResult = Apollo.MutationResult<UploadImageMutation>;
+export type UploadImageMutationOptions = Apollo.BaseMutationOptions<UploadImageMutation, UploadImageMutationVariables>;
+export const DeleteImagesDocument = gql`
+    mutation DeleteImages($imageIds: [String!]!) {
+  deleteImages(imageIds: $imageIds) {
+    status
+    message
+  }
+}
+    `;
+export type DeleteImagesMutationFn = Apollo.MutationFunction<DeleteImagesMutation, DeleteImagesMutationVariables>;
+
+/**
+ * __useDeleteImagesMutation__
+ *
+ * To run a mutation, you first call `useDeleteImagesMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useDeleteImagesMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [deleteImagesMutation, { data, loading, error }] = useDeleteImagesMutation({
+ *   variables: {
+ *      imageIds: // value for 'imageIds'
+ *   },
+ * });
+ */
+export function useDeleteImagesMutation(baseOptions?: Apollo.MutationHookOptions<DeleteImagesMutation, DeleteImagesMutationVariables>) {
+        return Apollo.useMutation<DeleteImagesMutation, DeleteImagesMutationVariables>(DeleteImagesDocument, baseOptions);
+      }
+export type DeleteImagesMutationHookResult = ReturnType<typeof useDeleteImagesMutation>;
+export type DeleteImagesMutationResult = Apollo.MutationResult<DeleteImagesMutation>;
+export type DeleteImagesMutationOptions = Apollo.BaseMutationOptions<DeleteImagesMutation, DeleteImagesMutationVariables>;
 export const ToggleProblemStarDocument = gql`
     mutation ToggleProblemStar($problemId: String!, $userId: String!) {
   toggleProblemStar(problemId: $problemId, userId: $userId) {
     status
+    message
+    data {
+      id
+      title
+      content
+      isSolve
+      createdAt
+      updatedAt
+      author {
+        id
+        username
+        avatar
+      }
+      stars {
+        problemId
+        userId
+      }
+      solutions {
+        id
+      }
+      images {
+        path
+      }
+    }
   }
 }
     `;
@@ -735,6 +1042,168 @@ export function useToggleProblemStarMutation(baseOptions?: Apollo.MutationHookOp
 export type ToggleProblemStarMutationHookResult = ReturnType<typeof useToggleProblemStarMutation>;
 export type ToggleProblemStarMutationResult = Apollo.MutationResult<ToggleProblemStarMutation>;
 export type ToggleProblemStarMutationOptions = Apollo.BaseMutationOptions<ToggleProblemStarMutation, ToggleProblemStarMutationVariables>;
+export const CreateProblemDocument = gql`
+    mutation CreateProblem($deviceId: String!, $authorId: String!, $title: String!, $content: String!, $images: [String!]!) {
+  createProblem(
+    deviceId: $deviceId
+    authorId: $authorId
+    title: $title
+    content: $content
+    images: $images
+  ) {
+    status
+    message
+    data {
+      id
+      title
+      content
+      isSolve
+      createdAt
+      updatedAt
+      author {
+        id
+        username
+        avatar
+      }
+      stars {
+        problemId
+        userId
+      }
+      solutions {
+        id
+      }
+      images {
+        path
+      }
+    }
+  }
+}
+    `;
+export type CreateProblemMutationFn = Apollo.MutationFunction<CreateProblemMutation, CreateProblemMutationVariables>;
+
+/**
+ * __useCreateProblemMutation__
+ *
+ * To run a mutation, you first call `useCreateProblemMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useCreateProblemMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [createProblemMutation, { data, loading, error }] = useCreateProblemMutation({
+ *   variables: {
+ *      deviceId: // value for 'deviceId'
+ *      authorId: // value for 'authorId'
+ *      title: // value for 'title'
+ *      content: // value for 'content'
+ *      images: // value for 'images'
+ *   },
+ * });
+ */
+export function useCreateProblemMutation(baseOptions?: Apollo.MutationHookOptions<CreateProblemMutation, CreateProblemMutationVariables>) {
+        return Apollo.useMutation<CreateProblemMutation, CreateProblemMutationVariables>(CreateProblemDocument, baseOptions);
+      }
+export type CreateProblemMutationHookResult = ReturnType<typeof useCreateProblemMutation>;
+export type CreateProblemMutationResult = Apollo.MutationResult<CreateProblemMutation>;
+export type CreateProblemMutationOptions = Apollo.BaseMutationOptions<CreateProblemMutation, CreateProblemMutationVariables>;
+export const DeleteProblemDocument = gql`
+    mutation DeleteProblem($id: String!) {
+  deleteProblem(id: $id) {
+    status
+    message
+  }
+}
+    `;
+export type DeleteProblemMutationFn = Apollo.MutationFunction<DeleteProblemMutation, DeleteProblemMutationVariables>;
+
+/**
+ * __useDeleteProblemMutation__
+ *
+ * To run a mutation, you first call `useDeleteProblemMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useDeleteProblemMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [deleteProblemMutation, { data, loading, error }] = useDeleteProblemMutation({
+ *   variables: {
+ *      id: // value for 'id'
+ *   },
+ * });
+ */
+export function useDeleteProblemMutation(baseOptions?: Apollo.MutationHookOptions<DeleteProblemMutation, DeleteProblemMutationVariables>) {
+        return Apollo.useMutation<DeleteProblemMutation, DeleteProblemMutationVariables>(DeleteProblemDocument, baseOptions);
+      }
+export type DeleteProblemMutationHookResult = ReturnType<typeof useDeleteProblemMutation>;
+export type DeleteProblemMutationResult = Apollo.MutationResult<DeleteProblemMutation>;
+export type DeleteProblemMutationOptions = Apollo.BaseMutationOptions<DeleteProblemMutation, DeleteProblemMutationVariables>;
+export const UpdateProblemDocument = gql`
+    mutation UpdateProblem($id: String!, $title: String!, $content: String!, $images: [String!]!) {
+  updateProblem(
+    id: $id
+    input: {title: $title, content: $content}
+    images: $images
+  ) {
+    status
+    message
+    data {
+      id
+      title
+      content
+      isSolve
+      createdAt
+      updatedAt
+      author {
+        id
+        username
+        avatar
+      }
+      stars {
+        problemId
+        userId
+      }
+      solutions {
+        id
+      }
+      images {
+        path
+      }
+    }
+  }
+}
+    `;
+export type UpdateProblemMutationFn = Apollo.MutationFunction<UpdateProblemMutation, UpdateProblemMutationVariables>;
+
+/**
+ * __useUpdateProblemMutation__
+ *
+ * To run a mutation, you first call `useUpdateProblemMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useUpdateProblemMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [updateProblemMutation, { data, loading, error }] = useUpdateProblemMutation({
+ *   variables: {
+ *      id: // value for 'id'
+ *      title: // value for 'title'
+ *      content: // value for 'content'
+ *      images: // value for 'images'
+ *   },
+ * });
+ */
+export function useUpdateProblemMutation(baseOptions?: Apollo.MutationHookOptions<UpdateProblemMutation, UpdateProblemMutationVariables>) {
+        return Apollo.useMutation<UpdateProblemMutation, UpdateProblemMutationVariables>(UpdateProblemDocument, baseOptions);
+      }
+export type UpdateProblemMutationHookResult = ReturnType<typeof useUpdateProblemMutation>;
+export type UpdateProblemMutationResult = Apollo.MutationResult<UpdateProblemMutation>;
+export type UpdateProblemMutationOptions = Apollo.BaseMutationOptions<UpdateProblemMutation, UpdateProblemMutationVariables>;
 export const LogoutDocument = gql`
     mutation Logout {
   logout {
@@ -844,6 +1313,7 @@ export const DeviceDetailDocument = gql`
         author {
           id
           username
+          avatar
         }
         stars {
           problemId
@@ -913,8 +1383,12 @@ export const ProblemsDocument = gql`
       isSolve
       createdAt
       updatedAt
+      images {
+        path
+      }
       author {
         id
+        avatar
         username
       }
       stars {

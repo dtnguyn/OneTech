@@ -21,6 +21,7 @@ function MyApp({ Component, pageProps }: any) {
     const users = data?.me?.data as User[];
     if (users && users.length != 0) {
       setUser(users[0]);
+      console.log(users[0]);
     } else {
       setUser(null);
     }
