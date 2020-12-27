@@ -1,0 +1,15 @@
+.customEditorContainer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.customEditorButton {
+  margin: 10px;
+}
+
+.customEditorButtonsContainer {
+  align-self: flex-start;
+  display: flex;
+  flex-direction: row;
+}

@@ -1,0 +1,12 @@
+{
+  "type": "service_account",
+  "project_id": "onetech-297117",
+  "private_key_id": "85443342fa70f12d3fbae6c0c7ca867ac51a0d90",
+  "private_key": "-----BEGIN PRIVATE KEY-----\nMIIEvQIBADANBgkqhkiG9w0BAQEFAASCBKcwggSjAgEAAoIBAQDJYxxcWdIzRZ45\njYT96lG6ZvIYkzyO09WZUAp621Untr6UpasDEQbf/gS7j5Kxc9zqgdDqx1wgsF98\nUUPBYJ7WCnhnQpwxT28NBcZirHcUYKBFMe7DlhQsVk7XbfJBObXq5MixcMyNVjDz\n5TcojvNducb2kHUAGtaRdQE3lmHCe963fKa6Bdzp3citVx7Os3nsrz7AnL2hstHr\nB7Rqzzaem3qCpdokjcO0qq0SPAEtbdz2upSJ/zgQe055yMdJAbuLbmnF7j+Fbqbx\nAsAUeH44wm+8fYu1UqScY0goj+4gsuGRVipp2NvSu4FUDoH+/4ixRGkkFLZIaKWm\ny0zvVIhFAgMBAAECggEAUGuWuL5ZtYXYkI0WDbvT1Uck6HFrnnGze5y+Ap+x2sEc\nTAn4R6o1/57VzvyfjOOC1dbvUcI45QjpqKBfGUr3Quw9dqbf7sUUyLOErITIrMeF\nWPx+p3Y4KhhxNZA/TJK6NcoU5t7voIVJ2Suwoi6rusLkVDQNtPQCuWVrDgKsmVfd\nUeHLG4ZIfsod1DJ9EmbT8B3CFELrIpC1hLFmG5daQkz4Viel7tmhTVspepEYXosM\n/odoy8Dt4FMgGtgmAVGowImlkeU8CPlMTkLK5yAdYiJ9NGI/u85cNDSxdorz7Tob\nmIDvq4bOMclHL2AkAKumH/MCkrwRZOqCwkkuLx1nBQKBgQD/qu825nSdH9H3HC8A\nC91P60GdVo4ljEptwrJk39QS9PYEymgRL+ta/wp02fjcfR6SezmcMUeNv904GWLj\nzh2uIh7jw62fMMUAY696YtMfsPHwTN+rFxqJ6DpUqNpjLGUaaRazW88MAoEjwY5Q\nCG4Cv9jNbabDjH8nIPGMVaZDqwKBgQDJph29Avxeo/CjgFkz5BD/l5eIr4cLJHap\nfzdXVs9gfUsW0zXA1PISF3ME+bizrFCMK+U4hgKMelZD3MB1vjZspS5ms6DKwyAi\nkf2A7vVPo+E2K+IJNklR+aurOn0qYu0TnZ/h/DOQNMpOJlSJA29Y+F02zkz2boTu\nNrJbOnpzzwKBgQDEL/UUmc9OawaBqxzd2jzfgNV+2NaHNZo/k7G0+pUQXu0STAeD\neNQPpbnuZP00pMZ6/Rf+JUqVGW+2BrT9vkLERuaRPKzUhWYGoHgdYAxGO0/MaBES\nhs4UmSF5qYC7rWt/0rhatc6xlpJmT7bW70EL1w+Uw9m+IOfJrNvuJiNJtQKBgCkc\nLbnoDu14fMnIk+cJWxHQpPsf1edGos6BehXbQ+IHCTT5EF9kyok3sKJWCvrOaYl6\nNXwljgV3t3iUW8RlaBEUR/Z2LpTH3RhPLSCJFwgKgBKcNbPtFluZDA+XmAb5Lh4u\np3baBOUkbg4qsFdSlPPNhqtyuawP8hfinNAOhwJvAoGAdIx/EqFQyARhOxCrEu5x\n8C2y/GnfikRTo3gd3b0diFdqoVP9N+XtL2eVWdsAxbLy0Xswy2QsuSefNPb+0oAi\nCuwLGGVSbpy59niZ6TCXtaQUQzwD4yBV5umvSPN61MB5lU8aCd88s8vhZe2PgjUD\nxCvqzw1kIFTfFGHeISh+Y7s=\n-----END PRIVATE KEY-----\n",
+  "client_email": "onetech-297117@appspot.gserviceaccount.com",
+  "client_id": "105988010705432731740",
+  "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+  "token_uri": "https://oauth2.googleapis.com/token",
+  "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
+  "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/onetech-297117%40appspot.gserviceaccount.com"
+}

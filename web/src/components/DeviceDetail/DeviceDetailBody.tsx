@@ -1,9 +1,17 @@
+import { TextField } from "@material-ui/core";
 import { ChangeEvent, KeyboardEvent, useEffect, useState } from "react";
 import { Button } from "react-bootstrap";
+import { useAuth } from "../../context/AuthContext";
 import { useProblem } from "../../context/ProblemContext";
-import { DeviceProblem, useProblemsQuery } from "../../generated/graphql";
+import {
+  DeviceProblem,
+  useCreateProblemMutation,
+  useProblemsQuery,
+} from "../../generated/graphql";
 import styles from "../../styles/DeviceDetail.module.css";
 import { client } from "../../utils/withApollo";
+import ConfirmationDialog from "../ConfirmationDialog";
+import CustomEditor from "../CustomEditor";
 import SearchBar from "../SearchBar";
 import Switcher from "../Switcher";
 import Problems from "./Problems";
@@ -18,6 +26,11 @@ const Body: React.FC<BodyProps> = ({ deviceId }) => {
   const [searchValue, setSearchValue] = useState<string>("");
   const [initialState, setInitialState] = useState<boolean>(true);
   const { problems, setProblems } = useProblem();
+
+  const [adding, setAdding] = useState<boolean>(false);
+  const [editing, setEditing] = useState<boolean>(false);
+
+  const { user } = useAuth();
   const { data } = useProblemsQuery({
     variables: {
       deviceId,
@@ -30,7 +43,7 @@ const Body: React.FC<BodyProps> = ({ deviceId }) => {
   const [switchState, setSwitchState] = useState<string>("problems");
 
   let timeout: NodeJS.Timeout;
-  const handleSearchDevice: (event: ChangeEvent<HTMLInputElement>) => void = (
+  const handleSearch: (event: ChangeEvent<HTMLInputElement>) => void = (
     event
   ) => {
     setInputValue(event.target.value);
@@ -65,26 +78,55 @@ const Body: React.FC<BodyProps> = ({ deviceId }) => {
 
   return (
     <div className={styles.deviceDetailBodyContainer}>
-      <Switcher
-        switchStateArr={["Problems", "Reviews"]}
-        switchState={switchState}
-        setSwitchState={setSwitchState}
-      />
+      {!adding && !editing ? (
+        <Switcher
+          switchStateArr={["Problems", "Reviews"]}
+          switchState={switchState}
+          setSwitchState={setSwitchState}
+        />
+      ) : null}
+
       <br />
+
+      {!adding && !editing ? (
+        <SearchBar
+          inputValue={inputValue}
+          autoComplete=""
+          placeHolder={`Find ${switchState}...`}
+          handleSearch={handleSearch}
+          handleKeyPress={() => {}}
+        />
+      ) : null}
+
       <br />
-      <SearchBar
-        inputValue={inputValue}
-        autoComplete=""
-        placeHolder={`Find ${switchState}...`}
-        handleSearchDevice={handleSearchDevice}
-        handleKeyPress={() => {}}
-      />
+
+      {!adding && !editing ? (
+        <Button variant="primary" onClick={() => setAdding(true)}>
+          Add a {switchState === "problems" ? "problem" : "review"}
+        </Button>
+      ) : (
+        <h4>
+          {switchState === "problems"
+            ? "Tell use what's wrong"
+            : "Give us a review!"}
+        </h4>
+      )}
+
       <br />
-      <Button variant="outline-primary">
-        Add a {switchState === "problems" ? "problem" : "review"}
-      </Button>
-      <br />
-      {switchState === "problems" ? <Problems /> : <Reviews />}
+
+      {switchState === "problems" ? (
+        <Problems
+          deviceId={deviceId}
+          adding={adding}
+          openAdding={() => setAdding(true)}
+          closeAdding={() => setAdding(false)}
+          editing={editing}
+          openEditing={() => setEditing(true)}
+          closeEditing={() => setEditing(false)}
+        />
+      ) : (
+        <Reviews />
+      )}
     </div>
   );
 };

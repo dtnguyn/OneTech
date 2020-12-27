@@ -205,10 +205,13 @@ export class DeviceResolver {
 
   @Query(() => DeviceResponse, { nullable: true })
   async singleDevice(@Arg("id") id: string) {
+    console.log("Getting single device");
     try {
       const device = await this.deviceRepo
         .createQueryBuilder("device")
         .leftJoinAndSelect("device.problems", "problems")
+        .leftJoinAndSelect("device.followers", "followers")
+        .orderBy("problems.createdAt", "DESC")
         .leftJoinAndSelect("problems.stars", "stars")
         .leftJoinAndSelect("problems.solutions", "solutions")
         .leftJoinAndSelect("problems.author", "author")
@@ -217,7 +220,7 @@ export class DeviceResolver {
         .leftJoinAndSelect("reviews.rating", "rating")
         .where("device.id = :id", { id })
         .getOne();
-      console.log("single device: ", device?.problems);
+
       return {
         status: true,
         message: "Get a device successfully.",

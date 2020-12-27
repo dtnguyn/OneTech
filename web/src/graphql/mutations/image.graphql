@@ -1,0 +1,14 @@
+mutation UploadImage($image: String!, $imageId: String!) {
+  uploadImage(image: $image, imageId: $imageId) {
+    status
+    message
+    data
+  }
+}
+
+mutation DeleteImages($imageIds: [String!]!) {
+  deleteImages(imageIds: $imageIds) {
+    status
+    message
+  }
+}

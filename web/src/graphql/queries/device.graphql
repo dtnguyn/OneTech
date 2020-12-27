@@ -49,6 +49,7 @@ query DeviceDetail($id: String!) {
         author {
           id
           username
+          avatar
         }
         stars {
           problemId

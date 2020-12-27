@@ -17,8 +17,12 @@ query Problems(
       isSolve
       createdAt
       updatedAt
+      images {
+        path
+      }
       author {
         id
+        avatar
         username
       }
       stars {

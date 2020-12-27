@@ -5,7 +5,7 @@ interface SearchBarProps {
   inputValue: string;
   autoComplete: string | undefined;
   placeHolder: string;
-  handleSearchDevice: (event: ChangeEvent<HTMLInputElement>) => void;
+  handleSearch: (event: ChangeEvent<HTMLInputElement>) => void;
   handleKeyPress: (event: KeyboardEvent<HTMLInputElement>) => void;
 }
 
@@ -13,7 +13,7 @@ const SearchBar: React.FC<SearchBarProps> = ({
   inputValue,
   autoComplete,
   placeHolder,
-  handleSearchDevice,
+  handleSearch,
   handleKeyPress,
 }) => {
   return (
@@ -22,7 +22,7 @@ const SearchBar: React.FC<SearchBarProps> = ({
         value={inputValue}
         className={styles.searchInput}
         placeholder={placeHolder}
-        onChange={handleSearchDevice}
+        onChange={handleSearch}
         onKeyPress={handleKeyPress}
       />
 

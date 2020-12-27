@@ -1,3 +1,4 @@
+import { ProblemImage } from "../entities/ProblemImage";
 import { Arg, Field, InputType, Mutation, Query, Resolver } from "type-graphql";
 import { getRepository } from "typeorm";
 
@@ -24,13 +25,15 @@ const sleep = (ms: number) => new Promise((res) => setTimeout(res, ms));
 export class ProblemResolver {
   problemRepo = getRepository(DeviceProblem);
   starRepo = getRepository(DeviceProblemStar);
+  imageRepo = getRepository(ProblemImage);
 
   @Mutation(() => ProblemResponse, { nullable: true })
   async createProblem(
     @Arg("title") title: string,
     @Arg("content") content: string,
     @Arg("authorId") authorId: string,
-    @Arg("deviceId") deviceId: string
+    @Arg("deviceId") deviceId: string,
+    @Arg("images", () => [String]) images: string[]
   ) {
     const newProblem = await this.problemRepo.create({
       title,
@@ -45,11 +48,54 @@ export class ProblemResolver {
         message: e.message,
       };
     });
-    return {
-      status: true,
-      message: "Create problem successfully.",
-      data: [newProblem],
-    };
+
+    let result = true;
+    if (images.length != 0) {
+      result = await new Promise((resolve) => {
+        let counter = 0;
+        for (const image of images) {
+          this.imageRepo
+            .insert({
+              path: image,
+              problemId: newProblem.id,
+            })
+            .then(() => {
+              counter += 1;
+              if (counter === images.length) {
+                resolve(true);
+              }
+            })
+            .catch((e) => {
+              console.log(e.message);
+              resolve(false);
+            });
+        }
+      });
+    }
+
+    const problem = await this.problemRepo
+      .createQueryBuilder("problem")
+      .leftJoinAndSelect("problem.stars", "problemStars")
+      .leftJoinAndSelect("problem.solutions", "solutions")
+      .leftJoinAndSelect("problem.author", "author")
+      .leftJoinAndSelect("solutions.stars", "solutionStars")
+      .leftJoinAndSelect("problem.images", "images")
+      .where("problem.id = :id", { id: newProblem.id })
+      .getOne();
+
+    console.log(problem?.author);
+
+    if (result)
+      return {
+        status: true,
+        message: "Create problem successfully.",
+        data: [problem],
+      };
+    else
+      return {
+        status: false,
+        message: "Fail to create problem",
+      };
   }
 
   @Mutation(() => ProblemResponse)
@@ -69,7 +115,8 @@ export class ProblemResolver {
   @Mutation(() => ProblemResponse)
   async updateProblem(
     @Arg("id") id: string,
-    @Arg("input") input: UpdateProblemInput
+    @Arg("input") input: UpdateProblemInput,
+    @Arg("images", () => [String]) images: string[]
   ) {
     await this.problemRepo.update({ id }, input).catch((e) => {
       return {
@@ -77,18 +124,54 @@ export class ProblemResolver {
         message: e.message,
       };
     });
-    const problem = this.problemRepo.findOne({ id }).catch((e) => {
+
+    let result = true;
+    if (images && images.length != 0) {
+      result = await new Promise((resolve) => {
+        let counter = 0;
+        for (const image of images) {
+          this.imageRepo
+            .insert({
+              path: image,
+              problemId: id,
+            })
+            .then(() => {
+              counter += 1;
+              if (counter === images.length) {
+                resolve(true);
+              }
+            })
+            .catch((e) => {
+              console.log(e.message);
+              resolve(false);
+            });
+        }
+      });
+    }
+
+    const problem = await this.problemRepo
+      .createQueryBuilder("problem")
+      .leftJoinAndSelect("problem.stars", "problemStars")
+      .leftJoinAndSelect("problem.solutions", "solutions")
+      .leftJoinAndSelect("problem.author", "author")
+      .leftJoinAndSelect("solutions.stars", "solutionStars")
+      .leftJoinAndSelect("problem.images", "images")
+      .where("problem.id = :id", { id })
+      .getOne();
+
+    console.log(problem);
+    if (result) {
+      return {
+        status: true,
+        message: "Update problem successfully.",
+        data: [problem],
+      };
+    } else {
       return {
         status: false,
-        message: e.message,
+        message: "Fail to update problem.",
       };
-    });
-
-    return {
-      status: true,
-      message: "Update problem successfully.",
-      data: [problem],
-    };
+    }
   }
 
   @Query(() => ProblemResponse, { nullable: true })
@@ -125,8 +208,9 @@ export class ProblemResolver {
           content: "%" + content + "%",
         });
 
+      builder.orderBy("problem.createdAt", "DESC");
       const problems = await builder.getMany();
-      console.log("problems: ", problems);
+
       return {
         status: true,
         message: "Get problems successfully.",
@@ -147,7 +231,9 @@ export class ProblemResolver {
         .createQueryBuilder("problem")
         .leftJoinAndSelect("problem.stars", "problemStars")
         .leftJoinAndSelect("problem.solutions", "solutions")
+        .leftJoinAndSelect("problem.author", "author")
         .leftJoinAndSelect("solutions.stars", "solutionStars")
+        .leftJoinAndSelect("problem.images", "images")
         .where("problem.id = :id", { id })
         .getOne();
 
@@ -179,9 +265,20 @@ export class ProblemResolver {
           message: err.message,
         };
       });
+      const problem = await this.problemRepo
+        .createQueryBuilder("problem")
+        .leftJoinAndSelect("problem.stars", "problemStars")
+        .leftJoinAndSelect("problem.solutions", "solutions")
+        .leftJoinAndSelect("problem.author", "author")
+        .leftJoinAndSelect("solutions.stars", "solutionStars")
+        .leftJoinAndSelect("problem.images", "images")
+        .where("problem.id = :id", { id: problemId })
+        .getOne();
+
       return {
         status: true,
         message: "Un-star problem successfully.",
+        data: [problem],
       };
     } else {
       const newStar = this.starRepo.create({ userId, problemId });
@@ -192,9 +289,21 @@ export class ProblemResolver {
           message: err.message,
         };
       });
+
+      const problem = await this.problemRepo
+        .createQueryBuilder("problem")
+        .leftJoinAndSelect("problem.stars", "problemStars")
+        .leftJoinAndSelect("problem.solutions", "solutions")
+        .leftJoinAndSelect("problem.author", "author")
+        .leftJoinAndSelect("solutions.stars", "solutionStars")
+        .leftJoinAndSelect("problem.images", "images")
+        .where("problem.id = :id", { id: problemId })
+        .getOne();
+
       return {
         status: true,
         message: "Star problem successfully.",
+        data: [problem],
       };
     }
   }
