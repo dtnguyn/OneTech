@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { DeviceSpec } from "../../generated/graphql";
+import { DeviceSpec, ReviewRating } from "../../generated/graphql";
 import device from "../../pages/device";
 import styles from "../../styles/DeviceDetail.module.css";
 import RatingBar from "./RatingBar";
@@ -7,13 +7,15 @@ import TextContent from "./SpecsTableTextContent";
 
 interface SpecsTableProps {
   switchState: string;
-  spec: any;
+  spec?: any;
+  rating?: any;
   category: string;
 }
 
 const SpecsTable: React.FC<SpecsTableProps> = ({
   switchState,
   spec,
+  rating,
   category,
 }) => {
   const [specsArr, setSpecsArr] = useState<Array<string>>([]);
@@ -39,7 +41,11 @@ const SpecsTable: React.FC<SpecsTableProps> = ({
           <div className={styles.specsTableRowTitle}>{title}</div>
           <div className={styles.specsTableRowContent}>
             {switchState === "rating" ? (
-              <RatingBar rating={7} />
+              rating ? (
+                <RatingBar rating={rating[title.toLowerCase()]} />
+              ) : (
+                <RatingBar rating={7} />
+              )
             ) : (
               <TextContent
                 textValue={

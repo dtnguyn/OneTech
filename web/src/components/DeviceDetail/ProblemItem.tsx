@@ -28,10 +28,7 @@ const ProblemItem: React.FC<ProblemItemProps> = ({
     <div>
       <div className={styles.problemItemContainer}>
         <div className={styles.problemItemStatsContainer}>
-          <img
-            src={problem.author?.avatar}
-            className={styles.problemItemAvatar}
-          />
+          <img src={problem.author?.avatar} className={styles.postAvatar} />
 
           <StatsBox
             number={problem.stars?.length ? problem.stars.length : 0}
@@ -47,29 +44,29 @@ const ProblemItem: React.FC<ProblemItemProps> = ({
 
         <div className={styles.problemItemPostContainer}>
           <h4 className={styles.problemItemTitle}>{problem.title}</h4>
-          <p className={styles.problemItemDate}>
+          <p className={styles.postDate}>
             {moment(problem.createdAt).format("LL")}
           </p>
           <div className={styles.problemItemContent}>
             {parse(problem.content)}
           </div>
 
-          <div className={styles.problemItemButtonsContainer}>
+          <div className={styles.postItemButtonsContainer}>
             <img
               src={starred ? `/images/starred.png` : `/images/star.png`}
-              className={styles.problemItemButton}
+              className={styles.postItemButton}
               onClick={() => {
                 console.log("starState: ", starred);
                 handleToggleStar(problem, starred);
               }}
             />
 
-            <img src="/images/flag.png" className={styles.problemItemButton} />
+            <img src="/images/flag.png" className={styles.postItemButton} />
             {user?.id === problem.author?.id ? (
               <div>
                 <img
                   src="/images/trash.png"
-                  className={styles.problemItemButton}
+                  className={styles.postItemButton}
                   onClick={() => {
                     const images = problem.images?.map((image) => {
                       return image.path;
@@ -80,7 +77,7 @@ const ProblemItem: React.FC<ProblemItemProps> = ({
                 />
                 <img
                   src="/images/pencil.png"
-                  className={styles.problemItemButton}
+                  className={styles.postItemButton}
                   onClick={() => {
                     handleEdit(problem.id);
                   }}

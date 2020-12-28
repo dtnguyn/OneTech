@@ -1,0 +1,49 @@
+mutation CreateReview(
+  $deviceId: String!
+  $authorId: String!
+  $title: String!
+  $content: String!
+  $overall: Float!
+  $display: Float!
+  $processor: Float!
+  $battery: Float!
+  $software: Float!
+  $camera: Float!
+) {
+  createReview(
+    deviceId: $deviceId
+    authorId: $authorId
+    content: $content
+    title: $title
+    overall: $overall
+    battery: $battery
+    software: $software
+    display: $display
+    processor: $processor
+    camera: $camera
+  ) {
+    status
+    message
+    data {
+      id
+      title
+      content
+      createdAt
+      author {
+        id
+        username
+        avatar
+      }
+      deviceId
+      rating {
+        reviewId
+        deviceId
+        battery
+        software
+        display
+        camera
+        processor
+      }
+    }
+  }
+}

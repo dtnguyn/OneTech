@@ -1,13 +1,16 @@
 import { TextField } from "@material-ui/core";
+import { StringValueNode } from "graphql";
 import { ChangeEvent, KeyboardEvent, useEffect, useState } from "react";
 import { Button } from "react-bootstrap";
 import { useAuth } from "../../context/AuthContext";
 import { useProblem } from "../../context/ProblemContext";
+import { useReview } from "../../context/ReviewContext";
 import {
   DeviceProblem,
   useCreateProblemMutation,
   useProblemsQuery,
 } from "../../generated/graphql";
+import device from "../../pages/device";
 import styles from "../../styles/DeviceDetail.module.css";
 import { client } from "../../utils/withApollo";
 import ConfirmationDialog from "../ConfirmationDialog";
@@ -19,16 +22,21 @@ import Reviews from "./Reviews";
 
 interface BodyProps {
   deviceId: string;
+  deviceCategory: string;
 }
 
-const Body: React.FC<BodyProps> = ({ deviceId }) => {
+const Body: React.FC<BodyProps> = ({ deviceId, deviceCategory }) => {
   const [inputValue, setInputValue] = useState<string>("");
   const [searchValue, setSearchValue] = useState<string>("");
   const [initialState, setInitialState] = useState<boolean>(true);
   const { problems, setProblems } = useProblem();
+  const { reviews, setReviews } = useReview();
 
-  const [adding, setAdding] = useState<boolean>(false);
-  const [editing, setEditing] = useState<boolean>(false);
+  const [addingProblem, setAddingProblem] = useState<boolean>(false);
+  const [editingProblem, setEditingProblem] = useState<boolean>(false);
+
+  const [addingReview, setAddingReview] = useState<boolean>(false);
+  const [editingReview, setEditingReview] = useState<boolean>(false);
 
   const { user } = useAuth();
   const { data } = useProblemsQuery({
@@ -55,12 +63,10 @@ const Body: React.FC<BodyProps> = ({ deviceId }) => {
 
   useEffect(() => {
     const problemArr = data?.problems?.data as DeviceProblem[];
-    console.log("useEffect", problemArr);
-    if (problemArr) console.log("found: ", problemArr, searchValue);
     if (problemArr && problemArr.length != 0) {
       //found devices
       if (!initialState) {
-        console.log("set problems");
+        console.log("set problems and reviews");
         setProblems(problemArr);
       }
 
@@ -78,7 +84,7 @@ const Body: React.FC<BodyProps> = ({ deviceId }) => {
 
   return (
     <div className={styles.deviceDetailBodyContainer}>
-      {!adding && !editing ? (
+      {!addingProblem && !editingProblem && !addingReview && !editingReview ? (
         <Switcher
           switchStateArr={["Problems", "Reviews"]}
           switchState={switchState}
@@ -88,7 +94,7 @@ const Body: React.FC<BodyProps> = ({ deviceId }) => {
 
       <br />
 
-      {!adding && !editing ? (
+      {!addingProblem && !editingProblem && !addingReview && !editingReview ? (
         <SearchBar
           inputValue={inputValue}
           autoComplete=""
@@ -100,8 +106,14 @@ const Body: React.FC<BodyProps> = ({ deviceId }) => {
 
       <br />
 
-      {!adding && !editing ? (
-        <Button variant="primary" onClick={() => setAdding(true)}>
+      {!addingProblem && !editingProblem && !addingReview && !editingReview ? (
+        <Button
+          variant="primary"
+          onClick={() => {
+            if (switchState === "problems") setAddingProblem(true);
+            else setAddingReview(true);
+          }}
+        >
           Add a {switchState === "problems" ? "problem" : "review"}
         </Button>
       ) : (
@@ -117,15 +129,25 @@ const Body: React.FC<BodyProps> = ({ deviceId }) => {
       {switchState === "problems" ? (
         <Problems
           deviceId={deviceId}
-          adding={adding}
-          openAdding={() => setAdding(true)}
-          closeAdding={() => setAdding(false)}
-          editing={editing}
-          openEditing={() => setEditing(true)}
-          closeEditing={() => setEditing(false)}
+          adding={addingProblem}
+          openAdding={() => setAddingProblem(true)}
+          closeAdding={() => setAddingProblem(false)}
+          editing={editingProblem}
+          openEditing={() => setEditingProblem(true)}
+          closeEditing={() => setEditingProblem(false)}
         />
       ) : (
-        <Reviews />
+        <Reviews
+          deviceId={deviceId}
+          reviews={reviews}
+          category={deviceCategory}
+          adding={addingReview}
+          editing={editingReview}
+          openAdding={() => setAddingReview(true)}
+          closeAdding={() => setAddingReview(false)}
+          openEditing={() => setEditingReview(true)}
+          closeEditing={() => setEditingReview(false)}
+        />
       )}
     </div>
   );

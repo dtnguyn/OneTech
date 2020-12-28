@@ -32,7 +32,7 @@ export type Query = {
   findSolutionStars: SolutionStarResponse;
   reviews: ReviewResponse;
   singleReview: ReviewResponse;
-  ratings: Array<ReviewRatingResponse>;
+  ratings: ReviewRatingResponse;
   problemImages: ProblemImageResponse;
 };
 
@@ -208,10 +208,11 @@ export type Review = {
   id: Scalars['String'];
   title: Scalars['String'];
   content: Scalars['String'];
-  createdAt: Scalars['String'];
+  createdAt: Scalars['DateTime'];
   updatedAt: Scalars['DateTime'];
   rating: ReviewRating;
   authorId: Scalars['String'];
+  author: User;
   deviceId: Scalars['String'];
 };
 
@@ -488,6 +489,12 @@ export type MutationToggleSolutionStarArgs = {
 
 
 export type MutationCreateReviewArgs = {
+  processor?: Maybe<Scalars['Float']>;
+  camera?: Maybe<Scalars['Float']>;
+  software?: Maybe<Scalars['Float']>;
+  battery?: Maybe<Scalars['Float']>;
+  display?: Maybe<Scalars['Float']>;
+  overall?: Maybe<Scalars['Float']>;
   deviceId: Scalars['String'];
   authorId: Scalars['String'];
   content: Scalars['String'];
@@ -754,6 +761,39 @@ export type UpdateProblemMutation = (
   ) }
 );
 
+export type CreateReviewMutationVariables = Exact<{
+  deviceId: Scalars['String'];
+  authorId: Scalars['String'];
+  title: Scalars['String'];
+  content: Scalars['String'];
+  overall: Scalars['Float'];
+  display: Scalars['Float'];
+  processor: Scalars['Float'];
+  battery: Scalars['Float'];
+  software: Scalars['Float'];
+  camera: Scalars['Float'];
+}>;
+
+
+export type CreateReviewMutation = (
+  { __typename?: 'Mutation' }
+  & { createReview?: Maybe<(
+    { __typename?: 'ReviewResponse' }
+    & Pick<ReviewResponse, 'status' | 'message'>
+    & { data?: Maybe<Array<(
+      { __typename?: 'Review' }
+      & Pick<Review, 'id' | 'title' | 'content' | 'createdAt' | 'deviceId'>
+      & { author: (
+        { __typename?: 'User' }
+        & Pick<User, 'id' | 'username' | 'avatar'>
+      ), rating: (
+        { __typename?: 'ReviewRating' }
+        & Pick<ReviewRating, 'reviewId' | 'deviceId' | 'battery' | 'software' | 'display' | 'camera' | 'processor'>
+      ) }
+    )>> }
+  )> }
+);
+
 export type LogoutMutationVariables = Exact<{ [key: string]: never; }>;
 
 
@@ -826,7 +866,14 @@ export type DeviceDetailQuery = (
         )>> }
       )>>, reviews?: Maybe<Array<(
         { __typename?: 'Review' }
-        & Pick<Review, 'id'>
+        & Pick<Review, 'id' | 'title' | 'content' | 'createdAt' | 'deviceId'>
+        & { author: (
+          { __typename?: 'User' }
+          & Pick<User, 'id' | 'username' | 'avatar'>
+        ), rating: (
+          { __typename?: 'ReviewRating' }
+          & Pick<ReviewRating, 'reviewId' | 'deviceId' | 'battery' | 'software' | 'display' | 'camera' | 'processor'>
+        ) }
       )>>, spec?: Maybe<(
         { __typename?: 'DeviceSpec' }
         & Pick<DeviceSpec, 'display' | 'battery' | 'software' | 'camera' | 'processor' | 'displaySimplify' | 'batterySimplify' | 'softwareSimplify' | 'cameraSimplify' | 'processorSimplify'>
@@ -865,6 +912,26 @@ export type ProblemsQuery = (
       )>> }
     )>> }
   )> }
+);
+
+export type ReviewsQueryVariables = Exact<{
+  deviceId: Scalars['String'];
+}>;
+
+
+export type ReviewsQuery = (
+  { __typename?: 'Query' }
+  & { reviews: (
+    { __typename?: 'ReviewResponse' }
+    & { data?: Maybe<Array<(
+      { __typename?: 'Review' }
+      & Pick<Review, 'id' | 'title' | 'content' | 'createdAt' | 'deviceId'>
+      & { rating: (
+        { __typename?: 'ReviewRating' }
+        & Pick<ReviewRating, 'reviewId' | 'deviceId' | 'battery' | 'software' | 'display' | 'camera' | 'processor'>
+      ) }
+    )>> }
+  ) }
 );
 
 export type MeQueryVariables = Exact<{ [key: string]: never; }>;
@@ -1204,6 +1271,80 @@ export function useUpdateProblemMutation(baseOptions?: Apollo.MutationHookOption
 export type UpdateProblemMutationHookResult = ReturnType<typeof useUpdateProblemMutation>;
 export type UpdateProblemMutationResult = Apollo.MutationResult<UpdateProblemMutation>;
 export type UpdateProblemMutationOptions = Apollo.BaseMutationOptions<UpdateProblemMutation, UpdateProblemMutationVariables>;
+export const CreateReviewDocument = gql`
+    mutation CreateReview($deviceId: String!, $authorId: String!, $title: String!, $content: String!, $overall: Float!, $display: Float!, $processor: Float!, $battery: Float!, $software: Float!, $camera: Float!) {
+  createReview(
+    deviceId: $deviceId
+    authorId: $authorId
+    content: $content
+    title: $title
+    overall: $overall
+    battery: $battery
+    software: $software
+    display: $display
+    processor: $processor
+    camera: $camera
+  ) {
+    status
+    message
+    data {
+      id
+      title
+      content
+      createdAt
+      author {
+        id
+        username
+        avatar
+      }
+      deviceId
+      rating {
+        reviewId
+        deviceId
+        battery
+        software
+        display
+        camera
+        processor
+      }
+    }
+  }
+}
+    `;
+export type CreateReviewMutationFn = Apollo.MutationFunction<CreateReviewMutation, CreateReviewMutationVariables>;
+
+/**
+ * __useCreateReviewMutation__
+ *
+ * To run a mutation, you first call `useCreateReviewMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useCreateReviewMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [createReviewMutation, { data, loading, error }] = useCreateReviewMutation({
+ *   variables: {
+ *      deviceId: // value for 'deviceId'
+ *      authorId: // value for 'authorId'
+ *      title: // value for 'title'
+ *      content: // value for 'content'
+ *      overall: // value for 'overall'
+ *      display: // value for 'display'
+ *      processor: // value for 'processor'
+ *      battery: // value for 'battery'
+ *      software: // value for 'software'
+ *      camera: // value for 'camera'
+ *   },
+ * });
+ */
+export function useCreateReviewMutation(baseOptions?: Apollo.MutationHookOptions<CreateReviewMutation, CreateReviewMutationVariables>) {
+        return Apollo.useMutation<CreateReviewMutation, CreateReviewMutationVariables>(CreateReviewDocument, baseOptions);
+      }
+export type CreateReviewMutationHookResult = ReturnType<typeof useCreateReviewMutation>;
+export type CreateReviewMutationResult = Apollo.MutationResult<CreateReviewMutation>;
+export type CreateReviewMutationOptions = Apollo.BaseMutationOptions<CreateReviewMutation, CreateReviewMutationVariables>;
 export const LogoutDocument = gql`
     mutation Logout {
   logout {
@@ -1325,6 +1466,24 @@ export const DeviceDetailDocument = gql`
       }
       reviews {
         id
+        title
+        content
+        createdAt
+        deviceId
+        author {
+          id
+          username
+          avatar
+        }
+        rating {
+          reviewId
+          deviceId
+          battery
+          software
+          display
+          camera
+          processor
+        }
       }
       spec {
         display
@@ -1431,6 +1590,54 @@ export function useProblemsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<P
 export type ProblemsQueryHookResult = ReturnType<typeof useProblemsQuery>;
 export type ProblemsLazyQueryHookResult = ReturnType<typeof useProblemsLazyQuery>;
 export type ProblemsQueryResult = Apollo.QueryResult<ProblemsQuery, ProblemsQueryVariables>;
+export const ReviewsDocument = gql`
+    query Reviews($deviceId: String!) {
+  reviews(deviceId: $deviceId) {
+    data {
+      id
+      title
+      content
+      createdAt
+      deviceId
+      rating {
+        reviewId
+        deviceId
+        battery
+        software
+        display
+        camera
+        processor
+      }
+    }
+  }
+}
+    `;
+
+/**
+ * __useReviewsQuery__
+ *
+ * To run a query within a React component, call `useReviewsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useReviewsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useReviewsQuery({
+ *   variables: {
+ *      deviceId: // value for 'deviceId'
+ *   },
+ * });
+ */
+export function useReviewsQuery(baseOptions: Apollo.QueryHookOptions<ReviewsQuery, ReviewsQueryVariables>) {
+        return Apollo.useQuery<ReviewsQuery, ReviewsQueryVariables>(ReviewsDocument, baseOptions);
+      }
+export function useReviewsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<ReviewsQuery, ReviewsQueryVariables>) {
+          return Apollo.useLazyQuery<ReviewsQuery, ReviewsQueryVariables>(ReviewsDocument, baseOptions);
+        }
+export type ReviewsQueryHookResult = ReturnType<typeof useReviewsQuery>;
+export type ReviewsLazyQueryHookResult = ReturnType<typeof useReviewsLazyQuery>;
+export type ReviewsQueryResult = Apollo.QueryResult<ReviewsQuery, ReviewsQueryVariables>;
 export const MeDocument = gql`
     query Me {
   me {

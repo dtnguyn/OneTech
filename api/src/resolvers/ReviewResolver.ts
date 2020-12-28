@@ -9,7 +9,7 @@ import {
   Query,
   Resolver,
 } from "type-graphql";
-import { getRepository } from "typeorm";
+import { getConnection, getRepository } from "typeorm";
 
 @InputType()
 class UpdateReviewInput {
@@ -48,26 +48,57 @@ export class ReviewResolver {
     @Arg("title") title: string,
     @Arg("content") content: string,
     @Arg("authorId") authorId: string,
-    @Arg("deviceId") deviceId: string
+    @Arg("deviceId") deviceId: string,
+    @Arg("overall", () => Float, { nullable: true }) overall: number | null,
+    @Arg("display", () => Float, { nullable: true }) display: number | null,
+    @Arg("battery", () => Float, { nullable: true }) battery: number | null,
+    @Arg("software", () => Float, { nullable: true }) software: number | null,
+    @Arg("camera", () => Float, { nullable: true }) camera: number | null,
+    @Arg("processor", () => Float, { nullable: true }) processor: number | null
   ) {
-    const newReview = await this.reviewRepo.create({
-      title,
-      content,
-      authorId,
-      deviceId,
-    });
-
-    await this.reviewRepo.save(newReview).catch((e) => {
+    try {
+      const newReview = await getConnection().transaction(async (manager) => {
+        console.log("Create review....")
+        const review = await manager.create(Review, {
+          title,
+          content,
+          authorId,
+          deviceId,
+        })
+  
+        await manager.save(review)
+  
+        await manager.insert(ReviewRating, {
+          deviceId,
+          reviewId: review.id,
+          overall,
+          display,
+          battery,
+          software,
+          camera,
+          processor,
+        });
+  
+        return await manager.createQueryBuilder(Review, "review")
+        .leftJoinAndSelect("review.rating", "rating")
+        .leftJoinAndSelect("review.author", "author")
+        
+        .where("review.id = :id", {id: review.id})
+        .getOne();
+      })
+      console.log(newReview)
+      return {
+        status: true,
+        message: "Create review successfully!",
+        data: [newReview]
+      };
+    } catch(e) {
       return {
         status: false,
         message: e.message,
       };
-    });
-    return {
-      status: true,
-      message: "Create review successfully.",
-      data: [newReview],
-    };
+    }
+    
   }
 
   @Mutation(() => ReviewResponse, { nullable: true })
@@ -111,18 +142,24 @@ export class ReviewResolver {
 
   @Query(() => ReviewResponse)
   async reviews(@Arg("deviceId") deviceId: string) {
-    const reviews = await this.reviewRepo.find({ deviceId }).catch((e) => {
+    try {
+      const reviews = await this.reviewRepo.createQueryBuilder("review")
+      .leftJoinAndSelect("review.rating", "rating")
+      .where("review.deviceId = :deviceId", { deviceId })
+      .orderBy("review.createdAt", "DESC")
+      .getMany()
+
+      return {
+        status: true,
+        message: "Getting reviews successfully.",
+        data: reviews,
+      };
+    } catch (e) {
       return {
         status: false,
         message: e.message,
       };
-    });
-
-    return {
-      status: true,
-      message: "Getting reviews successfully.",
-      data: reviews,
-    };
+    }
   }
 
   @Query(() => ReviewResponse)
@@ -152,28 +189,35 @@ export class ReviewResolver {
     @Arg("camera", () => Float, { nullable: true }) camera: number | null,
     @Arg("processor", () => Float, { nullable: true }) processor: number | null
   ) {
-    let newRating = await this.ratingRepo.create({
-      deviceId,
-      overall,
-      reviewId,
-      display,
-      battery,
-      software,
-      camera,
-      processor,
-    });
+    try{
+      let newRating = await this.ratingRepo.create({
+        deviceId,
+        overall,
+        reviewId,
+        display,
+        battery,
+        software,
+        camera,
+        processor,
+      });
 
-    await this.ratingRepo.save(newRating).catch((e) => {
+      await this.ratingRepo.insert(newRating)
+
+      return {
+        status: true,
+        message: "Create rating successfully.",
+        data: [newRating],
+      };
+    } catch (e) {
+      console.log("error");
       return {
         status: false,
         message: e.message,
       };
-    });
-    return {
-      status: true,
-      message: "Create rating successfully.",
-      data: [newRating],
-    };
+    })
+    
+
+    
   }
 
   @Mutation(() => ReviewRatingResponse, { nullable: true })
@@ -201,15 +245,17 @@ export class ReviewResolver {
     };
   }
 
-  @Query(() => [ReviewRatingResponse])
-  ratings(@Arg("deviceId") deviceId: string) {
-    const ratings = this.ratingRepo.find({ deviceId }).catch((e) => {
-      return {
-        status: false,
-        message: e.message,
-      };
-    });
-
+  @Query(() => ReviewRatingResponse)
+  async ratings(@Arg("deviceId") deviceId: string) {
+    const ratings = await this.ratingRepo
+      .find({ reviewId: "a0d13e55-3000-475c-bf7d-2b07d67ee79f" })
+      .catch((e) => {
+        return {
+          status: false,
+          message: e.message,
+        };
+      });
+    console.log("rating: ", ratings);
     return {
       status: true,
       message: "Get ratings successfully.",

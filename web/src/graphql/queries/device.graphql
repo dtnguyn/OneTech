@@ -61,6 +61,24 @@ query DeviceDetail($id: String!) {
       }
       reviews {
         id
+        title
+        content
+        createdAt
+        deviceId
+        author {
+          id
+          username
+          avatar
+        }
+        rating {
+          reviewId
+          deviceId
+          battery
+          software
+          display
+          camera
+          processor
+        }
       }
       spec {
         display

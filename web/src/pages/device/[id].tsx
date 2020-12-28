@@ -5,9 +5,11 @@ import { useEffect, useState } from "react";
 import Body from "../../components/DeviceDetail/DeviceDetailBody";
 import Header from "../../components/DeviceDetail/DeviceDetailHeader";
 import { ProblemContext } from "../../context/ProblemContext";
+import { ReviewContext } from "../../context/ReviewContext";
 import {
   Device,
   DeviceProblem,
+  Review,
   useDeviceDetailQuery,
 } from "../../generated/graphql";
 import styles from "../../styles/DeviceDetail.module.css";
@@ -20,6 +22,7 @@ const DeviceDetail: React.FC<DeviceDetailProps> = ({}) => {
   const { id } = router.query;
   const [device, setDevice] = useState<Device>();
   const [problems, setProblems] = useState<DeviceProblem[]>([]);
+  const [reviews, setReviews] = useState<Review[]>([]);
   const { data, error } = useDeviceDetailQuery({
     variables: {
       id: id as string,
@@ -35,6 +38,9 @@ const DeviceDetail: React.FC<DeviceDetailProps> = ({}) => {
       if (devices[0].problems && devices[0].problems.length != 0) {
         setProblems(devices[0].problems);
       }
+      if (devices[0].reviews && devices[0].reviews.length != 0) {
+        setReviews(devices[0].reviews);
+      }
     }
   }, [data]);
 
@@ -42,16 +48,18 @@ const DeviceDetail: React.FC<DeviceDetailProps> = ({}) => {
 
   return (
     <ProblemContext.Provider value={{ problems, setProblems }}>
-      <div className={styles.deviceDetailContainer}>
-        <Header device={device} />
-        <br />
-        <br />
-        <Divider />
-        <br />
-        <Body deviceId={device.id} />
-        <br />
-        <br />
-      </div>
+      <ReviewContext.Provider value={{ reviews, setReviews }}>
+        <div className={styles.deviceDetailContainer}>
+          <Header device={device} />
+          <br />
+          <br />
+          <Divider />
+          <br />
+          <Body deviceId={device.id} deviceCategory={device.category} />
+          <br />
+          <br />
+        </div>
+      </ReviewContext.Provider>
     </ProblemContext.Provider>
   );
 };

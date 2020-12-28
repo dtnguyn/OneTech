@@ -217,6 +217,8 @@ export class DeviceResolver {
         .leftJoinAndSelect("problems.author", "author")
         .leftJoinAndSelect("device.spec", "spec")
         .leftJoinAndSelect("device.reviews", "reviews")
+        .orderBy("reviews.createdAt", "DESC")
+        .leftJoinAndSelect("reviews.author", "reviewAuthor")
         .leftJoinAndSelect("reviews.rating", "rating")
         .where("device.id = :id", { id })
         .getOne();
