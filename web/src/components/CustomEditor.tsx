@@ -1,6 +1,5 @@
 import { Editor } from "@tinymce/tinymce-react";
-import { fail } from "assert";
-import { useEffect, useRef, useState } from "react";
+import { useState } from "react";
 import { Button } from "react-bootstrap";
 import {
   useDeleteImagesMutation,
@@ -35,27 +34,6 @@ const CustomEditor: React.FC<CustomEditorProps> = ({
     failure: (err: string, options?: any | undefined) => void,
     progress?: ((percent: number) => void) | undefined
   ) => {
-    //   console.log("blob", blobInfo);
-    //   const imageDir = `images/${blobInfo.id()}`;
-    //   const uploadTask = storage.ref().child(imageDir).put(blobInfo.blob());
-    //   uploadTask.on(
-    //     "state_changed",
-    //     function (snapshot) {
-    //       var progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
-    //       console.log("Upload is " + progress + "% done");
-    //     },
-    //     function (error) {
-    //       failure("Error: " + error.message);
-    //     },
-    //     function () {
-    //       uploadTask.snapshot.ref.getDownloadURL().then(function (downloadURL) {
-    //         console.log("File available at", downloadURL);
-    //         setImages([...images, imageDir]);
-    //         success(downloadURL);
-    //       });
-    //     }
-    //   );
-
     await uploadImageMutation({
       variables: {
         image: blobInfo.base64(),
@@ -80,11 +58,6 @@ const CustomEditor: React.FC<CustomEditorProps> = ({
     });
   };
 
-  // window.onbeforeunload = () => {
-  //   console.log("Stop this");
-  //   handleDeleteImages(images);
-  // };
-
   return (
     <div className={styles.customEditorContainer}>
       <Editor
@@ -98,7 +71,7 @@ const CustomEditor: React.FC<CustomEditorProps> = ({
           images_upload_handler: handleUploadImage,
           placeholder: "your post goes here...",
           plugins: [
-            "advlist autolink lists link image imagetools imageresize",
+            "advlist autolink lists link image imagetools",
             "charmap print preview anchor help",
             "searchreplace visualblocks code",
             "insertdatetime media table paste wordcount ",

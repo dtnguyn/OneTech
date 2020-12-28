@@ -1,0 +1,20 @@
+query Reviews($deviceId: String!) {
+  reviews(deviceId: $deviceId) {
+    data {
+      id
+      title
+      content
+      createdAt
+      deviceId
+      rating {
+        reviewId
+        deviceId
+        battery
+        software
+        display
+        camera
+        processor
+      }
+    }
+  }
+}

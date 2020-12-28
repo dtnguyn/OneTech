@@ -101,7 +101,7 @@
   flex-direction: column;
 }
 
-.problemItemAvatar {
+.postAvatar {
   width: 60px;
   height: 60px;
   margin: 10px;
@@ -141,7 +141,7 @@
   text-decoration: underline;
 }
 
-.problemItemDate {
+.postDate {
   font-family: MLight;
 }
 
@@ -164,24 +164,68 @@
   hyphens: auto;
 }
 
-.problemItemButtonsContainer {
+.postItemButtonsContainer {
   display: flex;
   flex-direction: row;
   position: absolute;
   bottom: 0;
 }
 
-.problemItemButton {
+.postItemButton {
   width: 24px;
   margin: 0 20px 0 0;
 }
 
-.problemItemButton:active {
+.postItemButton:active {
   padding: 4px;
 }
 
 .addProblemInputTitle {
   width: 80%;
+}
+
+.reviewsContainer {
+  width: 80vw;
+  margin: 30px;
+  display: flex;
+  flex-direction: column;
+}
+
+.reviewContainer {
+  width: 100%;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+}
+
+.reviewHeaderContainer {
+  display: flex;
+  flex-direction: row;
+}
+
+.reviewHeaderTextContainer {
+  display: flex;
+  flex-direction: column;
+  line-height: 5px;
+  justify-content: center;
+}
+
+.reviewAuthorName {
+  font-family: MSemiBold;
+  font-size: 1.2rem;
+}
+
+.reviewContentContainer {
+  margin: 20px 0 40px;
+  border-right: 1px solid #e9e9e9;
+}
+
+.reviewTitle {
+  font-family: MSemiBold;
+}
+
+.reviewContent {
+  font-family: MRegular;
 }
 
 @keyframes moveFromLeft {

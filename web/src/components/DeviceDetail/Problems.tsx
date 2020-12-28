@@ -170,37 +170,6 @@ const Problems: React.FC<ProblemsProps> = ({
           problems.map((_problem) => {
             if (problem.id === _problem.id) {
               return updatedProblem;
-              // if (starred) {
-              //   //Add star
-              //   console.log("Add star");
-              //   return {
-              //     ..._problem,
-              //     stars: [
-              //       ..._problem.stars!,
-              //       {
-              //         userId: user.id,
-              //         problemId: _problem.id,
-              //       } as DeviceProblemStar,
-              //     ],
-              //   };
-              // } else {
-              //   //remove star
-              //   console.log("Remove star");
-              //   let index = -1;
-              //   for (let i = 0; i < _problem.stars!.length; i++) {
-              //     if (_problem.stars![i].userId === user.id) {
-              //       index = i;
-              //       break;
-              //     }
-              //   }
-              //   if (index > 0) _problem.stars!.splice(index, 1);
-              //   if (index === 0)
-              //     return {
-              //       ..._problem,
-              //       stars: [],
-              //     };
-              //   return _problem;
-              // }
             }
             return _problem;
           })

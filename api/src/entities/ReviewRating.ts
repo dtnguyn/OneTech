@@ -7,6 +7,7 @@ import {
   PrimaryColumn,
   OneToOne,
   JoinColumn,
+  ManyToOne,
 } from "typeorm";
 import { Device } from "./Device";
 import { Review } from "./Review";
@@ -27,7 +28,7 @@ export class ReviewRating {
   @Field()
   @Column()
   deviceId: string;
-  @OneToOne(() => Device, (device) => device.ratings, {
+  @ManyToOne(() => Device, (device) => device.ratings, {
     onDelete: "CASCADE",
     onUpdate: "CASCADE",
   })

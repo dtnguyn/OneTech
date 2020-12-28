@@ -28,7 +28,7 @@ export class Review {
   @Column()
   content: string;
 
-  @Field(() => String)
+  @Field()
   @CreateDateColumn()
   createdAt: Date;
 
@@ -47,6 +47,7 @@ export class Review {
     onDelete: "CASCADE",
     onUpdate: "CASCADE",
   })
+  @Field(() => User)
   @JoinColumn({ name: "authorId" })
   author: User;
 
