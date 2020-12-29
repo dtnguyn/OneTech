@@ -10,11 +10,11 @@ import stream from "stream";
 import { getRepository } from "typeorm";
 
 const gc = new Storage({
-  keyFilename: path.join(__dirname, "../../onetech-297117-85443342fa70.json"),
-  projectId: "onetech-297117",
+  keyFilename: path.join(__dirname, `../../${process.env.GOOGLE_STORAGE}`),
+  projectId: process.env.PROJECT_ID,
 });
 
-const bucket = gc.bucket("onetechbucket");
+const bucket = gc.bucket(process.env.BUCKET_NAME!);
 
 @Resolver()
 export class ImageResolver {
