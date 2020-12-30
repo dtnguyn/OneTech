@@ -58,6 +58,9 @@ query DeviceDetail($id: String!) {
         solutions {
           id
         }
+        images {
+          path
+        }
       }
       reviews {
         id
@@ -65,6 +68,9 @@ query DeviceDetail($id: String!) {
         content
         createdAt
         deviceId
+        images {
+          path
+        }
         author {
           id
           username

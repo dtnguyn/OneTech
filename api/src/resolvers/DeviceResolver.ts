@@ -210,19 +210,22 @@ export class DeviceResolver {
       const device = await this.deviceRepo
         .createQueryBuilder("device")
         .leftJoinAndSelect("device.problems", "problems")
-        .leftJoinAndSelect("device.followers", "followers")
         .orderBy("problems.createdAt", "DESC")
+        .leftJoinAndSelect("device.followers", "followers")
         .leftJoinAndSelect("problems.stars", "stars")
         .leftJoinAndSelect("problems.solutions", "solutions")
         .leftJoinAndSelect("problems.author", "author")
+        .leftJoinAndSelect("problems.images", "problemImages")
         .leftJoinAndSelect("device.spec", "spec")
         .leftJoinAndSelect("device.reviews", "reviews")
-        .orderBy("reviews.createdAt", "DESC")
+        .addOrderBy("reviews.createdAt", "DESC")
         .leftJoinAndSelect("reviews.author", "reviewAuthor")
         .leftJoinAndSelect("reviews.rating", "rating")
+        .leftJoinAndSelect("reviews.images", "reviewImages")
         .where("device.id = :id", { id })
         .getOne();
 
+      console.log(device?.problems);
       return {
         status: true,
         message: "Get a device successfully.",

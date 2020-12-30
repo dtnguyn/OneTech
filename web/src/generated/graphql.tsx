@@ -935,11 +935,17 @@ export type DeviceDetailQuery = (
         )>>, solutions?: Maybe<Array<(
           { __typename?: 'Solution' }
           & Pick<Solution, 'id'>
+        )>>, images?: Maybe<Array<(
+          { __typename?: 'ProblemImage' }
+          & Pick<ProblemImage, 'path'>
         )>> }
       )>>, reviews?: Maybe<Array<(
         { __typename?: 'Review' }
         & Pick<Review, 'id' | 'title' | 'content' | 'createdAt' | 'deviceId'>
-        & { author: (
+        & { images?: Maybe<Array<(
+          { __typename?: 'ReviewImage' }
+          & Pick<ReviewImage, 'path'>
+        )>>, author: (
           { __typename?: 'User' }
           & Pick<User, 'id' | 'username' | 'avatar'>
         ), rating: (
@@ -1646,6 +1652,9 @@ export const DeviceDetailDocument = gql`
         solutions {
           id
         }
+        images {
+          path
+        }
       }
       reviews {
         id
@@ -1653,6 +1662,9 @@ export const DeviceDetailDocument = gql`
         content
         createdAt
         deviceId
+        images {
+          path
+        }
         author {
           id
           username

@@ -129,26 +129,29 @@ const Problems: React.FC<ProblemsProps> = ({
   };
 
   const handleDeleteProblem = async (id: string, images: string[]) => {
-    console.log("delete", images);
-    deleteImagesMutation({
-      variables: {
-        imageIds: images,
-      },
-    });
+    try {
+      await deleteImagesMutation({
+        variables: {
+          imageIds: images,
+        },
+      });
 
-    await deleteProblemMutation({
-      variables: {
-        id,
-      },
-    }).then((res) => {
-      if (res.data?.deleteProblem.status) {
-        setProblems(
-          problems.filter((_problem) => {
-            return _problem.id != id;
-          })
-        );
-      }
-    });
+      await deleteProblemMutation({
+        variables: {
+          id,
+        },
+      }).then((res) => {
+        if (res.data?.deleteProblem.status) {
+          setProblems(
+            problems.filter((_problem) => {
+              return _problem.id != id;
+            })
+          );
+        }
+      });
+    } catch (error) {
+      alert(error.message);
+    }
   };
 
   const handleToggleProblemStar = async (

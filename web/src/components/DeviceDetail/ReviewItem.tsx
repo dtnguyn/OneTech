@@ -9,7 +9,7 @@ import SpecsTable from "./SpecsTable";
 interface ReviewItemProps {
   review: Review;
   handleEdit: (review: Review) => void;
-  handleDelete: (id: string) => void;
+  handleDelete: (id: string, images: string[]) => void;
 }
 
 const ReviewItem: React.FC<ReviewItemProps> = ({
@@ -54,7 +54,11 @@ const ReviewItem: React.FC<ReviewItemProps> = ({
                 src="/images/trash.png"
                 className={styles.postItemButton}
                 onClick={() => {
-                  handleDelete(review.id);
+                  const images = review.images?.map((image) => {
+                    return image.path;
+                  });
+                  console.log("images", images);
+                  handleDelete(review.id, images ? images : []);
                 }}
               />
               <img
