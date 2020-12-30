@@ -30,9 +30,8 @@ const DeviceDetail: React.FC<DeviceDetailProps> = ({}) => {
   });
 
   useEffect(() => {
-    console.log("Get device detail...");
     const devices = data?.singleDevice?.data as Device[];
-
+    console.log("Get device detail...", device?.problems, device?.reviews);
     if (devices && devices.length != 0) {
       setDevice(devices[0]);
       if (devices[0].problems && devices[0].problems.length != 0) {
@@ -42,7 +41,7 @@ const DeviceDetail: React.FC<DeviceDetailProps> = ({}) => {
         setReviews(devices[0].reviews);
       }
     }
-  }, [data]);
+  }, []);
 
   if (!device) return null;
 

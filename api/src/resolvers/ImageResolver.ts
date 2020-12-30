@@ -9,6 +9,7 @@ import path from "path";
 import stream from "stream";
 import { getRepository } from "typeorm";
 import { ReviewImage, ReviewImageResponse } from "../entities/ReviewImage";
+import { rejects } from "assert";
 
 const gc = new Storage({
   keyFilename: path.join(__dirname, `../../${process.env.GOOGLE_STORAGE}`),
@@ -73,35 +74,34 @@ export class ImageResolver {
   @Mutation(() => UploadImageResponse)
   async deleteImages(@Arg("imageIds", () => [String]) imageIds: string[]) {
     console.log("delete images", imageIds);
-    let counter = 0;
-
-    const result: boolean = await new Promise((resolve, reject) => {
-      for (const id of imageIds) {
-        const file = bucket.file(id);
-        file.delete((err, res) => {
-          console.log(err?.message, res?.statusCode);
-          if (err) {
-            resolve(false);
-          } else {
-            counter += 1;
-            if (counter === imageIds.length) {
-              resolve(true);
+    try {
+      let counter = 0;
+      await new Promise((resolve) => {
+        for (const id of imageIds) {
+          const file = bucket.file(id);
+          file.delete((err, res) => {
+            console.log(err?.message, res?.statusCode);
+            if (err) {
+              rejects(err as any);
+            } else {
+              counter += 1;
+              if (counter === imageIds.length) {
+                resolve(true);
+              }
             }
-          }
-        });
-      }
-    });
-
-    if (result) {
+          });
+        }
+      });
       return {
         status: true,
-        message: "Delete images successfully",
+        message: "Delete images successfully.",
       };
-    } else
+    } catch (error) {
       return {
         status: false,
-        message: "Fail to delete image",
+        message: error.message,
       };
+    }
   }
 
   @Query(() => ProblemImageResponse)

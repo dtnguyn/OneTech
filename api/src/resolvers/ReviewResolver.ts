@@ -248,7 +248,6 @@ export class ReviewResolver {
         .orderBy("review.createdAt", "DESC")
         .getMany();
 
-      console.log(reviews);
       return {
         status: true,
         message: "Getting reviews successfully.",

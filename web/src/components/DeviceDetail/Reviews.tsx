@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import {
   Review,
   useCreateReviewMutation,
+  useDeleteImagesMutation,
   useDeleteReviewMutation,
   useUpdateReviewMutation,
 } from "../../generated/graphql";
@@ -69,6 +70,7 @@ const Reviews: React.FC<ReviewsProps> = ({
   const [createReviewMutation, {}] = useCreateReviewMutation();
   const [deleteReviewMutation, {}] = useDeleteReviewMutation();
   const [updateReviewMutation, {}] = useUpdateReviewMutation();
+  const [deleteImagesMutation, {}] = useDeleteImagesMutation();
 
   const resetReviewValue = () => {
     setReviewValue({
@@ -185,13 +187,19 @@ const Reviews: React.FC<ReviewsProps> = ({
       });
   };
 
-  const handleDeleteReview = async (id: string) => {
-    await deleteReviewMutation({
-      variables: {
-        id,
-      },
-    })
-      .then((res) => {
+  const handleDeleteReview = async (id: string, images: string[]) => {
+    try {
+      await deleteImagesMutation({
+        variables: {
+          imageIds: images,
+        },
+      });
+
+      await deleteReviewMutation({
+        variables: {
+          id,
+        },
+      }).then((res) => {
         if (res.data?.deleteReview.status) {
           setReviews(
             reviews.filter((review) => {
@@ -199,13 +207,13 @@ const Reviews: React.FC<ReviewsProps> = ({
             })
           );
         } else throw Error(res.data?.deleteReview.message);
-      })
-      .catch((error) => {
-        alert(error.message);
       });
+    } catch (error) {
+      alert(error.message);
+    }
   };
 
-  const initialDeleteReviewDialog = (id: string) => {
+  const initialDeleteReviewDialog = (id: string, images: string[]) => {
     setConfirmationDialog({
       ...confirmationDialog,
       show: true,
@@ -220,7 +228,7 @@ const Reviews: React.FC<ReviewsProps> = ({
         });
       },
       handlePositive: () => {
-        handleDeleteReview(id);
+        handleDeleteReview(id, images);
         setConfirmationDialog({
           ...confirmationDialog,
           show: false,
@@ -331,8 +339,8 @@ const Reviews: React.FC<ReviewsProps> = ({
             <ReviewItem
               key={review.id}
               review={review}
-              handleDelete={(id: string) => {
-                initialDeleteReviewDialog(id);
+              handleDelete={(id: string, images: string[]) => {
+                initialDeleteReviewDialog(id, images);
               }}
               handleEdit={(review: Review) => {
                 console.log(review.rating);
