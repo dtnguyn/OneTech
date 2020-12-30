@@ -43,7 +43,7 @@ const ReviewItem: React.FC<ReviewItemProps> = ({
             className={`col-lg-5 col-md-12 ` + styles.reviewContentContainer}
           >
             <h5 className={styles.reviewTitle}>{review.title}</h5>
-            <p className={styles.reviewContent}>{parse(review.content)}</p>
+            {parse(review.content)}
           </div>
         </div>
         <div className={styles.postItemButtonsContainer}>

@@ -212,15 +212,43 @@ export class ReviewResolver {
   }
 
   @Query(() => ReviewResponse)
-  async reviews(@Arg("deviceId") deviceId: string) {
+  async reviews(
+    @Arg("deviceId", { nullable: true }) deviceId: string,
+    @Arg("authorId", { nullable: true }) authorId: string,
+    @Arg("title", { nullable: true }) title: string,
+    @Arg("content", { nullable: true }) content: string
+  ) {
     try {
-      const reviews = await this.reviewRepo
+      const builder = await this.reviewRepo
         .createQueryBuilder("review")
-        .leftJoinAndSelect("review.rating", "rating")
-        .where("review.deviceId = :deviceId", { deviceId })
+        .leftJoinAndSelect("review.author", "author")
+        .leftJoinAndSelect("review.rating", "rating");
+
+      if (authorId) builder.where("review.authorId = :authorId", { authorId });
+      if (deviceId) builder.where("review.deviceId = :deviceId", { deviceId });
+
+      if (title && content) {
+        builder
+          .andWhere("LOWER(review.title) LIKE LOWER(:title)", {
+            title: "%" + title + "%",
+          })
+          .orWhere("LOWER(review.content) LIKE LOWER(:content)", {
+            content: "%" + content + "%",
+          });
+      } else if (title)
+        builder.andWhere("LOWER(review.title) LIKE LOWER(:title)", {
+          title: "%" + title + "%",
+        });
+      else if (content)
+        builder.andWhere("LOWER(review.content) LIKE LOWER(:content)", {
+          content: "%" + content + "%",
+        });
+
+      const reviews = await builder
         .orderBy("review.createdAt", "DESC")
         .getMany();
 
+      console.log(reviews);
       return {
         status: true,
         message: "Getting reviews successfully.",

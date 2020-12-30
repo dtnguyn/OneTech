@@ -7,8 +7,10 @@ import { useProblem } from "../../context/ProblemContext";
 import { useReview } from "../../context/ReviewContext";
 import {
   DeviceProblem,
+  Review,
   useCreateProblemMutation,
   useProblemsQuery,
+  useReviewsQuery,
 } from "../../generated/graphql";
 import device from "../../pages/device";
 import styles from "../../styles/DeviceDetail.module.css";
@@ -28,7 +30,10 @@ interface BodyProps {
 const Body: React.FC<BodyProps> = ({ deviceId, deviceCategory }) => {
   const [inputValue, setInputValue] = useState<string>("");
   const [searchValue, setSearchValue] = useState<string>("");
-  const [initialState, setInitialState] = useState<boolean>(true);
+  const [initialState, setInitialState] = useState({
+    problems: true,
+    reviews: true,
+  });
   const { problems, setProblems } = useProblem();
   const { reviews, setReviews } = useReview();
 
@@ -39,7 +44,10 @@ const Body: React.FC<BodyProps> = ({ deviceId, deviceCategory }) => {
   const [editingReview, setEditingReview] = useState<boolean>(false);
 
   const { user } = useAuth();
-  const { data } = useProblemsQuery({
+
+  const [switchState, setSwitchState] = useState<string>("problems");
+
+  const { data: problemsData } = useProblemsQuery({
     variables: {
       deviceId,
       title: searchValue,
@@ -48,7 +56,14 @@ const Body: React.FC<BodyProps> = ({ deviceId, deviceCategory }) => {
     client: client,
   });
 
-  const [switchState, setSwitchState] = useState<string>("problems");
+  const { data: reviewsData } = useReviewsQuery({
+    variables: {
+      deviceId,
+      title: searchValue,
+      content: searchValue,
+    },
+    client: client,
+  });
 
   let timeout: NodeJS.Timeout;
   const handleSearch: (event: ChangeEvent<HTMLInputElement>) => void = (
@@ -62,25 +77,35 @@ const Body: React.FC<BodyProps> = ({ deviceId, deviceCategory }) => {
   };
 
   useEffect(() => {
-    const problemArr = data?.problems?.data as DeviceProblem[];
+    const problemArr = problemsData?.problems?.data as DeviceProblem[];
     if (problemArr && problemArr.length != 0) {
-      //found devices
-      if (!initialState) {
-        console.log("set problems and reviews");
+      //found problems
+      if (!initialState.problems) {
         setProblems(problemArr);
       }
-
-      if (searchValue) {
-        const position = problemArr[0].title.toLowerCase().indexOf(searchValue);
-        const name = problemArr[0].title.toLowerCase().substring(position);
-      }
-      setInitialState(false);
+      setInitialState({ ...initialState, problems: false });
     } else if (problemArr && problemArr.length == 0) {
       //not found
-      console.log("set devices empty array");
       setProblems([]);
     }
-  }, [data]);
+  }, [problemsData]);
+
+  useEffect(() => {
+    const reviewArr = reviewsData?.reviews?.data as Review[];
+    console.log("review Array", reviewArr);
+    if (reviewArr && reviewArr.length != 0) {
+      //found reviews
+
+      if (!initialState.reviews) {
+        setReviews(reviewArr);
+      }
+
+      setInitialState({ ...initialState, reviews: false });
+    } else if (reviewArr && reviewArr.length == 0) {
+      //not found
+      setReviews([]);
+    }
+  }, [reviewsData]);
 
   return (
     <div className={styles.deviceDetailBodyContainer}>

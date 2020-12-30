@@ -96,7 +96,10 @@ export type QueryFindSolutionStarsArgs = {
 
 
 export type QueryReviewsArgs = {
-  deviceId: Scalars['String'];
+  content?: Maybe<Scalars['String']>;
+  title?: Maybe<Scalars['String']>;
+  authorId?: Maybe<Scalars['String']>;
+  deviceId?: Maybe<Scalars['String']>;
 };
 
 
@@ -984,7 +987,10 @@ export type ProblemsQuery = (
 );
 
 export type ReviewsQueryVariables = Exact<{
-  deviceId: Scalars['String'];
+  deviceId?: Maybe<Scalars['String']>;
+  authorId?: Maybe<Scalars['String']>;
+  content?: Maybe<Scalars['String']>;
+  title?: Maybe<Scalars['String']>;
 }>;
 
 
@@ -995,7 +1001,10 @@ export type ReviewsQuery = (
     & { data?: Maybe<Array<(
       { __typename?: 'Review' }
       & Pick<Review, 'id' | 'title' | 'content' | 'createdAt' | 'deviceId'>
-      & { rating: (
+      & { author: (
+        { __typename?: 'User' }
+        & Pick<User, 'id' | 'username' | 'avatar'>
+      ), rating: (
         { __typename?: 'ReviewRating' }
         & Pick<ReviewRating, 'reviewId' | 'deviceId' | 'overall' | 'battery' | 'software' | 'display' | 'camera' | 'processor'>
       ) }
@@ -1766,11 +1775,21 @@ export type ProblemsQueryHookResult = ReturnType<typeof useProblemsQuery>;
 export type ProblemsLazyQueryHookResult = ReturnType<typeof useProblemsLazyQuery>;
 export type ProblemsQueryResult = Apollo.QueryResult<ProblemsQuery, ProblemsQueryVariables>;
 export const ReviewsDocument = gql`
-    query Reviews($deviceId: String!) {
-  reviews(deviceId: $deviceId) {
+    query Reviews($deviceId: String, $authorId: String, $content: String, $title: String) {
+  reviews(
+    deviceId: $deviceId
+    authorId: $authorId
+    content: $content
+    title: $title
+  ) {
     data {
       id
       title
+      author {
+        id
+        username
+        avatar
+      }
       content
       createdAt
       deviceId
@@ -1802,10 +1821,13 @@ export const ReviewsDocument = gql`
  * const { data, loading, error } = useReviewsQuery({
  *   variables: {
  *      deviceId: // value for 'deviceId'
+ *      authorId: // value for 'authorId'
+ *      content: // value for 'content'
+ *      title: // value for 'title'
  *   },
  * });
  */
-export function useReviewsQuery(baseOptions: Apollo.QueryHookOptions<ReviewsQuery, ReviewsQueryVariables>) {
+export function useReviewsQuery(baseOptions?: Apollo.QueryHookOptions<ReviewsQuery, ReviewsQueryVariables>) {
         return Apollo.useQuery<ReviewsQuery, ReviewsQueryVariables>(ReviewsDocument, baseOptions);
       }
 export function useReviewsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<ReviewsQuery, ReviewsQueryVariables>) {

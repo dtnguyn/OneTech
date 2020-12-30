@@ -329,6 +329,7 @@ const Reviews: React.FC<ReviewsProps> = ({
         reviews.map((review) => {
           return (
             <ReviewItem
+              key={review.id}
               review={review}
               handleDelete={(id: string) => {
                 initialDeleteReviewDialog(id);
