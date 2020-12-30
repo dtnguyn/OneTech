@@ -139,7 +139,6 @@ const Body: React.FC<BodyProps> = ({ deviceId, deviceCategory }) => {
       ) : (
         <Reviews
           deviceId={deviceId}
-          reviews={reviews}
           category={deviceCategory}
           adding={addingReview}
           editing={editingReview}

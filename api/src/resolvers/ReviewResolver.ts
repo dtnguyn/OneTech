@@ -10,6 +10,7 @@ import {
   Resolver,
 } from "type-graphql";
 import { getConnection, getRepository } from "typeorm";
+import { ReviewImage } from "../entities/ReviewImage";
 
 @InputType()
 class UpdateReviewInput {
@@ -22,6 +23,9 @@ class UpdateReviewInput {
 
 @InputType()
 class UpdateRatingInput {
+  @Field(() => Float, { nullable: true })
+  overall?: number;
+
   @Field(() => Float, { nullable: true })
   display?: number;
 
@@ -54,76 +58,143 @@ export class ReviewResolver {
     @Arg("battery", () => Float, { nullable: true }) battery: number | null,
     @Arg("software", () => Float, { nullable: true }) software: number | null,
     @Arg("camera", () => Float, { nullable: true }) camera: number | null,
-    @Arg("processor", () => Float, { nullable: true }) processor: number | null
+    @Arg("processor", () => Float, { nullable: true }) processor: number | null,
+    @Arg("images", () => [String]) images: string[]
   ) {
+    const queryRunner = getConnection().createQueryRunner();
+    await queryRunner.connect();
+    await queryRunner.startTransaction();
+
     try {
-      const newReview = await getConnection().transaction(async (manager) => {
-        console.log("Create review....")
-        const review = await manager.create(Review, {
-          title,
-          content,
-          authorId,
-          deviceId,
-        })
-  
-        await manager.save(review)
-  
-        await manager.insert(ReviewRating, {
-          deviceId,
-          reviewId: review.id,
-          overall,
-          display,
-          battery,
-          software,
-          camera,
-          processor,
+      const manager = queryRunner.manager;
+      const review = await manager.create(Review, {
+        title,
+        content,
+        authorId,
+        deviceId,
+      });
+      await manager.insert(Review, review);
+      await manager.insert(ReviewRating, {
+        deviceId,
+        reviewId: review.id,
+        overall,
+        display,
+        battery,
+        software,
+        camera,
+        processor,
+      });
+
+      if (images.length != 0) {
+        await new Promise((resolve, reject) => {
+          let counter = 0;
+          for (const image of images) {
+            manager
+              .insert(ReviewImage, {
+                path: image,
+                reviewId: review.id,
+              })
+              .then(() => {
+                counter += 1;
+                if (counter === images.length) {
+                  resolve(true);
+                }
+              })
+              .catch((e) => {
+                console.log(e.message);
+                reject(e);
+              });
+          }
         });
-  
-        return await manager.createQueryBuilder(Review, "review")
+      }
+
+      const newReview = await manager
+        .createQueryBuilder(Review, "review")
         .leftJoinAndSelect("review.rating", "rating")
         .leftJoinAndSelect("review.author", "author")
-        
-        .where("review.id = :id", {id: review.id})
+        .where("review.id = :id", { id: review.id })
         .getOne();
-      })
-      console.log(newReview)
+
+      await queryRunner.commitTransaction();
+
       return {
         status: true,
-        message: "Create review successfully!",
-        data: [newReview]
+        message: "Create review successfully.",
+        data: [newReview],
       };
-    } catch(e) {
+    } catch (error) {
+      await queryRunner.rollbackTransaction();
       return {
         status: false,
-        message: e.message,
+        message: error.message,
       };
+    } finally {
+      await queryRunner.release();
     }
-    
   }
 
   @Mutation(() => ReviewResponse, { nullable: true })
   async updateReview(
     @Arg("id") id: string,
-    @Arg("input") input: UpdateReviewInput
+    @Arg("reviewInput") reviewInput: UpdateReviewInput,
+    @Arg("ratingInput") ratingInput: UpdateRatingInput,
+    @Arg("images", () => [String]) images: string[]
   ) {
-    await this.reviewRepo.update({ id }, input).catch((e) => {
-      return {
-        status: false,
-        message: e.message,
-      };
-    });
-    const review = this.reviewRepo.findOne({ id }).catch((e) => {
-      return {
-        status: false,
-        message: e.message,
-      };
-    });
+    const queryRunner = getConnection().createQueryRunner();
+    await queryRunner.connect();
+    await queryRunner.startTransaction();
 
-    return {
-      status: true,
-      message: "Update review successfully.",
-      data: [review],
-    };
+    try {
+      const manager = queryRunner.manager;
+      await manager.update(Review, { id }, reviewInput);
+      await manager.update(ReviewRating, { reviewId: id }, ratingInput);
+
+      if (images.length != 0) {
+        await new Promise((resolve, reject) => {
+          let counter = 0;
+          for (const image of images) {
+            manager
+              .insert(ReviewImage, {
+                path: image,
+                reviewId: id,
+              })
+              .then(() => {
+                counter += 1;
+                if (counter === images.length) {
+                  resolve(true);
+                }
+              })
+              .catch((e) => {
+                console.log(e.message);
+                reject(e);
+              });
+          }
+        });
+      }
+
+      const updatedReview = await manager
+        .createQueryBuilder(Review, "review")
+        .leftJoinAndSelect("review.rating", "rating")
+        .leftJoinAndSelect("review.author", "author")
+        .where("review.id = :id", { id })
+        .getOne();
+
+      queryRunner.commitTransaction();
+
+      return {
+        status: true,
+        message: "Update review successfully.",
+        data: [updatedReview],
+      };
+    } catch (error) {
+      queryRunner.rollbackTransaction();
+      return {
+        status: false,
+        message: error.message,
+      };
+    } finally {
+      queryRunner.release();
+    }
   }
 
   @Mutation(() => ReviewResponse)
@@ -143,11 +214,12 @@ export class ReviewResolver {
   @Query(() => ReviewResponse)
   async reviews(@Arg("deviceId") deviceId: string) {
     try {
-      const reviews = await this.reviewRepo.createQueryBuilder("review")
-      .leftJoinAndSelect("review.rating", "rating")
-      .where("review.deviceId = :deviceId", { deviceId })
-      .orderBy("review.createdAt", "DESC")
-      .getMany()
+      const reviews = await this.reviewRepo
+        .createQueryBuilder("review")
+        .leftJoinAndSelect("review.rating", "rating")
+        .where("review.deviceId = :deviceId", { deviceId })
+        .orderBy("review.createdAt", "DESC")
+        .getMany();
 
       return {
         status: true,
@@ -189,7 +261,7 @@ export class ReviewResolver {
     @Arg("camera", () => Float, { nullable: true }) camera: number | null,
     @Arg("processor", () => Float, { nullable: true }) processor: number | null
   ) {
-    try{
+    try {
       let newRating = await this.ratingRepo.create({
         deviceId,
         overall,
@@ -201,7 +273,7 @@ export class ReviewResolver {
         processor,
       });
 
-      await this.ratingRepo.insert(newRating)
+      await this.ratingRepo.insert(newRating);
 
       return {
         status: true,
@@ -214,10 +286,7 @@ export class ReviewResolver {
         status: false,
         message: e.message,
       };
-    })
-    
-
-    
+    }
   }
 
   @Mutation(() => ReviewRatingResponse, { nullable: true })

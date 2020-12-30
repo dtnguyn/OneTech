@@ -3,12 +3,13 @@ mutation CreateReview(
   $authorId: String!
   $title: String!
   $content: String!
-  $overall: Float!
-  $display: Float!
-  $processor: Float!
-  $battery: Float!
-  $software: Float!
-  $camera: Float!
+  $overall: Float
+  $display: Float
+  $processor: Float
+  $battery: Float
+  $software: Float
+  $camera: Float
+  $images: [String!]!
 ) {
   createReview(
     deviceId: $deviceId
@@ -21,6 +22,7 @@ mutation CreateReview(
     display: $display
     processor: $processor
     camera: $camera
+    images: $images
   ) {
     status
     message
@@ -38,6 +40,7 @@ mutation CreateReview(
       rating {
         reviewId
         deviceId
+        overall
         battery
         software
         display
@@ -45,5 +48,64 @@ mutation CreateReview(
         processor
       }
     }
+  }
+}
+
+mutation UpdateReview(
+  $id: String!
+  $title: String
+  $content: String
+  $overall: Float
+  $display: Float
+  $processor: Float
+  $battery: Float
+  $software: Float
+  $camera: Float
+  $images: [String!]!
+) {
+  updateReview(
+    id: $id
+    reviewInput: { title: $title, content: $content }
+    ratingInput: {
+      overall: $overall
+      battery: $battery
+      software: $software
+      display: $display
+      processor: $processor
+      camera: $camera
+    }
+    images: $images
+  ) {
+    status
+    message
+    data {
+      id
+      title
+      content
+      createdAt
+      author {
+        id
+        username
+        avatar
+      }
+      deviceId
+      rating {
+        reviewId
+        deviceId
+        overall
+        battery
+        software
+        display
+        camera
+        processor
+      }
+    }
+  }
+}
+
+mutation DeleteReview($id: String!) {
+  deleteReview(id: $id) {
+    status
+    message
   }
 }

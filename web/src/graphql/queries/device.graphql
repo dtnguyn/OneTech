@@ -73,6 +73,7 @@ query DeviceDetail($id: String!) {
         rating {
           reviewId
           deviceId
+          overall
           battery
           software
           display

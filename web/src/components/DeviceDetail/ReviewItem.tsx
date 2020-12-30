@@ -8,11 +8,15 @@ import SpecsTable from "./SpecsTable";
 
 interface ReviewItemProps {
   review: Review;
-  handleEdit: () => void;
-  handleDelete: () => void;
+  handleEdit: (review: Review) => void;
+  handleDelete: (id: string) => void;
 }
 
-const ReviewItem: React.FC<ReviewItemProps> = ({ review }) => {
+const ReviewItem: React.FC<ReviewItemProps> = ({
+  review,
+  handleEdit,
+  handleDelete,
+}) => {
   const { user } = useAuth();
 
   return (
@@ -49,12 +53,16 @@ const ReviewItem: React.FC<ReviewItemProps> = ({ review }) => {
               <img
                 src="/images/trash.png"
                 className={styles.postItemButton}
-                onClick={() => {}}
+                onClick={() => {
+                  handleDelete(review.id);
+                }}
               />
               <img
                 src="/images/pencil.png"
                 className={styles.postItemButton}
-                onClick={() => {}}
+                onClick={() => {
+                  handleEdit(review);
+                }}
               />
             </div>
           ) : null}

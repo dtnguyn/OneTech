@@ -34,6 +34,7 @@ export type Query = {
   singleReview: ReviewResponse;
   ratings: ReviewRatingResponse;
   problemImages: ProblemImageResponse;
+  reviewImages: ReviewImageResponse;
 };
 
 
@@ -214,6 +215,7 @@ export type Review = {
   authorId: Scalars['String'];
   author: User;
   deviceId: Scalars['String'];
+  images?: Maybe<Array<ReviewImage>>;
 };
 
 export type ReviewRating = {
@@ -228,6 +230,15 @@ export type ReviewRating = {
   processor?: Maybe<Scalars['Float']>;
   createdAt: Scalars['String'];
   updatedAt: Scalars['DateTime'];
+};
+
+export type ReviewImage = {
+  __typename?: 'ReviewImage';
+  path: Scalars['String'];
+  createdAt: Scalars['String'];
+  updatedAt: Scalars['DateTime'];
+  reviewId: Scalars['String'];
+  review: Review;
 };
 
 export type DeviceProblemStar = {
@@ -328,6 +339,13 @@ export type ProblemImageResponse = {
   status: Scalars['Boolean'];
   message: Scalars['String'];
   data?: Maybe<Array<ProblemImage>>;
+};
+
+export type ReviewImageResponse = {
+  __typename?: 'ReviewImageResponse';
+  status: Scalars['Boolean'];
+  message: Scalars['String'];
+  data?: Maybe<Array<ReviewImage>>;
 };
 
 export type Mutation = {
@@ -489,6 +507,7 @@ export type MutationToggleSolutionStarArgs = {
 
 
 export type MutationCreateReviewArgs = {
+  images: Array<Scalars['String']>;
   processor?: Maybe<Scalars['Float']>;
   camera?: Maybe<Scalars['Float']>;
   software?: Maybe<Scalars['Float']>;
@@ -503,7 +522,9 @@ export type MutationCreateReviewArgs = {
 
 
 export type MutationUpdateReviewArgs = {
-  input: UpdateReviewInput;
+  images: Array<Scalars['String']>;
+  ratingInput: UpdateRatingInput;
+  reviewInput: UpdateReviewInput;
   id: Scalars['String'];
 };
 
@@ -589,17 +610,18 @@ export type UpdateSolutionInput = {
   isPicked?: Maybe<Scalars['Boolean']>;
 };
 
-export type UpdateReviewInput = {
-  title?: Maybe<Scalars['String']>;
-  content?: Maybe<Scalars['String']>;
-};
-
 export type UpdateRatingInput = {
+  overall?: Maybe<Scalars['Float']>;
   display?: Maybe<Scalars['Float']>;
   camera?: Maybe<Scalars['Float']>;
   software?: Maybe<Scalars['Float']>;
   processor?: Maybe<Scalars['Float']>;
   battery?: Maybe<Scalars['Float']>;
+};
+
+export type UpdateReviewInput = {
+  title?: Maybe<Scalars['String']>;
+  content?: Maybe<Scalars['String']>;
 };
 
 export type UploadImageResponse = {
@@ -766,12 +788,13 @@ export type CreateReviewMutationVariables = Exact<{
   authorId: Scalars['String'];
   title: Scalars['String'];
   content: Scalars['String'];
-  overall: Scalars['Float'];
-  display: Scalars['Float'];
-  processor: Scalars['Float'];
-  battery: Scalars['Float'];
-  software: Scalars['Float'];
-  camera: Scalars['Float'];
+  overall?: Maybe<Scalars['Float']>;
+  display?: Maybe<Scalars['Float']>;
+  processor?: Maybe<Scalars['Float']>;
+  battery?: Maybe<Scalars['Float']>;
+  software?: Maybe<Scalars['Float']>;
+  camera?: Maybe<Scalars['Float']>;
+  images: Array<Scalars['String']>;
 }>;
 
 
@@ -788,10 +811,56 @@ export type CreateReviewMutation = (
         & Pick<User, 'id' | 'username' | 'avatar'>
       ), rating: (
         { __typename?: 'ReviewRating' }
-        & Pick<ReviewRating, 'reviewId' | 'deviceId' | 'battery' | 'software' | 'display' | 'camera' | 'processor'>
+        & Pick<ReviewRating, 'reviewId' | 'deviceId' | 'overall' | 'battery' | 'software' | 'display' | 'camera' | 'processor'>
       ) }
     )>> }
   )> }
+);
+
+export type UpdateReviewMutationVariables = Exact<{
+  id: Scalars['String'];
+  title?: Maybe<Scalars['String']>;
+  content?: Maybe<Scalars['String']>;
+  overall?: Maybe<Scalars['Float']>;
+  display?: Maybe<Scalars['Float']>;
+  processor?: Maybe<Scalars['Float']>;
+  battery?: Maybe<Scalars['Float']>;
+  software?: Maybe<Scalars['Float']>;
+  camera?: Maybe<Scalars['Float']>;
+  images: Array<Scalars['String']>;
+}>;
+
+
+export type UpdateReviewMutation = (
+  { __typename?: 'Mutation' }
+  & { updateReview?: Maybe<(
+    { __typename?: 'ReviewResponse' }
+    & Pick<ReviewResponse, 'status' | 'message'>
+    & { data?: Maybe<Array<(
+      { __typename?: 'Review' }
+      & Pick<Review, 'id' | 'title' | 'content' | 'createdAt' | 'deviceId'>
+      & { author: (
+        { __typename?: 'User' }
+        & Pick<User, 'id' | 'username' | 'avatar'>
+      ), rating: (
+        { __typename?: 'ReviewRating' }
+        & Pick<ReviewRating, 'reviewId' | 'deviceId' | 'overall' | 'battery' | 'software' | 'display' | 'camera' | 'processor'>
+      ) }
+    )>> }
+  )> }
+);
+
+export type DeleteReviewMutationVariables = Exact<{
+  id: Scalars['String'];
+}>;
+
+
+export type DeleteReviewMutation = (
+  { __typename?: 'Mutation' }
+  & { deleteReview: (
+    { __typename?: 'ReviewResponse' }
+    & Pick<ReviewResponse, 'status' | 'message'>
+  ) }
 );
 
 export type LogoutMutationVariables = Exact<{ [key: string]: never; }>;
@@ -872,7 +941,7 @@ export type DeviceDetailQuery = (
           & Pick<User, 'id' | 'username' | 'avatar'>
         ), rating: (
           { __typename?: 'ReviewRating' }
-          & Pick<ReviewRating, 'reviewId' | 'deviceId' | 'battery' | 'software' | 'display' | 'camera' | 'processor'>
+          & Pick<ReviewRating, 'reviewId' | 'deviceId' | 'overall' | 'battery' | 'software' | 'display' | 'camera' | 'processor'>
         ) }
       )>>, spec?: Maybe<(
         { __typename?: 'DeviceSpec' }
@@ -928,7 +997,7 @@ export type ReviewsQuery = (
       & Pick<Review, 'id' | 'title' | 'content' | 'createdAt' | 'deviceId'>
       & { rating: (
         { __typename?: 'ReviewRating' }
-        & Pick<ReviewRating, 'reviewId' | 'deviceId' | 'battery' | 'software' | 'display' | 'camera' | 'processor'>
+        & Pick<ReviewRating, 'reviewId' | 'deviceId' | 'overall' | 'battery' | 'software' | 'display' | 'camera' | 'processor'>
       ) }
     )>> }
   ) }
@@ -1272,7 +1341,7 @@ export type UpdateProblemMutationHookResult = ReturnType<typeof useUpdateProblem
 export type UpdateProblemMutationResult = Apollo.MutationResult<UpdateProblemMutation>;
 export type UpdateProblemMutationOptions = Apollo.BaseMutationOptions<UpdateProblemMutation, UpdateProblemMutationVariables>;
 export const CreateReviewDocument = gql`
-    mutation CreateReview($deviceId: String!, $authorId: String!, $title: String!, $content: String!, $overall: Float!, $display: Float!, $processor: Float!, $battery: Float!, $software: Float!, $camera: Float!) {
+    mutation CreateReview($deviceId: String!, $authorId: String!, $title: String!, $content: String!, $overall: Float, $display: Float, $processor: Float, $battery: Float, $software: Float, $camera: Float, $images: [String!]!) {
   createReview(
     deviceId: $deviceId
     authorId: $authorId
@@ -1284,6 +1353,7 @@ export const CreateReviewDocument = gql`
     display: $display
     processor: $processor
     camera: $camera
+    images: $images
   ) {
     status
     message
@@ -1301,6 +1371,7 @@ export const CreateReviewDocument = gql`
       rating {
         reviewId
         deviceId
+        overall
         battery
         software
         display
@@ -1336,6 +1407,7 @@ export type CreateReviewMutationFn = Apollo.MutationFunction<CreateReviewMutatio
  *      battery: // value for 'battery'
  *      software: // value for 'software'
  *      camera: // value for 'camera'
+ *      images: // value for 'images'
  *   },
  * });
  */
@@ -1345,6 +1417,108 @@ export function useCreateReviewMutation(baseOptions?: Apollo.MutationHookOptions
 export type CreateReviewMutationHookResult = ReturnType<typeof useCreateReviewMutation>;
 export type CreateReviewMutationResult = Apollo.MutationResult<CreateReviewMutation>;
 export type CreateReviewMutationOptions = Apollo.BaseMutationOptions<CreateReviewMutation, CreateReviewMutationVariables>;
+export const UpdateReviewDocument = gql`
+    mutation UpdateReview($id: String!, $title: String, $content: String, $overall: Float, $display: Float, $processor: Float, $battery: Float, $software: Float, $camera: Float, $images: [String!]!) {
+  updateReview(
+    id: $id
+    reviewInput: {title: $title, content: $content}
+    ratingInput: {overall: $overall, battery: $battery, software: $software, display: $display, processor: $processor, camera: $camera}
+    images: $images
+  ) {
+    status
+    message
+    data {
+      id
+      title
+      content
+      createdAt
+      author {
+        id
+        username
+        avatar
+      }
+      deviceId
+      rating {
+        reviewId
+        deviceId
+        overall
+        battery
+        software
+        display
+        camera
+        processor
+      }
+    }
+  }
+}
+    `;
+export type UpdateReviewMutationFn = Apollo.MutationFunction<UpdateReviewMutation, UpdateReviewMutationVariables>;
+
+/**
+ * __useUpdateReviewMutation__
+ *
+ * To run a mutation, you first call `useUpdateReviewMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useUpdateReviewMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [updateReviewMutation, { data, loading, error }] = useUpdateReviewMutation({
+ *   variables: {
+ *      id: // value for 'id'
+ *      title: // value for 'title'
+ *      content: // value for 'content'
+ *      overall: // value for 'overall'
+ *      display: // value for 'display'
+ *      processor: // value for 'processor'
+ *      battery: // value for 'battery'
+ *      software: // value for 'software'
+ *      camera: // value for 'camera'
+ *      images: // value for 'images'
+ *   },
+ * });
+ */
+export function useUpdateReviewMutation(baseOptions?: Apollo.MutationHookOptions<UpdateReviewMutation, UpdateReviewMutationVariables>) {
+        return Apollo.useMutation<UpdateReviewMutation, UpdateReviewMutationVariables>(UpdateReviewDocument, baseOptions);
+      }
+export type UpdateReviewMutationHookResult = ReturnType<typeof useUpdateReviewMutation>;
+export type UpdateReviewMutationResult = Apollo.MutationResult<UpdateReviewMutation>;
+export type UpdateReviewMutationOptions = Apollo.BaseMutationOptions<UpdateReviewMutation, UpdateReviewMutationVariables>;
+export const DeleteReviewDocument = gql`
+    mutation DeleteReview($id: String!) {
+  deleteReview(id: $id) {
+    status
+    message
+  }
+}
+    `;
+export type DeleteReviewMutationFn = Apollo.MutationFunction<DeleteReviewMutation, DeleteReviewMutationVariables>;
+
+/**
+ * __useDeleteReviewMutation__
+ *
+ * To run a mutation, you first call `useDeleteReviewMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useDeleteReviewMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [deleteReviewMutation, { data, loading, error }] = useDeleteReviewMutation({
+ *   variables: {
+ *      id: // value for 'id'
+ *   },
+ * });
+ */
+export function useDeleteReviewMutation(baseOptions?: Apollo.MutationHookOptions<DeleteReviewMutation, DeleteReviewMutationVariables>) {
+        return Apollo.useMutation<DeleteReviewMutation, DeleteReviewMutationVariables>(DeleteReviewDocument, baseOptions);
+      }
+export type DeleteReviewMutationHookResult = ReturnType<typeof useDeleteReviewMutation>;
+export type DeleteReviewMutationResult = Apollo.MutationResult<DeleteReviewMutation>;
+export type DeleteReviewMutationOptions = Apollo.BaseMutationOptions<DeleteReviewMutation, DeleteReviewMutationVariables>;
 export const LogoutDocument = gql`
     mutation Logout {
   logout {
@@ -1478,6 +1652,7 @@ export const DeviceDetailDocument = gql`
         rating {
           reviewId
           deviceId
+          overall
           battery
           software
           display
@@ -1602,6 +1777,7 @@ export const ReviewsDocument = gql`
       rating {
         reviewId
         deviceId
+        overall
         battery
         software
         display
