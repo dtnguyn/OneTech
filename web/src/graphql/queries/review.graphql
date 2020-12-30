@@ -9,6 +9,7 @@ query Reviews($deviceId: String!) {
       rating {
         reviewId
         deviceId
+        overall
         battery
         software
         display

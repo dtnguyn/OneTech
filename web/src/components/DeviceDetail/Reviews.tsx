@@ -1,5 +1,10 @@
 import React, { useEffect, useState } from "react";
-import { Review, useCreateReviewMutation } from "../../generated/graphql";
+import {
+  Review,
+  useCreateReviewMutation,
+  useDeleteReviewMutation,
+  useUpdateReviewMutation,
+} from "../../generated/graphql";
 import styles from "../../styles/DeviceDetail.module.css";
 import ConfirmationDialog from "../ConfirmationDialog";
 import CustomEditor from "../CustomEditor";
@@ -36,6 +41,7 @@ const Reviews: React.FC<ReviewsProps> = ({
   const { user } = useAuth();
 
   const [reviewValue, setReviewValue] = useState({
+    id: "",
     title: "",
     content: "",
     rating: {
@@ -61,9 +67,12 @@ const Reviews: React.FC<ReviewsProps> = ({
   const [specsArr, setSpecsArr] = useState<Array<string>>([]);
 
   const [createReviewMutation, {}] = useCreateReviewMutation();
+  const [deleteReviewMutation, {}] = useDeleteReviewMutation();
+  const [updateReviewMutation, {}] = useUpdateReviewMutation();
 
   const resetReviewValue = () => {
     setReviewValue({
+      id: "",
       title: "",
       content: "",
       rating: {
@@ -101,7 +110,8 @@ const Reviews: React.FC<ReviewsProps> = ({
     authorId: string,
     title: string,
     content: string,
-    rating: any
+    rating: any,
+    images: string[]
   ) => {
     await createReviewMutation({
       variables: {
@@ -115,6 +125,7 @@ const Reviews: React.FC<ReviewsProps> = ({
         processor: rating.processor,
         software: rating.software,
         camera: rating.camera,
+        images,
       },
     })
       .then((res) => {
@@ -125,12 +136,97 @@ const Reviews: React.FC<ReviewsProps> = ({
           resetReviewValue();
           closeAdding();
         } else {
-          alert(res.data?.createReview?.message);
+          throw Error(res.data?.createReview?.message);
         }
       })
       .catch((e) => {
         alert(e.message);
       });
+  };
+
+  const handleUpdateReview = (
+    id: string,
+    title: string,
+    content: string,
+    rating: any,
+    images: string[]
+  ) => {
+    updateReviewMutation({
+      variables: {
+        id,
+        title,
+        content,
+        overall: rating.overall,
+        display: rating.display,
+        processor: rating.processor,
+        battery: rating.battery,
+        software: rating.software,
+        camera: rating.camera,
+        images,
+      },
+    })
+      .then((res) => {
+        if (res.data?.updateReview?.status) {
+          const updatedReview = res.data.updateReview.data![0] as Review;
+          setReviews(
+            reviews.map((review) => {
+              if (review.id === updatedReview.id) return updatedReview;
+              return review;
+            })
+          );
+          resetReviewValue();
+          closeEditing();
+        } else {
+          throw Error(res.data?.updateReview?.message);
+        }
+      })
+      .catch((error) => {
+        alert(error.message);
+      });
+  };
+
+  const handleDeleteReview = async (id: string) => {
+    await deleteReviewMutation({
+      variables: {
+        id,
+      },
+    })
+      .then((res) => {
+        if (res.data?.deleteReview.status) {
+          setReviews(
+            reviews.filter((review) => {
+              return review.id !== id;
+            })
+          );
+        } else throw Error(res.data?.deleteReview.message);
+      })
+      .catch((error) => {
+        alert(error.message);
+      });
+  };
+
+  const initialDeleteReviewDialog = (id: string) => {
+    setConfirmationDialog({
+      ...confirmationDialog,
+      show: true,
+      title: "Delete Review",
+      content: "Do you want to delete this post?",
+      positiveText: "Yes",
+      negativeText: "Nope",
+      handleNegative: () => {
+        setConfirmationDialog({
+          ...confirmationDialog,
+          show: false,
+        });
+      },
+      handlePositive: () => {
+        handleDeleteReview(id);
+        setConfirmationDialog({
+          ...confirmationDialog,
+          show: false,
+        });
+      },
+    });
   };
 
   useEffect(() => {
@@ -175,16 +271,24 @@ const Reviews: React.FC<ReviewsProps> = ({
                   if (adding) {
                     //adding review
                     if (!user) return;
-                    console.log(reviewValue);
                     handleCreateReview(
                       deviceId,
                       user.id,
                       reviewValue.title,
                       reviewValue.content,
-                      reviewValue.rating
+                      reviewValue.rating,
+                      images
                     );
                   } else {
+                    if (!user) return;
                     //edit review
+                    handleUpdateReview(
+                      reviewValue.id,
+                      reviewValue.title,
+                      reviewValue.content,
+                      reviewValue.rating,
+                      images
+                    );
                   }
                 }}
                 handleCancel={() => {
@@ -226,8 +330,26 @@ const Reviews: React.FC<ReviewsProps> = ({
           return (
             <ReviewItem
               review={review}
-              handleDelete={() => {}}
-              handleEdit={() => {}}
+              handleDelete={(id: string) => {
+                initialDeleteReviewDialog(id);
+              }}
+              handleEdit={(review: Review) => {
+                console.log(review.rating);
+                const rating = reviewValue.rating;
+                const newRating = review.rating as any;
+                for (const spec of specsArr) {
+                  rating[spec.toLowerCase()] = newRating[spec.toLowerCase()];
+                }
+                rating.overall = newRating.overall;
+                setReviewValue({
+                  ...reviewValue,
+                  id: review.id,
+                  title: review.title,
+                  content: review.content,
+                  rating,
+                });
+                openEditing();
+              }}
             />
           );
         })

@@ -3,11 +3,12 @@ import {
   ProblemImageResponse,
   UploadImageResponse,
 } from "../entities/ProblemImage";
-import { Arg, Field, InputType, Mutation, Query, Resolver } from "type-graphql";
+import { Arg, Mutation, Query, Resolver } from "type-graphql";
 import { Storage } from "@google-cloud/storage";
 import path from "path";
 import stream from "stream";
 import { getRepository } from "typeorm";
+import { ReviewImage, ReviewImageResponse } from "../entities/ReviewImage";
 
 const gc = new Storage({
   keyFilename: path.join(__dirname, `../../${process.env.GOOGLE_STORAGE}`),
@@ -19,6 +20,7 @@ const bucket = gc.bucket(process.env.BUCKET_NAME!);
 @Resolver()
 export class ImageResolver {
   problemImageRepo = getRepository(ProblemImage);
+  reviewImageRepo = getRepository(ReviewImage);
 
   @Mutation(() => UploadImageResponse)
   async uploadImage(
@@ -109,6 +111,17 @@ export class ImageResolver {
     return {
       status: true,
       message: "Getting problem images successfully!",
+      data: images,
+    };
+  }
+
+  @Query(() => ReviewImageResponse)
+  async reviewImages() {
+    const images = await this.reviewImageRepo.find();
+
+    return {
+      status: true,
+      message: "Getting review images successfully!",
       data: images,
     };
   }

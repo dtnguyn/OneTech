@@ -8,8 +8,10 @@ import {
   ManyToOne,
   JoinColumn,
   OneToOne,
+  OneToMany,
 } from "typeorm";
 import { Device } from "./Device";
+import { ReviewImage } from "./ReviewImage";
 import { ReviewRating } from "./ReviewRating";
 import { User } from "./User";
 
@@ -60,6 +62,10 @@ export class Review {
   })
   @JoinColumn({ name: "deviceId" })
   device: Device;
+
+  @Field(() => [ReviewImage], { nullable: true })
+  @OneToMany(() => ReviewImage, (image) => image.review)
+  images: ReviewImage[];
 }
 
 @ObjectType()
