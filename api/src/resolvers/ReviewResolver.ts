@@ -222,7 +222,8 @@ export class ReviewResolver {
       const builder = await this.reviewRepo
         .createQueryBuilder("review")
         .leftJoinAndSelect("review.author", "author")
-        .leftJoinAndSelect("review.rating", "rating");
+        .leftJoinAndSelect("review.rating", "rating")
+        .leftJoinAndSelect("review.images", "images");
 
       if (authorId) builder.where("review.authorId = :authorId", { authorId });
       if (deviceId) builder.where("review.deviceId = :deviceId", { deviceId });
@@ -343,19 +344,28 @@ export class ReviewResolver {
 
   @Query(() => ReviewRatingResponse)
   async ratings(@Arg("deviceId") deviceId: string) {
-    const ratings = await this.ratingRepo
-      .find({ reviewId: "a0d13e55-3000-475c-bf7d-2b07d67ee79f" })
-      .catch((e) => {
-        return {
-          status: false,
-          message: e.message,
-        };
-      });
-    console.log("rating: ", ratings);
+    // const ratings = await this.ratingRepo.find({ deviceId }).catch((e) => {
+    //   return {
+    //     status: false,
+    //     message: e.message,
+    //   };
+    // });
+    const rating = await this.ratingRepo
+      .createQueryBuilder("rating")
+      .select("AVG(rating.display)", "display")
+      .addSelect("AVG(rating.overall)", "overall")
+      .addSelect("AVG(rating.display)", "display")
+      .addSelect("AVG(rating.processor)", "processor")
+      .addSelect("AVG(rating.battery)", "battery")
+      .addSelect("AVG(rating.software)", "software")
+      .addSelect("AVG(rating.camera)", "camera")
+      .where("rating.deviceId = :deviceId", { deviceId })
+      .getRawOne();
+
     return {
       status: true,
       message: "Get ratings successfully.",
-      data: ratings,
+      data: [rating],
     };
   }
 }

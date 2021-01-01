@@ -2,8 +2,13 @@ import ProblemItem from "./ProblemItem";
 
 import styles from "../../styles/DeviceDetail.module.css";
 import {
+  DeviceDetailDocument,
+  DeviceDetailQuery,
   DeviceProblem,
   DeviceProblemStar,
+  DevicesQuery,
+  ProblemsDocument,
+  ProblemsQuery,
   useCreateProblemMutation,
   useDeleteImagesMutation,
   useDeleteProblemMutation,
@@ -82,17 +87,22 @@ const Problems: React.FC<ProblemsProps> = ({
         content,
         images,
       },
-    }).then((res) => {
-      if (res.data?.createProblem?.status) {
-        const newProblem = res.data?.createProblem.data![0] as DeviceProblem;
-        console.log(newProblem);
-        if (newProblem) setProblems([newProblem, ...problems]);
-
-        closeAdding();
-        setProblemTitleValue("");
-        setEditTextValue("");
-      }
-    });
+      update: (cache) => {
+        cache.evict({ fieldName: "problems" });
+      },
+    })
+      .then((res) => {
+        if (res.data?.createProblem?.status) {
+          closeAdding();
+          setProblemTitleValue("");
+          setEditTextValue("");
+        } else {
+          throw Error(res.data?.createProblem?.message);
+        }
+      })
+      .catch((error) => {
+        alert(error.message);
+      });
   };
 
   const handleEditProblem = async (
@@ -108,45 +118,41 @@ const Problems: React.FC<ProblemsProps> = ({
         content,
         images,
       },
-    }).then((res) => {
-      if (res.data?.updateProblem.status) {
-        const updatedProblem = res.data?.updateProblem
-          .data![0] as DeviceProblem;
-        console.log(updatedProblem);
-        setProblems(
-          problems.map((_problem) => {
-            if (_problem.id === updatedProblem.id) {
-              return updatedProblem;
-            }
-            return _problem;
-          })
-        );
-        closeEditing();
-        setProblemTitleValue("");
-        setEditTextValue("");
-      }
-    });
+    })
+      .then((res) => {
+        if (res.data?.updateProblem.status) {
+          closeEditing();
+          setProblemTitleValue("");
+          setEditTextValue("");
+        } else {
+          throw Error(res.data?.updateProblem.message);
+        }
+      })
+      .catch((error) => {
+        alert(error.message);
+      });
   };
 
   const handleDeleteProblem = async (id: string, images: string[]) => {
     try {
-      await deleteImagesMutation({
-        variables: {
-          imageIds: images,
-        },
-      });
+      if (images.length != 0) {
+        await deleteImagesMutation({
+          variables: {
+            imageIds: images,
+          },
+        });
+      }
 
       await deleteProblemMutation({
         variables: {
           id,
         },
+        update: (cache) => {
+          cache.evict({ fieldName: "problems" });
+        },
       }).then((res) => {
-        if (res.data?.deleteProblem.status) {
-          setProblems(
-            problems.filter((_problem) => {
-              return _problem.id != id;
-            })
-          );
+        if (!res.data?.deleteProblem.status) {
+          throw Error(res.data?.deleteProblem.message);
         }
       });
     } catch (error) {
@@ -164,21 +170,15 @@ const Problems: React.FC<ProblemsProps> = ({
         problemId: problem.id,
         userId: user!.id,
       },
-    }).then((res) => {
-      if (res.data?.toggleProblemStar.status) {
-        const starred = !isStarred;
-        const updatedProblem = res.data.toggleProblemStar
-          .data![0] as DeviceProblem;
-        setProblems(
-          problems.map((_problem) => {
-            if (problem.id === _problem.id) {
-              return updatedProblem;
-            }
-            return _problem;
-          })
-        );
-      }
-    });
+    })
+      .then((res) => {
+        if (!res.data?.toggleProblemStar.status) {
+          throw Error(res.data?.toggleProblemStar.message);
+        }
+      })
+      .catch((error) => {
+        alert(error.message);
+      });
   };
 
   const initialDeleteProblemDialog = (id: string, images: string[]) => {

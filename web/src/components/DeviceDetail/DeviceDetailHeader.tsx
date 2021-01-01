@@ -1,6 +1,10 @@
 import { useEffect, useState } from "react";
 import { Button } from "react-bootstrap";
-import { Device, useToggleDeviceFollowMutation } from "../../generated/graphql";
+import {
+  Device,
+  ReviewRating,
+  useToggleDeviceFollowMutation,
+} from "../../generated/graphql";
 import styles from "../../styles/DeviceDetail.module.css";
 import SpecsTable from "./SpecsTable";
 import Switcher from "../Switcher";
@@ -8,9 +12,10 @@ import { useAuth } from "../../context/AuthContext";
 
 interface HeaderProps {
   device: Device;
+  rating: any;
 }
 
-const Header: React.FC<HeaderProps> = ({ device }) => {
+const Header: React.FC<HeaderProps> = ({ device, rating }) => {
   const [switchState, setSwitchState] = useState("technical");
   const [followed, setFollowed] = useState(false);
   const { user } = useAuth();
@@ -27,11 +32,27 @@ const Header: React.FC<HeaderProps> = ({ device }) => {
         deviceId,
         userId,
       },
-    }).then((res) => {
-      if (res.data?.toggleDeviceFollow.status) {
-        setFollowed(!followState);
-      }
-    });
+      update: (cache) => {
+        console.log(cache);
+        cache.evict({ fieldName: "singleDevice" });
+      },
+    })
+      .then((res) => {
+        if (!res.data?.toggleDeviceFollow.status) {
+          throw Error(res.data?.toggleDeviceFollow.message);
+        }
+      })
+      .catch((error) => {
+        alert(error.message);
+      });
+  };
+
+  const getAverage = (numArr: number[]) => {
+    let sum = 0;
+    for (const num of numArr) {
+      sum += num;
+    }
+    return sum / numArr.length;
   };
 
   useEffect(() => {
@@ -47,7 +68,7 @@ const Header: React.FC<HeaderProps> = ({ device }) => {
       }
     }
     setFollowed(false);
-  }, [user]);
+  }, [user, device]);
 
   return (
     <div className={`row ${styles.deviceDetailHeaderContainer}`}>
@@ -60,6 +81,7 @@ const Header: React.FC<HeaderProps> = ({ device }) => {
         <SpecsTable
           switchState={switchState}
           spec={device.spec}
+          rating={rating}
           category={device.category}
         />
         <Button

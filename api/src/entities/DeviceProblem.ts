@@ -72,7 +72,7 @@ export class DeviceProblem {
   @OneToMany(() => Solution, (solution) => solution.problem)
   solutions: Solution[];
 
-  @Field(() => [ProblemImage], { nullable: true })
+  @Field(() => [ProblemImage])
   @OneToMany(() => ProblemImage, (image) => image.problem)
   images: ProblemImage[];
 }

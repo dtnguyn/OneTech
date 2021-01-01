@@ -209,29 +209,20 @@ export class DeviceResolver {
     try {
       const device = await this.deviceRepo
         .createQueryBuilder("device")
-        .leftJoinAndSelect("device.problems", "problems")
-        .orderBy("problems.createdAt", "DESC")
         .leftJoinAndSelect("device.followers", "followers")
-        .leftJoinAndSelect("problems.stars", "stars")
-        .leftJoinAndSelect("problems.solutions", "solutions")
-        .leftJoinAndSelect("problems.author", "author")
-        .leftJoinAndSelect("problems.images", "problemImages")
         .leftJoinAndSelect("device.spec", "spec")
-        .leftJoinAndSelect("device.reviews", "reviews")
-        .addOrderBy("reviews.createdAt", "DESC")
-        .leftJoinAndSelect("reviews.author", "reviewAuthor")
-        .leftJoinAndSelect("reviews.rating", "rating")
-        .leftJoinAndSelect("reviews.images", "reviewImages")
         .where("device.id = :id", { id })
         .getOne();
 
-      console.log(device?.problems);
+      console.log("Got device detail");
+
       return {
         status: true,
         message: "Get a device successfully.",
         data: [device],
       };
     } catch (e) {
+      console.log(e.message);
       return {
         status: false,
         message: e.message,

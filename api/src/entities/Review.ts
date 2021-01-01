@@ -63,7 +63,7 @@ export class Review {
   @JoinColumn({ name: "deviceId" })
   device: Device;
 
-  @Field(() => [ReviewImage], { nullable: true })
+  @Field(() => [ReviewImage])
   @OneToMany(() => ReviewImage, (image) => image.review)
   images: ReviewImage[];
 }

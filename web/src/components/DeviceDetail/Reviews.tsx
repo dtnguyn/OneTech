@@ -129,12 +129,13 @@ const Reviews: React.FC<ReviewsProps> = ({
         camera: rating.camera,
         images,
       },
+      update: (cache) => {
+        cache.evict({ fieldName: "reviews" });
+        cache.evict({ fieldName: "ratings" });
+      },
     })
       .then((res) => {
         if (res.data?.createReview?.status) {
-          console.log("Create review successfully");
-          const newReview = res.data.createReview.data![0] as Review;
-          setReviews([newReview, ...reviews]);
           resetReviewValue();
           closeAdding();
         } else {
@@ -166,16 +167,12 @@ const Reviews: React.FC<ReviewsProps> = ({
         camera: rating.camera,
         images,
       },
+      update: (cache) => {
+        cache.evict({ fieldName: "ratings" });
+      },
     })
       .then((res) => {
         if (res.data?.updateReview?.status) {
-          const updatedReview = res.data.updateReview.data![0] as Review;
-          setReviews(
-            reviews.map((review) => {
-              if (review.id === updatedReview.id) return updatedReview;
-              return review;
-            })
-          );
           resetReviewValue();
           closeEditing();
         } else {
@@ -189,24 +186,25 @@ const Reviews: React.FC<ReviewsProps> = ({
 
   const handleDeleteReview = async (id: string, images: string[]) => {
     try {
-      await deleteImagesMutation({
-        variables: {
-          imageIds: images,
-        },
-      });
+      if (images.length !== 0) {
+        await deleteImagesMutation({
+          variables: {
+            imageIds: images,
+          },
+        });
+      }
 
       await deleteReviewMutation({
         variables: {
           id,
         },
+        update: (cache) => {
+          cache.evict({ fieldName: "reviews" });
+        },
       }).then((res) => {
-        if (res.data?.deleteReview.status) {
-          setReviews(
-            reviews.filter((review) => {
-              return review.id !== id;
-            })
-          );
-        } else throw Error(res.data?.deleteReview.message);
+        if (!res.data?.deleteReview.status) {
+          throw Error(res.data?.deleteReview.message);
+        }
       });
     } catch (error) {
       alert(error.message);
@@ -262,7 +260,32 @@ const Reviews: React.FC<ReviewsProps> = ({
               setReviewValue({ ...reviewValue, title: e.target.value })
             }
           />
-          <div className="row">
+          <div className="row flex-row-reverse">
+            <div className="col-lg-6 col-md-12">
+              <br />
+              <h5>Rating</h5>
+              <br />
+              {specsArr.map((spec) => (
+                <div key={spec}>
+                  <p>{spec}</p>
+                  <CustomSlider
+                    defaultValue={reviewValue.rating[spec.toLowerCase()]}
+                    onChangeCommitted={(_, value) => {
+                      console.log(reviewValue);
+                      const rating = reviewValue.rating;
+                      rating[spec.toLowerCase()] = value;
+                      setReviewValue({ ...reviewValue, rating });
+                      calculateOverall();
+                    }}
+                    aria-labelledby="discrete-slider"
+                    valueLabelDisplay="auto"
+                    step={0}
+                    min={0}
+                    max={10}
+                  />
+                </div>
+              ))}
+            </div>
             <div className="col-lg-6 col-md-12">
               <CustomEditor
                 value={reviewValue.content}
@@ -305,31 +328,6 @@ const Reviews: React.FC<ReviewsProps> = ({
                   resetReviewValue();
                 }}
               />
-            </div>
-            <div className="col-lg-6 col-md-12">
-              <br />
-              <h5>Rating</h5>
-              <br />
-              {specsArr.map((spec) => (
-                <>
-                  <p>{spec}</p>
-                  <CustomSlider
-                    defaultValue={reviewValue.rating[spec.toLowerCase()]}
-                    onChangeCommitted={(_, value) => {
-                      console.log(reviewValue);
-                      const rating = reviewValue.rating;
-                      rating[spec.toLowerCase()] = value;
-                      setReviewValue({ ...reviewValue, rating });
-                      calculateOverall();
-                    }}
-                    aria-labelledby="discrete-slider"
-                    valueLabelDisplay="auto"
-                    step={0.5}
-                    min={0}
-                    max={10}
-                  />
-                </>
-              ))}
             </div>
           </div>
         </>

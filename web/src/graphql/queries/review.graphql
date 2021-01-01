@@ -21,6 +21,9 @@ query Reviews(
       content
       createdAt
       deviceId
+      images {
+        path
+      }
       rating {
         reviewId
         deviceId

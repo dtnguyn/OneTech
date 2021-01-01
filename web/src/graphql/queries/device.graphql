@@ -39,6 +39,16 @@ query DeviceDetail($id: String!) {
       followers {
         userId
       }
+      ratings {
+        reviewId
+        deviceId
+        overall
+        battery
+        software
+        display
+        camera
+        processor
+      }
       problems {
         id
         title
@@ -99,6 +109,21 @@ query DeviceDetail($id: String!) {
         cameraSimplify
         processorSimplify
       }
+    }
+  }
+}
+
+query deviceRatings($deviceId: String!) {
+  ratings(deviceId: $deviceId) {
+    status
+    message
+    data {
+      overall
+      display
+      camera
+      software
+      battery
+      processor
     }
   }
 }
