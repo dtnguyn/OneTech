@@ -78,11 +78,12 @@ const Body: React.FC<BodyProps> = ({ deviceId, deviceCategory }) => {
 
   useEffect(() => {
     const problemArr = problemsData?.problems?.data as DeviceProblem[];
+    console.log("setttt", problemArr);
     if (problemArr && problemArr.length != 0) {
       //found problems
       if (!initialState.problems) {
-        setProblems(problemArr);
       }
+      setProblems(problemArr);
       setInitialState({ ...initialState, problems: false });
     } else if (problemArr && problemArr.length == 0) {
       //not found
@@ -97,9 +98,9 @@ const Body: React.FC<BodyProps> = ({ deviceId, deviceCategory }) => {
       //found reviews
 
       if (!initialState.reviews) {
-        setReviews(reviewArr);
       }
 
+      setReviews(reviewArr);
       setInitialState({ ...initialState, reviews: false });
     } else if (reviewArr && reviewArr.length == 0) {
       //not found

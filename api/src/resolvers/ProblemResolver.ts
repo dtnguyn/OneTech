@@ -187,6 +187,7 @@ export class ProblemResolver {
       builder
         .leftJoinAndSelect("problem.author", "author")
         .leftJoinAndSelect("problem.stars", "stars")
+        .leftJoinAndSelect("problem.images", "images")
         .leftJoinAndSelect("problem.solutions", "solutions");
       if (authorId) builder.where("problem.authorId = :authorId", { authorId });
       if (deviceId) builder.where("problem.deviceId = :deviceId", { deviceId });

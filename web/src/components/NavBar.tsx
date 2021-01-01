@@ -15,9 +15,8 @@ const NavBar: React.FC<NavBarProps> = ({}) => {
   const { user, setUser } = useAuth();
   const [dropdown, setDropDown] = useState(false);
   const router = useRouter();
-  const [logoutMutation, { data, loading, error }] = useLogoutMutation({
-    variables: {},
-    client,
+  const [logoutMutation, {}] = useLogoutMutation({
+    client: client,
   });
 
   return (
@@ -85,11 +84,12 @@ const NavBar: React.FC<NavBarProps> = ({}) => {
             className={styles.dropdownItem}
             onClick={() => {
               setDropDown(false);
-              logoutMutation().then((res) => {
+              logoutMutation({
+                update: (cache) => cache.evict({ fieldName: "me" }),
+              }).then((res) => {
                 const response = res.data?.logout;
                 if (response?.status) {
                   router.push("/auth");
-                  setUser(null);
                 } else {
                   alert(response?.message);
                 }

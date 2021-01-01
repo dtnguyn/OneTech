@@ -10,7 +10,9 @@ import {
   Device,
   DeviceProblem,
   Review,
+  ReviewRating,
   useDeviceDetailQuery,
+  useDeviceRatingsQuery,
 } from "../../generated/graphql";
 import styles from "../../styles/DeviceDetail.module.css";
 import { client, withApollo } from "../../utils/withApollo";
@@ -23,25 +25,33 @@ const DeviceDetail: React.FC<DeviceDetailProps> = ({}) => {
   const [device, setDevice] = useState<Device>();
   const [problems, setProblems] = useState<DeviceProblem[]>([]);
   const [reviews, setReviews] = useState<Review[]>([]);
-  const { data, error } = useDeviceDetailQuery({
+  const [rating, setRating] = useState<ReviewRating>();
+  const { data, loading } = useDeviceDetailQuery({
     variables: {
       id: id as string,
     },
   });
 
+  const { data: ratingData } = useDeviceRatingsQuery({
+    variables: {
+      deviceId: id as string,
+    },
+  });
+
   useEffect(() => {
+    console.log("Call here", data?.singleDevice?.data);
     const devices = data?.singleDevice?.data as Device[];
-    console.log("Get device detail...", device?.problems, device?.reviews);
     if (devices && devices.length != 0) {
       setDevice(devices[0]);
-      if (devices[0].problems && devices[0].problems.length != 0) {
-        setProblems(devices[0].problems);
-      }
-      if (devices[0].reviews && devices[0].reviews.length != 0) {
-        setReviews(devices[0].reviews);
-      }
     }
-  }, []);
+  }, [data]);
+
+  useEffect(() => {
+    const ratings = ratingData?.ratings?.data as ReviewRating[];
+    if (ratings && ratings?.length === 1) {
+      setRating(ratings[0]);
+    }
+  }, [ratingData]);
 
   if (!device) return null;
 
@@ -49,7 +59,7 @@ const DeviceDetail: React.FC<DeviceDetailProps> = ({}) => {
     <ProblemContext.Provider value={{ problems, setProblems }}>
       <ReviewContext.Provider value={{ reviews, setReviews }}>
         <div className={styles.deviceDetailContainer}>
-          <Header device={device} />
+          <Header device={device} rating={rating} />
           <br />
           <br />
           <Divider />

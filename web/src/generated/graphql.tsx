@@ -923,6 +923,9 @@ export type DeviceDetailQuery = (
       & { followers?: Maybe<Array<(
         { __typename?: 'DeviceFollower' }
         & Pick<DeviceFollower, 'userId'>
+      )>>, ratings?: Maybe<Array<(
+        { __typename?: 'ReviewRating' }
+        & Pick<ReviewRating, 'reviewId' | 'deviceId' | 'overall' | 'battery' | 'software' | 'display' | 'camera' | 'processor'>
       )>>, problems?: Maybe<Array<(
         { __typename?: 'DeviceProblem' }
         & Pick<DeviceProblem, 'id' | 'title' | 'content' | 'isSolve' | 'createdAt' | 'updatedAt'>
@@ -958,6 +961,23 @@ export type DeviceDetailQuery = (
       )> }
     )>> }
   )> }
+);
+
+export type DeviceRatingsQueryVariables = Exact<{
+  deviceId: Scalars['String'];
+}>;
+
+
+export type DeviceRatingsQuery = (
+  { __typename?: 'Query' }
+  & { ratings: (
+    { __typename?: 'ReviewRatingResponse' }
+    & Pick<ReviewRatingResponse, 'status' | 'message'>
+    & { data?: Maybe<Array<(
+      { __typename?: 'ReviewRating' }
+      & Pick<ReviewRating, 'overall' | 'display' | 'camera' | 'software' | 'battery' | 'processor'>
+    )>> }
+  ) }
 );
 
 export type ProblemsQueryVariables = Exact<{
@@ -1010,7 +1030,10 @@ export type ReviewsQuery = (
       & { author: (
         { __typename?: 'User' }
         & Pick<User, 'id' | 'username' | 'avatar'>
-      ), rating: (
+      ), images?: Maybe<Array<(
+        { __typename?: 'ReviewImage' }
+        & Pick<ReviewImage, 'path'>
+      )>>, rating: (
         { __typename?: 'ReviewRating' }
         & Pick<ReviewRating, 'reviewId' | 'deviceId' | 'overall' | 'battery' | 'software' | 'display' | 'camera' | 'processor'>
       ) }
@@ -1633,6 +1656,16 @@ export const DeviceDetailDocument = gql`
       followers {
         userId
       }
+      ratings {
+        reviewId
+        deviceId
+        overall
+        battery
+        software
+        display
+        camera
+        processor
+      }
       problems {
         id
         title
@@ -1723,6 +1756,48 @@ export function useDeviceDetailLazyQuery(baseOptions?: Apollo.LazyQueryHookOptio
 export type DeviceDetailQueryHookResult = ReturnType<typeof useDeviceDetailQuery>;
 export type DeviceDetailLazyQueryHookResult = ReturnType<typeof useDeviceDetailLazyQuery>;
 export type DeviceDetailQueryResult = Apollo.QueryResult<DeviceDetailQuery, DeviceDetailQueryVariables>;
+export const DeviceRatingsDocument = gql`
+    query deviceRatings($deviceId: String!) {
+  ratings(deviceId: $deviceId) {
+    status
+    message
+    data {
+      overall
+      display
+      camera
+      software
+      battery
+      processor
+    }
+  }
+}
+    `;
+
+/**
+ * __useDeviceRatingsQuery__
+ *
+ * To run a query within a React component, call `useDeviceRatingsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useDeviceRatingsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useDeviceRatingsQuery({
+ *   variables: {
+ *      deviceId: // value for 'deviceId'
+ *   },
+ * });
+ */
+export function useDeviceRatingsQuery(baseOptions: Apollo.QueryHookOptions<DeviceRatingsQuery, DeviceRatingsQueryVariables>) {
+        return Apollo.useQuery<DeviceRatingsQuery, DeviceRatingsQueryVariables>(DeviceRatingsDocument, baseOptions);
+      }
+export function useDeviceRatingsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<DeviceRatingsQuery, DeviceRatingsQueryVariables>) {
+          return Apollo.useLazyQuery<DeviceRatingsQuery, DeviceRatingsQueryVariables>(DeviceRatingsDocument, baseOptions);
+        }
+export type DeviceRatingsQueryHookResult = ReturnType<typeof useDeviceRatingsQuery>;
+export type DeviceRatingsLazyQueryHookResult = ReturnType<typeof useDeviceRatingsLazyQuery>;
+export type DeviceRatingsQueryResult = Apollo.QueryResult<DeviceRatingsQuery, DeviceRatingsQueryVariables>;
 export const ProblemsDocument = gql`
     query Problems($deviceId: String, $authorId: String, $content: String, $title: String) {
   problems(
@@ -1805,6 +1880,9 @@ export const ReviewsDocument = gql`
       content
       createdAt
       deviceId
+      images {
+        path
+      }
       rating {
         reviewId
         deviceId

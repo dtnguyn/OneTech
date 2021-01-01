@@ -41,10 +41,10 @@ const SpecsTable: React.FC<SpecsTableProps> = ({
           <div className={styles.specsTableRowTitle}>{title}</div>
           <div className={styles.specsTableRowContent}>
             {switchState === "rating" ? (
-              rating ? (
-                <RatingBar rating={rating[title.toLowerCase()]} />
+              rating[title.toLowerCase()] ? (
+                <RatingBar rating={rating[title.toLowerCase()].toFixed(1)} />
               ) : (
-                <RatingBar rating={7} />
+                <RatingBar rating={0} />
               )
             ) : (
               <TextContent
