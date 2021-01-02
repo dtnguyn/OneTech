@@ -43,9 +43,16 @@ const Problems: React.FC<ProblemsProps> = ({
   const { problems, setProblems } = useProblem();
   const { user } = useAuth();
 
-  const [editTextValue, setEditTextValue] = useState<string>("");
-  const [problemTitleValue, setProblemTitleValue] = useState<string>("");
-  const [editProblemId, setEditProblemId] = useState<string | null>(null);
+  // const [editTextValue, setEditTextValue] = useState<string>("");
+  // const [problemTitleValue, setProblemTitleValue] = useState<string>("");
+  // const [editProblemId, setEditProblemId] = useState<string | null>(null);
+
+  const [problemValue, setProblemValue] = useState({
+    id: "",
+    title: "",
+    content: "",
+  });
+
   const [confirmationDialog, setConfirmationDialog] = useState({
     show: false,
     title: "",
@@ -71,6 +78,14 @@ const Problems: React.FC<ProblemsProps> = ({
     return false;
   };
 
+  const resetProblemValue = () => {
+    setProblemValue({
+      id: "",
+      title: "",
+      content: "",
+    });
+  };
+
   const handleCreateProblem = async (
     deviceId: string,
     authorId: string,
@@ -94,8 +109,7 @@ const Problems: React.FC<ProblemsProps> = ({
       .then((res) => {
         if (res.data?.createProblem?.status) {
           closeAdding();
-          setProblemTitleValue("");
-          setEditTextValue("");
+          resetProblemValue();
         } else {
           throw Error(res.data?.createProblem?.message);
         }
@@ -122,8 +136,7 @@ const Problems: React.FC<ProblemsProps> = ({
       .then((res) => {
         if (res.data?.updateProblem.status) {
           closeEditing();
-          setProblemTitleValue("");
-          setEditTextValue("");
+          resetProblemValue();
         } else {
           throw Error(res.data?.updateProblem.message);
         }
@@ -211,15 +224,19 @@ const Problems: React.FC<ProblemsProps> = ({
         <>
           <input
             placeholder="Enter topic... *"
-            value={problemTitleValue}
-            onChange={(e) => setProblemTitleValue(e.target.value)}
+            value={problemValue.title}
+            onChange={(e) =>
+              setProblemValue({ ...problemValue, title: e.target.value })
+            }
           />
           <CustomEditor
-            value={editTextValue}
+            value={problemValue.content}
             positiveText={adding ? "Submit" : "Save"}
-            submitAllow={editTextValue !== "" && problemTitleValue !== ""}
+            submitAllow={
+              problemValue.content !== "" && problemValue.title !== ""
+            }
             handleChange={(text, _) => {
-              setEditTextValue(text);
+              setProblemValue({ ...problemValue, content: text });
             }}
             handleSubmit={(images) => {
               if (adding) {
@@ -227,16 +244,16 @@ const Problems: React.FC<ProblemsProps> = ({
                 handleCreateProblem(
                   deviceId,
                   user!.id,
-                  problemTitleValue,
-                  editTextValue,
+                  problemValue.title,
+                  problemValue.content,
                   images
                 );
               } else {
-                if (!user || !editProblemId) return;
+                if (!user || !problemValue.id) return;
                 handleEditProblem(
-                  editProblemId,
-                  problemTitleValue,
-                  editTextValue,
+                  problemValue.id,
+                  problemValue.title,
+                  problemValue.content,
                   images
                 );
               }
@@ -244,8 +261,7 @@ const Problems: React.FC<ProblemsProps> = ({
             handleCancel={() => {
               closeAdding();
               closeEditing();
-              setEditTextValue("");
-              setProblemTitleValue("");
+              resetProblemValue();
             }}
           />
         </>
@@ -262,9 +278,13 @@ const Problems: React.FC<ProblemsProps> = ({
               }
               handleDelete={initialDeleteProblemDialog}
               handleEdit={(problemId) => {
-                setEditProblemId(problemId);
-                setProblemTitleValue(problem.title);
-                setEditTextValue(problem.content);
+                setProblemValue({
+                  ...problemValue,
+                  id: problemId,
+                  title: problem.title,
+                  content: problem.content,
+                });
+
                 openEditing();
               }}
             />
