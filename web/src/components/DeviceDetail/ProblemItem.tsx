@@ -6,6 +6,7 @@ import moment from "moment";
 import parse from "html-react-parser";
 import classes from "@material-ui/styles";
 import { useAuth } from "../../context/AuthContext";
+import { useRouter } from "next/router";
 
 interface ProblemItemProps {
   problem: DeviceProblem;
@@ -22,6 +23,7 @@ const ProblemItem: React.FC<ProblemItemProps> = ({
   handleDelete,
   handleEdit,
 }) => {
+  const router = useRouter();
   const { user } = useAuth();
 
   return (
@@ -43,7 +45,12 @@ const ProblemItem: React.FC<ProblemItemProps> = ({
         </div>
 
         <div className={styles.problemItemPostContainer}>
-          <h4 className={styles.problemItemTitle}>{problem.title}</h4>
+          <h4
+            className={styles.problemItemTitle}
+            onClick={() => router.push(`/problem/${problem.id}`)}
+          >
+            {problem.title}
+          </h4>
           <p className={styles.postDate}>
             {moment(problem.createdAt).format("LL")}
           </p>

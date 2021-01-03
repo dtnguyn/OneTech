@@ -1,0 +1,118 @@
+.problemDetailPageContainer {
+  width: 100vw;
+}
+
+.problemContainer {
+  margin: 20px;
+  margin-left: 10px;
+  height: fit-content;
+  display: flex;
+  flex-direction: row;
+  padding-bottom: 40px;
+}
+
+.problemEditorContainer {
+  padding: 20px 30px;
+}
+
+.problemButtonsContainer {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  margin-top: 0px;
+}
+
+.problemButton {
+  width: 24px;
+  margin: 0 20px 10px 0;
+}
+
+.problemButton:active {
+  padding: 4px;
+}
+
+.solutionsContainer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.solutionsTitle {
+  margin: 50px 0;
+  font-family: MSemiBold;
+  font-size: 1.5rem;
+}
+
+.solutionItemContainer {
+  padding: 10px;
+  width: 100%;
+  display: flex;
+  flex-direction: row;
+}
+
+.solutionInfoSection {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  flex: 1;
+}
+.solutionInfoContainer {
+  width: fit-content;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.solutionPostSection {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  flex: 5;
+}
+
+.solutionButton {
+  display: flex;
+  flex-direction: row;
+  cursor: pointer;
+}
+
+.solutionButtonIcon {
+  width: 24px;
+  height: 24px;
+  margin-right: 10px;
+}
+
+.solutionHeaderContainer {
+  display: flex;
+  flex-direction: row;
+}
+
+.solutionHeaderTextContainer {
+  margin-top: 5px;
+  display: flex;
+  flex-direction: column;
+  line-height: 5px;
+  justify-content: center;
+}
+
+.solutionAuthorName {
+  font-family: MSemiBold;
+  font-size: 1.2rem;
+}
+
+.solutionAuthorAvatar {
+  width: 60px;
+  height: 60px;
+  margin: 10px;
+  border-radius: 100px;
+}
+
+.solutionDateText {
+  font-family: MLight;
+}
+
+.solutionContentContainer {
+  margin: 20px 0 40px;
+  border-right: 1px solid #e9e9e9;
+}

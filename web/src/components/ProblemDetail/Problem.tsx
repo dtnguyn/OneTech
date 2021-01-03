@@ -1,46 +1,30 @@
-import ProblemItem from "./ProblemItem";
-
-import styles from "../../styles/DeviceDetail.module.css";
+import { Avatar, Divider } from "@material-ui/core";
 import {
-  DeviceDetailDocument,
-  DeviceDetailQuery,
   DeviceProblem,
   DeviceProblemStar,
-  DevicesQuery,
-  ProblemsDocument,
-  ProblemsQuery,
-  useCreateProblemMutation,
   useDeleteImagesMutation,
   useDeleteProblemMutation,
   useToggleProblemStarMutation,
   useUpdateProblemMutation,
 } from "../../generated/graphql";
-import { useProblem } from "../../context/ProblemContext";
+import StatsBox from "../StatsBox";
+import moment from "moment";
+import parse from "html-react-parser";
+import classes from "@material-ui/styles";
 import { useAuth } from "../../context/AuthContext";
+import detailStyles from "../../styles/ProblemDetail.module.css";
+import styles from "../../styles/DeviceDetail.module.css";
 import React, { useState } from "react";
 import CustomEditor from "../CustomEditor";
 import ConfirmationDialog from "../ConfirmationDialog";
+import { useRouter } from "next/router";
 
-interface ProblemsProps {
-  deviceId: string;
-  adding: boolean;
-  openAdding: () => void;
-  closeAdding: () => void;
-  editing: boolean;
-  openEditing: () => void;
-  closeEditing: () => void;
+interface ProblemProps {
+  problem: DeviceProblem;
 }
 
-const Problems: React.FC<ProblemsProps> = ({
-  deviceId,
-  adding,
-  openAdding,
-  closeAdding,
-  editing,
-  openEditing,
-  closeEditing,
-}) => {
-  const { problems, setProblems } = useProblem();
+const Problem: React.FC<ProblemProps> = ({ problem }) => {
+  const router = useRouter();
   const { user } = useAuth();
 
   const [problemValue, setProblemValue] = useState({
@@ -59,20 +43,12 @@ const Problems: React.FC<ProblemsProps> = ({
     handlePositive: () => {},
   });
 
+  const [editing, setEditing] = useState(false);
+
   const [toggleProblemStarMutation, {}] = useToggleProblemStarMutation();
-  const [createProblemMutation, {}] = useCreateProblemMutation();
   const [deleteProblemMutation, {}] = useDeleteProblemMutation();
   const [updateProblemMutation, {}] = useUpdateProblemMutation();
   const [deleteImagesMutation, {}] = useDeleteImagesMutation();
-
-  const isStarred = (stars: DeviceProblemStar[]) => {
-    for (const star of stars) {
-      if (star.userId === user?.id) {
-        return true;
-      }
-    }
-    return false;
-  };
 
   const resetProblemValue = () => {
     setProblemValue({
@@ -82,37 +58,13 @@ const Problems: React.FC<ProblemsProps> = ({
     });
   };
 
-  const handleCreateProblem = async (
-    deviceId: string,
-    authorId: string,
-    title: string,
-    content: string,
-    images: string[]
-  ) => {
-    if (!user) return;
-    await createProblemMutation({
-      variables: {
-        deviceId,
-        authorId,
-        title,
-        content,
-        images,
-      },
-      update: (cache) => {
-        cache.evict({ fieldName: "problems" });
-      },
-    })
-      .then((res) => {
-        if (res.data?.createProblem?.status) {
-          closeAdding();
-          resetProblemValue();
-        } else {
-          throw Error(res.data?.createProblem?.message);
-        }
-      })
-      .catch((error) => {
-        alert(error.message);
-      });
+  const isStarred = (stars: DeviceProblemStar[]) => {
+    for (const star of stars) {
+      if (star.userId === user?.id) {
+        return true;
+      }
+    }
+    return false;
   };
 
   const handleEditProblem = async (
@@ -131,7 +83,7 @@ const Problems: React.FC<ProblemsProps> = ({
     })
       .then((res) => {
         if (res.data?.updateProblem.status) {
-          closeEditing();
+          setEditing(false);
           resetProblemValue();
         } else {
           throw Error(res.data?.updateProblem.message);
@@ -158,9 +110,12 @@ const Problems: React.FC<ProblemsProps> = ({
         },
         update: (cache) => {
           cache.evict({ fieldName: "problems" });
+          cache.evict({ fieldName: "singleProblem" });
         },
       }).then((res) => {
-        if (!res.data?.deleteProblem.status) {
+        if (res.data?.deleteProblem.status) {
+          router.back();
+        } else {
           throw Error(res.data?.deleteProblem.message);
         }
       });
@@ -212,9 +167,85 @@ const Problems: React.FC<ProblemsProps> = ({
   };
 
   return (
-    <div className={styles.problemsContainer}>
-      {adding || editing ? (
-        <>
+    <div>
+      {!editing ? (
+        <div className={detailStyles.problemContainer}>
+          <div className={styles.problemItemStatsContainer}>
+            <img src={problem.author?.avatar} className={styles.postAvatar} />
+
+            <StatsBox
+              number={problem.stars!.length ? problem.stars!.length : 0}
+              title="stars"
+              color="yellow"
+            />
+            <StatsBox
+              number={problem.solutions!.length ? problem.solutions!.length : 0}
+              title="solutions"
+              color="green"
+            />
+          </div>
+
+          <div className={styles.problemItemPostContainer}>
+            <h4 className={styles.problemItemTitle}>{problem.title}</h4>
+            <p className={styles.postDate}>
+              {moment(problem.createdAt).format("LL")}
+            </p>
+            <div className={detailStyles.problemButtonsContainer}>
+              <img
+                src={
+                  isStarred(problem.stars ? problem.stars! : [])
+                    ? `/images/starred.png`
+                    : `/images/star.png`
+                }
+                className={detailStyles.problemButton}
+                onClick={() => {
+                  handleToggleProblemStar(problem);
+                }}
+              />
+
+              <img
+                src="/images/flag.png"
+                className={detailStyles.problemButton}
+              />
+              {user?.id === problem.author?.id ? (
+                <div>
+                  <img
+                    src="/images/trash.png"
+                    className={detailStyles.problemButton}
+                    onClick={() => {
+                      const images = problem.images?.map((image) => {
+                        return image.path;
+                      });
+                      initialDeleteProblemDialog(problem.id, images);
+                    }}
+                  />
+                  <img
+                    src="/images/pencil.png"
+                    className={detailStyles.problemButton}
+                    onClick={() => {
+                      setProblemValue({
+                        ...problemValue,
+                        id: problem.id,
+                        title: problem.title,
+                        content: problem.content,
+                      });
+
+                      setEditing(true);
+                    }}
+                  />
+                </div>
+              ) : null}
+            </div>
+
+            <Divider />
+            <br />
+            <div className={styles.problemItemContent}>
+              {parse(problem.content)}
+            </div>
+          </div>
+        </div>
+      ) : (
+        <div className={detailStyles.problemEditorContainer}>
           <input
             placeholder="Enter topic... *"
             value={problemValue.title}
@@ -224,7 +255,7 @@ const Problems: React.FC<ProblemsProps> = ({
           />
           <CustomEditor
             value={problemValue.content}
-            positiveText={adding ? "Submit" : "Save"}
+            positiveText={"Save"}
             submitAllow={
               problemValue.content !== "" && problemValue.title !== ""
             }
@@ -232,58 +263,21 @@ const Problems: React.FC<ProblemsProps> = ({
               setProblemValue({ ...problemValue, content: text });
             }}
             handleSubmit={(images) => {
-              if (adding) {
-                if (!user) return;
-                handleCreateProblem(
-                  deviceId,
-                  user!.id,
-                  problemValue.title,
-                  problemValue.content,
-                  images
-                );
-              } else {
-                if (!user || !problemValue.id) return;
-                handleEditProblem(
-                  problemValue.id,
-                  problemValue.title,
-                  problemValue.content,
-                  images
-                );
-              }
+              handleEditProblem(
+                problem.id,
+                problemValue.title,
+                problemValue.content,
+                images
+              );
             }}
             handleCancel={() => {
-              closeAdding();
-              closeEditing();
-              resetProblemValue();
+              setEditing(false);
             }}
           />
-        </>
-      ) : (
-        problems.map((problem) => {
-          const starred = isStarred(problem.stars ? problem.stars : []);
-          return (
-            <ProblemItem
-              starred={starred}
-              key={problem.id}
-              problem={problem}
-              handleToggleStar={(problem, isStarred) =>
-                handleToggleProblemStar(problem)
-              }
-              handleDelete={initialDeleteProblemDialog}
-              handleEdit={(problemId) => {
-                setProblemValue({
-                  ...problemValue,
-                  id: problemId,
-                  title: problem.title,
-                  content: problem.content,
-                });
-
-                openEditing();
-              }}
-            />
-          );
-        })
+        </div>
       )}
+
+      <Divider />
       <ConfirmationDialog
         show={confirmationDialog.show}
         title={confirmationDialog.title}
@@ -297,4 +291,4 @@ const Problems: React.FC<ProblemsProps> = ({
   );
 };
 
-export default Problems;
+export default Problem;
