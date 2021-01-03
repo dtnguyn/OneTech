@@ -161,7 +161,7 @@ export type DeviceProblem = {
   device: Device;
   stars?: Maybe<Array<DeviceProblemStar>>;
   solutions?: Maybe<Array<Solution>>;
-  images?: Maybe<Array<ProblemImage>>;
+  images: Array<ProblemImage>;
 };
 
 export type Device = {
@@ -218,7 +218,7 @@ export type Review = {
   authorId: Scalars['String'];
   author: User;
   deviceId: Scalars['String'];
-  images?: Maybe<Array<ReviewImage>>;
+  images: Array<ReviewImage>;
 };
 
 export type ReviewRating = {
@@ -257,9 +257,10 @@ export type Solution = {
   id: Scalars['String'];
   content: Scalars['String'];
   isPicked: Scalars['Boolean'];
-  createdAt: Scalars['String'];
+  createdAt: Scalars['DateTime'];
   updatedAt: Scalars['DateTime'];
   authorId: Scalars['String'];
+  author: User;
   problemId: Scalars['String'];
   stars?: Maybe<Array<SolutionStar>>;
 };
@@ -698,10 +699,10 @@ export type ToggleProblemStarMutation = (
       )>>, solutions?: Maybe<Array<(
         { __typename?: 'Solution' }
         & Pick<Solution, 'id'>
-      )>>, images?: Maybe<Array<(
+      )>>, images: Array<(
         { __typename?: 'ProblemImage' }
         & Pick<ProblemImage, 'path'>
-      )>> }
+      )> }
     )>> }
   ) }
 );
@@ -732,10 +733,10 @@ export type CreateProblemMutation = (
       )>>, solutions?: Maybe<Array<(
         { __typename?: 'Solution' }
         & Pick<Solution, 'id'>
-      )>>, images?: Maybe<Array<(
+      )>>, images: Array<(
         { __typename?: 'ProblemImage' }
         & Pick<ProblemImage, 'path'>
-      )>> }
+      )> }
     )>> }
   )> }
 );
@@ -778,10 +779,10 @@ export type UpdateProblemMutation = (
       )>>, solutions?: Maybe<Array<(
         { __typename?: 'Solution' }
         & Pick<Solution, 'id'>
-      )>>, images?: Maybe<Array<(
+      )>>, images: Array<(
         { __typename?: 'ProblemImage' }
         & Pick<ProblemImage, 'path'>
-      )>> }
+      )> }
     )>> }
   ) }
 );
@@ -938,17 +939,17 @@ export type DeviceDetailQuery = (
         )>>, solutions?: Maybe<Array<(
           { __typename?: 'Solution' }
           & Pick<Solution, 'id'>
-        )>>, images?: Maybe<Array<(
+        )>>, images: Array<(
           { __typename?: 'ProblemImage' }
           & Pick<ProblemImage, 'path'>
-        )>> }
+        )> }
       )>>, reviews?: Maybe<Array<(
         { __typename?: 'Review' }
         & Pick<Review, 'id' | 'title' | 'content' | 'createdAt' | 'deviceId'>
-        & { images?: Maybe<Array<(
+        & { images: Array<(
           { __typename?: 'ReviewImage' }
           & Pick<ReviewImage, 'path'>
-        )>>, author: (
+        )>, author: (
           { __typename?: 'User' }
           & Pick<User, 'id' | 'username' | 'avatar'>
         ), rating: (
@@ -995,10 +996,10 @@ export type ProblemsQuery = (
     & { data?: Maybe<Array<(
       { __typename?: 'DeviceProblem' }
       & Pick<DeviceProblem, 'id' | 'title' | 'content' | 'isSolve' | 'createdAt' | 'updatedAt'>
-      & { images?: Maybe<Array<(
+      & { images: Array<(
         { __typename?: 'ProblemImage' }
         & Pick<ProblemImage, 'path'>
-      )>>, author?: Maybe<(
+      )>, author?: Maybe<(
         { __typename?: 'User' }
         & Pick<User, 'id' | 'avatar' | 'username'>
       )>, stars?: Maybe<Array<(
@@ -1010,6 +1011,43 @@ export type ProblemsQuery = (
       )>> }
     )>> }
   )> }
+);
+
+export type ProblemDetailQueryVariables = Exact<{
+  id: Scalars['String'];
+}>;
+
+
+export type ProblemDetailQuery = (
+  { __typename?: 'Query' }
+  & { singleProblem: (
+    { __typename?: 'ProblemResponse' }
+    & Pick<ProblemResponse, 'status' | 'message'>
+    & { data?: Maybe<Array<(
+      { __typename?: 'DeviceProblem' }
+      & Pick<DeviceProblem, 'id' | 'title' | 'content' | 'isSolve' | 'createdAt' | 'updatedAt'>
+      & { images: Array<(
+        { __typename?: 'ProblemImage' }
+        & Pick<ProblemImage, 'path'>
+      )>, author?: Maybe<(
+        { __typename?: 'User' }
+        & Pick<User, 'id' | 'avatar' | 'username'>
+      )>, stars?: Maybe<Array<(
+        { __typename?: 'DeviceProblemStar' }
+        & Pick<DeviceProblemStar, 'problemId' | 'userId'>
+      )>>, solutions?: Maybe<Array<(
+        { __typename?: 'Solution' }
+        & Pick<Solution, 'id' | 'content' | 'isPicked' | 'createdAt' | 'updatedAt'>
+        & { author: (
+          { __typename?: 'User' }
+          & Pick<User, 'username' | 'id' | 'avatar'>
+        ), stars?: Maybe<Array<(
+          { __typename?: 'SolutionStar' }
+          & Pick<SolutionStar, 'userId'>
+        )>> }
+      )>> }
+    )>> }
+  ) }
 );
 
 export type ReviewsQueryVariables = Exact<{
@@ -1030,10 +1068,10 @@ export type ReviewsQuery = (
       & { author: (
         { __typename?: 'User' }
         & Pick<User, 'id' | 'username' | 'avatar'>
-      ), images?: Maybe<Array<(
+      ), images: Array<(
         { __typename?: 'ReviewImage' }
         & Pick<ReviewImage, 'path'>
-      )>>, rating: (
+      )>, rating: (
         { __typename?: 'ReviewRating' }
         & Pick<ReviewRating, 'reviewId' | 'deviceId' | 'overall' | 'battery' | 'software' | 'display' | 'camera' | 'processor'>
       ) }
@@ -1861,6 +1899,75 @@ export function useProblemsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<P
 export type ProblemsQueryHookResult = ReturnType<typeof useProblemsQuery>;
 export type ProblemsLazyQueryHookResult = ReturnType<typeof useProblemsLazyQuery>;
 export type ProblemsQueryResult = Apollo.QueryResult<ProblemsQuery, ProblemsQueryVariables>;
+export const ProblemDetailDocument = gql`
+    query ProblemDetail($id: String!) {
+  singleProblem(id: $id) {
+    status
+    message
+    data {
+      id
+      title
+      content
+      isSolve
+      createdAt
+      updatedAt
+      images {
+        path
+      }
+      author {
+        id
+        avatar
+        username
+      }
+      stars {
+        problemId
+        userId
+      }
+      solutions {
+        id
+        author {
+          username
+          id
+          avatar
+        }
+        content
+        stars {
+          userId
+        }
+        isPicked
+        createdAt
+        updatedAt
+      }
+    }
+  }
+}
+    `;
+
+/**
+ * __useProblemDetailQuery__
+ *
+ * To run a query within a React component, call `useProblemDetailQuery` and pass it any options that fit your needs.
+ * When your component renders, `useProblemDetailQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useProblemDetailQuery({
+ *   variables: {
+ *      id: // value for 'id'
+ *   },
+ * });
+ */
+export function useProblemDetailQuery(baseOptions: Apollo.QueryHookOptions<ProblemDetailQuery, ProblemDetailQueryVariables>) {
+        return Apollo.useQuery<ProblemDetailQuery, ProblemDetailQueryVariables>(ProblemDetailDocument, baseOptions);
+      }
+export function useProblemDetailLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<ProblemDetailQuery, ProblemDetailQueryVariables>) {
+          return Apollo.useLazyQuery<ProblemDetailQuery, ProblemDetailQueryVariables>(ProblemDetailDocument, baseOptions);
+        }
+export type ProblemDetailQueryHookResult = ReturnType<typeof useProblemDetailQuery>;
+export type ProblemDetailLazyQueryHookResult = ReturnType<typeof useProblemDetailLazyQuery>;
+export type ProblemDetailQueryResult = Apollo.QueryResult<ProblemDetailQuery, ProblemDetailQueryVariables>;
 export const ReviewsDocument = gql`
     query Reviews($deviceId: String, $authorId: String, $content: String, $title: String) {
   reviews(

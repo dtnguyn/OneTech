@@ -35,3 +35,45 @@ query Problems(
     }
   }
 }
+
+query ProblemDetail($id: String!) {
+  singleProblem(id: $id) {
+    status
+    message
+    data {
+      id
+      title
+      content
+      isSolve
+      createdAt
+      updatedAt
+      images {
+        path
+      }
+      author {
+        id
+        avatar
+        username
+      }
+      stars {
+        problemId
+        userId
+      }
+      solutions {
+        id
+        author {
+          username
+          id
+          avatar
+        }
+        content
+        stars {
+          userId
+        }
+        isPicked
+        createdAt
+        updatedAt
+      }
+    }
+  }
+}

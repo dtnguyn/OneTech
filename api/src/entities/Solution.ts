@@ -28,7 +28,7 @@ export class Solution {
   @Column({ default: false })
   isPicked?: boolean;
 
-  @Field(() => String)
+  @Field()
   @CreateDateColumn()
   createdAt: Date;
 
@@ -43,6 +43,7 @@ export class Solution {
     onDelete: "CASCADE",
     onUpdate: "CASCADE",
   })
+  @Field(() => User)
   @JoinColumn({ name: "authorId" })
   author: User;
 

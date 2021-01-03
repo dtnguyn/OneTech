@@ -110,6 +110,7 @@
 }
 
 .problemItemPostContainer {
+  width: 100%;
   display: flex;
   flex-direction: column;
   margin: 0 15px;
