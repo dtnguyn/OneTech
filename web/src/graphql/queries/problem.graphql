@@ -14,7 +14,7 @@ query Problems(
       id
       title
       content
-      isSolve
+      solvedBy
       createdAt
       updatedAt
       images {
@@ -44,7 +44,7 @@ query ProblemDetail($id: String!) {
       id
       title
       content
-      isSolve
+      solvedBy
       createdAt
       updatedAt
       images {
@@ -73,6 +73,9 @@ query ProblemDetail($id: String!) {
         isPicked
         createdAt
         updatedAt
+        images {
+          path
+        }
       }
     }
   }

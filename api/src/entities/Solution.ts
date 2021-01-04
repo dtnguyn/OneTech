@@ -10,6 +10,7 @@ import {
   OneToMany,
 } from "typeorm";
 import { DeviceProblem } from "./DeviceProblem";
+import { SolutionImage } from "./SolutionImage";
 import { SolutionStar } from "./SolutionStar";
 import { User } from "./User";
 
@@ -60,6 +61,10 @@ export class Solution {
   @Field(() => [SolutionStar], { nullable: true })
   @OneToMany(() => SolutionStar, (star) => star.solution)
   stars: SolutionStar[];
+
+  @Field(() => [SolutionImage])
+  @OneToMany(() => SolutionImage, (image) => image.solution)
+  images: SolutionImage[];
 }
 
 @ObjectType()

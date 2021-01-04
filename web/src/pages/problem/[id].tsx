@@ -27,6 +27,7 @@ const ProblemDetail: React.FC<ProblemDetailProps> = ({}) => {
   useEffect(() => {
     const arr = data?.singleProblem.data as DeviceProblem[];
     if (arr && arr.length === 1) {
+      console.log(arr[0]);
       const prob = arr[0];
       setProblem(arr[0]);
       if (prob.solutions) {
@@ -40,7 +41,7 @@ const ProblemDetail: React.FC<ProblemDetailProps> = ({}) => {
   return (
     <div className={styles.problemDetailPageContainer}>
       <Problem problem={problem} />
-      <Solutions solutions={solutions} />
+      <Solutions solutions={solutions} problemId={problem.id} />
     </div>
   );
 };

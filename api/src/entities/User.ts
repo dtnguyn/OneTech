@@ -74,6 +74,10 @@ export class User {
   @Field(() => [Review], { nullable: true })
   @OneToMany(() => Review, (review) => review.author)
   reviews: Review[];
+
+  @Field(() => [Review], { nullable: true })
+  @OneToMany(() => Review, (review) => review.author)
+  problemSolved: DeviceProblem[];
 }
 
 @ObjectType()
