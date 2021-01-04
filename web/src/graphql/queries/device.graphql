@@ -53,7 +53,7 @@ query DeviceDetail($id: String!) {
         id
         title
         content
-        isSolve
+        solvedBy
         createdAt
         updatedAt
         author {

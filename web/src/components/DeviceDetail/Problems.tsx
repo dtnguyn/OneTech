@@ -107,7 +107,7 @@ const Problems: React.FC<ProblemsProps> = ({
           closeAdding();
           resetProblemValue();
         } else {
-          throw Error(res.data?.createProblem?.message);
+          throw new Error(res.data?.createProblem?.message);
         }
       })
       .catch((error) => {
@@ -134,7 +134,7 @@ const Problems: React.FC<ProblemsProps> = ({
           closeEditing();
           resetProblemValue();
         } else {
-          throw Error(res.data?.updateProblem.message);
+          throw new Error(res.data?.updateProblem.message);
         }
       })
       .catch((error) => {
@@ -161,7 +161,7 @@ const Problems: React.FC<ProblemsProps> = ({
         },
       }).then((res) => {
         if (!res.data?.deleteProblem.status) {
-          throw Error(res.data?.deleteProblem.message);
+          throw new Error(res.data?.deleteProblem.message);
         }
       });
     } catch (error) {
@@ -179,7 +179,7 @@ const Problems: React.FC<ProblemsProps> = ({
     })
       .then((res) => {
         if (!res.data?.toggleProblemStar.status) {
-          throw Error(res.data?.toggleProblemStar.message);
+          throw new Error(res.data?.toggleProblemStar.message);
         }
       })
       .catch((error) => {

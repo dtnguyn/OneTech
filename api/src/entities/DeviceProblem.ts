@@ -30,10 +30,6 @@ export class DeviceProblem {
   @Column()
   content: string;
 
-  @Field(() => Boolean)
-  @Column({ default: false })
-  isSolve?: boolean;
-
   @Field()
   @CreateDateColumn()
   createdAt: Date;
@@ -41,6 +37,17 @@ export class DeviceProblem {
   @Field()
   @UpdateDateColumn()
   updatedAt: Date;
+
+  @Field(() => String, { nullable: true })
+  @Column({ nullable: true })
+  solvedBy: string | null;
+  @ManyToOne(() => User, (user) => user.problemSolved, {
+    onDelete: "CASCADE",
+    onUpdate: "CASCADE",
+  })
+  @Field({ nullable: true })
+  @JoinColumn({ name: "solvedBy" })
+  solver: User;
 
   @Field()
   @Column()

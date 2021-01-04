@@ -6,7 +6,7 @@ mutation ToggleProblemStar($problemId: String!, $userId: String!) {
       id
       title
       content
-      isSolve
+      solvedBy
       createdAt
       updatedAt
       author {
@@ -48,7 +48,7 @@ mutation CreateProblem(
       id
       title
       content
-      isSolve
+      solvedBy
       createdAt
       updatedAt
       author {
@@ -94,7 +94,7 @@ mutation UpdateProblem(
       id
       title
       content
-      isSolve
+      solvedBy
       createdAt
       updatedAt
       author {

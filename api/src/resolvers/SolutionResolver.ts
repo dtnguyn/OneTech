@@ -1,7 +1,9 @@
 import { Solution, SolutionResponse } from "../entities/Solution";
 import { Arg, Field, InputType, Mutation, Query, Resolver } from "type-graphql";
-import { getRepository } from "typeorm";
+import { getConnection, getRepository } from "typeorm";
 import { SolutionStar, SolutionStarResponse } from "../entities/SolutionStar";
+import { SolutionImage } from "../entities/SolutionImage";
+import { DeviceProblem } from "../entities/DeviceProblem";
 
 @InputType()
 class UpdateSolutionInput {
@@ -21,50 +23,113 @@ export class SolutionResolver {
   async createSolution(
     @Arg("content") content: string,
     @Arg("authorId") authorId: string,
-    @Arg("problemId") problemId: string
+    @Arg("problemId") problemId: string,
+    @Arg("images", () => [String]) images: string[]
   ) {
-    const solution = await this.solutionRepo.create({
-      content,
-      authorId,
-      problemId,
-    });
-    await this.solutionRepo.save(solution).catch((e) => {
+    const queryRunner = getConnection().createQueryRunner();
+    await queryRunner.connect();
+    await queryRunner.startTransaction();
+
+    try {
+      const manager = queryRunner.manager;
+      const solution = await manager.create(Solution, {
+        content,
+        authorId,
+        problemId,
+      });
+
+      await manager.insert(Solution, solution);
+
+      if (images.length) {
+        await new Promise((resolve, reject) => {
+          let counter = 0;
+          for (const image of images) {
+            manager
+              .insert(SolutionImage, {
+                path: image,
+                solutionId: solution.id,
+              })
+              .then(() => {
+                counter++;
+                if (counter === images.length) {
+                  resolve(true);
+                }
+              })
+              .catch((error) => {
+                reject(error);
+              });
+          }
+        });
+      }
+
+      await queryRunner.commitTransaction();
+      await queryRunner.release();
+
+      return {
+        status: true,
+        message: "Create solution successfully.",
+        data: [solution],
+      };
+    } catch (error) {
       return {
         status: false,
-        message: e.message,
+        message: error.message,
       };
-    });
-
-    return {
-      status: true,
-      message: "Create solution successfully.",
-      data: [solution],
-    };
+    }
   }
 
   @Mutation(() => SolutionResponse)
   async updateSolution(
     @Arg("id") id: string,
-    @Arg("input") input: UpdateSolutionInput
+    @Arg("input") input: UpdateSolutionInput,
+    @Arg("images", () => [String]) images: string[]
   ) {
-    await this.solutionRepo.update({ id }, input).catch((e) => {
-      return {
-        status: false,
-        message: e.message,
-      };
-    });
-    const solution = await this.solutionRepo.findOne({ id }).catch((e) => {
-      return {
-        status: false,
-        message: e.message,
-      };
-    });
+    const queryRunner = getConnection().createQueryRunner();
+    await queryRunner.connect();
+    await queryRunner.startTransaction();
 
-    return {
-      status: true,
-      message: "Update solution successfully.",
-      data: [solution],
-    };
+    try {
+      const manager = queryRunner.manager;
+      await manager.update(Solution, { id }, input);
+
+      if (images.length) {
+        await new Promise((resolve, reject) => {
+          let counter = 0;
+          for (const image of images) {
+            manager
+              .insert(SolutionImage, {
+                path: image,
+                solutionId: id,
+              })
+              .then(() => {
+                counter++;
+                if (counter === images.length) {
+                  resolve(true);
+                }
+              })
+              .catch((error) => {
+                reject(error);
+              });
+          }
+        });
+      }
+
+      const solution = await manager.findOne(Solution, { id });
+
+      await queryRunner.commitTransaction();
+      await queryRunner.release();
+
+      return {
+        status: true,
+        message: "Create solution successfully.",
+        data: [solution],
+      };
+    } catch (error) {
+      return {
+        status: false,
+        message: error.message,
+      };
+    }
   }
 
   @Mutation(() => SolutionResponse)
@@ -154,6 +219,76 @@ export class SolutionResolver {
       return {
         status: true,
         message: "Star solution successfully.",
+      };
+    }
+  }
+
+  @Mutation(() => SolutionResponse)
+  async toggleSolutionPicked(
+    @Arg("problemId") problemId: string,
+    @Arg("solutionId") solutionId: string,
+    @Arg("solverId") solverId: string
+  ) {
+    const queryRunner = getConnection().createQueryRunner();
+    await queryRunner.connect();
+    await queryRunner.startTransaction();
+
+    try {
+      const manager = queryRunner.manager;
+      const problem = await manager.findOne(DeviceProblem, { id: problemId });
+      if (problem?.solvedBy) {
+        //Unpicked
+        if (problem.solvedBy === solverId) {
+          await manager.update(
+            DeviceProblem,
+            { id: problemId },
+            {
+              solvedBy: null,
+            }
+          );
+
+          await manager.update(
+            Solution,
+            { id: solutionId },
+            {
+              isPicked: false,
+            }
+          );
+        } else {
+          throw new Error(
+            "This problem is already solved by another solution."
+          );
+        }
+      } else {
+        //Picked
+        await manager.update(
+          DeviceProblem,
+          { id: problemId },
+          {
+            solvedBy: solverId,
+          }
+        );
+
+        await manager.update(
+          Solution,
+          { id: solutionId },
+          {
+            isPicked: true,
+          }
+        );
+      }
+
+      await queryRunner.commitTransaction();
+      await queryRunner.release();
+
+      return {
+        status: true,
+        message: "Toggle solution picked successfully.",
+      };
+    } catch (error) {
+      return {
+        status: false,
+        message: error.message,
       };
     }
   }

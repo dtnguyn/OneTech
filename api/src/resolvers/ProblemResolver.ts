@@ -234,7 +234,9 @@ export class ProblemResolver {
         .leftJoinAndSelect("problem.solutions", "solutions")
         .leftJoinAndSelect("problem.author", "author")
         .leftJoinAndSelect("solutions.stars", "solutionStars")
+        .orderBy("solutions.createdAt", "DESC")
         .leftJoinAndSelect("solutions.author", "solutionAuthor")
+        .leftJoinAndSelect("solutions.images", "solutionImages")
         .leftJoinAndSelect("problem.images", "images")
         .where("problem.id = :id", { id })
         .getOne();

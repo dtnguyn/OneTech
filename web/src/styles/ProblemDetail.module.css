@@ -38,9 +38,15 @@
 }
 
 .solutionsTitle {
-  margin: 50px 0;
+  margin: 30px 0 50px;
   font-family: MSemiBold;
-  font-size: 1.5rem;
+  font-size: 1.75rem;
+}
+
+.solutionItemBox {
+  width: 100%;
+  margin-bottom: 50px;
+  padding: 0 30px;
 }
 
 .solutionItemContainer {
@@ -68,13 +74,26 @@
   width: 100%;
   display: flex;
   flex-direction: column;
-  flex: 5;
+  flex: 7;
 }
 
 .solutionButton {
   display: flex;
   flex-direction: row;
   cursor: pointer;
+}
+
+.solutionButton:hover {
+  text-decoration: underline;
+}
+
+.solutionButton:active {
+  text-decoration: underline;
+  transform: scale(0.8, 0.8);
+  -ms-transform: scale(0.8, 0.8); /* IE 9 */
+  -webkit-transform: scale(0.8, 0.8); /* Safari and Chrome */
+  -o-transform: scale(0.8, 0.8); /* Opera */
+  -moz-transform: scale(0.8, 0.8); /* Firefox */
 }
 
 .solutionButtonIcon {
@@ -108,11 +127,17 @@
   border-radius: 100px;
 }
 
+.solutionCheckIcon {
+  width: 40px;
+  height: 40px;
+  align-self: center;
+  margin: 0 0 10px 20px;
+}
+
 .solutionDateText {
   font-family: MLight;
 }
 
 .solutionContentContainer {
   margin: 20px 0 40px;
-  border-right: 1px solid #e9e9e9;
 }

@@ -139,7 +139,7 @@ const Reviews: React.FC<ReviewsProps> = ({
           resetReviewValue();
           closeAdding();
         } else {
-          throw Error(res.data?.createReview?.message);
+          throw new Error(res.data?.createReview?.message);
         }
       })
       .catch((e) => {
@@ -176,7 +176,7 @@ const Reviews: React.FC<ReviewsProps> = ({
           resetReviewValue();
           closeEditing();
         } else {
-          throw Error(res.data?.updateReview?.message);
+          throw new Error(res.data?.updateReview?.message);
         }
       })
       .catch((error) => {
@@ -203,7 +203,7 @@ const Reviews: React.FC<ReviewsProps> = ({
         },
       }).then((res) => {
         if (!res.data?.deleteReview.status) {
-          throw Error(res.data?.deleteReview.message);
+          throw new Error(res.data?.deleteReview.message);
         }
       });
     } catch (error) {
