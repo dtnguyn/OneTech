@@ -4,7 +4,6 @@ import styles from "../styles/NavBar.module.css";
 import Link from "next/link";
 import { useAuth } from "../context/AuthContext";
 import { Avatar, Divider } from "@material-ui/core";
-import UserDropdown from "./UserDropdown";
 import { useLogoutMutation } from "../generated/graphql";
 import { client } from "../utils/withApollo";
 import { Router, useRouter } from "next/router";
@@ -33,35 +32,65 @@ const NavBar: React.FC<NavBarProps> = ({}) => {
           <Nav className="mr-auto"></Nav>
           <Nav className={styles.navbarLinkContainer}>
             <Link href="/device">
-              <a className={styles.navbarLink}>Devices</a>
+              <a
+                className={styles.navbarLink}
+                onClick={() => setDropDown(false)}
+              >
+                Devices
+              </a>
             </Link>
             <Link href="/about">
-              <a className={styles.navbarLink}>About</a>
+              <a
+                className={styles.navbarLink}
+                onClick={() => setDropDown(false)}
+              >
+                About
+              </a>
             </Link>
             {user ? null : (
               <Link href="/auth">
-                <a className={styles.navbarLink}>Login</a>
+                <a
+                  className={styles.navbarLink}
+                  onClick={() => setDropDown(false)}
+                >
+                  Login
+                </a>
               </Link>
             )}
 
             {user && innerWidth < 992 ? (
               <div className={styles.navbarLinkContainer}>
-                <Link href="/device">
-                  <a className={styles.navbarLink}>Account</a>
+                <Link href={`/user/${user.id}`}>
+                  <a
+                    className={styles.navbarLink}
+                    onClick={() => setDropDown(false)}
+                  >
+                    Account
+                  </a>
                 </Link>
               </div>
             ) : null}
             {user && innerWidth < 992 ? (
               <div className={styles.navbarLinkContainer}>
                 <Link href="/device">
-                  <a className={styles.navbarLink}>Settings</a>
+                  <a
+                    className={styles.navbarLink}
+                    onClick={() => setDropDown(false)}
+                  >
+                    Settings
+                  </a>
                 </Link>
               </div>
             ) : null}
             {user && innerWidth < 992 ? (
               <div className={styles.navbarLinkContainer}>
                 <Link href="/device">
-                  <a className={styles.navbarLink}>Logout</a>
+                  <a
+                    className={styles.navbarLink}
+                    onClick={() => setDropDown(false)}
+                  >
+                    Logout
+                  </a>
                 </Link>
               </div>
             ) : null}
@@ -77,8 +106,18 @@ const NavBar: React.FC<NavBarProps> = ({}) => {
       </Navbar>
       {dropdown ? (
         <div className={styles.dropdownMenu}>
-          <p className={styles.dropdownItem}>Account</p>
-          <p className={styles.dropdownItem}>Settings</p>
+          <Link href={`/user/${user?.id}`}>
+            <p
+              className={styles.dropdownItem}
+              onClick={() => setDropDown(false)}
+            >
+              Account
+            </p>
+          </Link>
+
+          <p className={styles.dropdownItem} onClick={() => setDropDown(false)}>
+            Settings
+          </p>
           <Divider />
           <p
             className={styles.dropdownItem}

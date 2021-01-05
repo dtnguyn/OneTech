@@ -35,6 +35,7 @@ const Header: React.FC<HeaderProps> = ({ device, rating }) => {
       update: (cache) => {
         console.log(cache);
         cache.evict({ fieldName: "singleDevice" });
+        cache.evict({ fieldName: "devices" });
       },
     })
       .then((res) => {
@@ -45,14 +46,6 @@ const Header: React.FC<HeaderProps> = ({ device, rating }) => {
       .catch((error) => {
         alert(error.message);
       });
-  };
-
-  const getAverage = (numArr: number[]) => {
-    let sum = 0;
-    for (const num of numArr) {
-      sum += num;
-    }
-    return sum / numArr.length;
   };
 
   useEffect(() => {

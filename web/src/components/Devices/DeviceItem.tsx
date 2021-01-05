@@ -13,7 +13,7 @@ const DeviceItem: React.FC<DeviceItemProps> = ({ device }) => {
     <div
       className={styles.deviceItemContainer}
       onClick={() => {
-        router.push(`device/${device.id}`);
+        router.push(`/device/${device.id}`);
       }}
     >
       <img className={styles.deviceItemImage} src={device.coverImage} />
