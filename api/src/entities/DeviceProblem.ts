@@ -8,6 +8,7 @@ import {
   ManyToOne,
   JoinColumn,
   OneToMany,
+  OneToOne,
 } from "typeorm";
 import { Device } from "./Device";
 import { DeviceProblemStar } from "./DeviceProblemStar";
@@ -48,6 +49,14 @@ export class DeviceProblem {
   @Field({ nullable: true })
   @JoinColumn({ name: "solvedBy" })
   solver: User;
+
+  @Field(() => String, { nullable: true })
+  @Column({ nullable: true })
+  pickedSolutionId: string | null;
+  @OneToOne(() => Solution, (solution) => solution.problem)
+  @Field(() => Solution, { nullable: true })
+  @JoinColumn({ name: "pickedSolutionId" })
+  pickedSolution: Solution;
 
   @Field()
   @Column()

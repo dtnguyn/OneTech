@@ -152,7 +152,12 @@ export class SolutionResolver {
     @Arg("userId", { nullable: true }) userId: string
   ) {
     try {
-      const builder = this.solutionRepo.createQueryBuilder("solution");
+      const builder = this.solutionRepo
+        .createQueryBuilder("solution")
+        .leftJoinAndSelect("solution.stars", "stars")
+        .orderBy("solution.createdAt", "DESC")
+        .leftJoinAndSelect("solution.author", "author")
+        .leftJoinAndSelect("solution.images", "images");
       if (problemId)
         builder.where("solution.problemId = :problemId", { problemId });
       if (userId) builder.where("solution.authorId = :userId", { userId });
@@ -238,12 +243,13 @@ export class SolutionResolver {
       const problem = await manager.findOne(DeviceProblem, { id: problemId });
       if (problem?.solvedBy) {
         //Unpicked
-        if (problem.solvedBy === solverId) {
+        if (problem.pickedSolutionId === solutionId) {
           await manager.update(
             DeviceProblem,
             { id: problemId },
             {
               solvedBy: null,
+              pickedSolutionId: null,
             }
           );
 
@@ -266,6 +272,7 @@ export class SolutionResolver {
           { id: problemId },
           {
             solvedBy: solverId,
+            pickedSolutionId: solutionId,
           }
         );
 
