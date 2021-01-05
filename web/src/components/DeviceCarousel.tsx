@@ -1,13 +1,15 @@
+import { title } from "process";
 import Slider from "react-slick";
-import { Device } from "../../generated/graphql";
-import styles from "../../styles/Devices.module.css";
-import DeviceItem from "./DeviceItem";
+import { Device } from "../generated/graphql";
+import styles from "../styles/Devices.module.css";
+import DeviceItem from "./Devices/DeviceItem";
 
 interface DeviceCarouselProps {
   devices: Device[];
+  title: string;
 }
 
-const DeviceCarousel: React.FC<DeviceCarouselProps> = ({ devices }) => {
+const DeviceCarousel: React.FC<DeviceCarouselProps> = ({ devices, title }) => {
   const settings = {
     dots: true,
     infinite: false,
@@ -49,7 +51,7 @@ const DeviceCarousel: React.FC<DeviceCarouselProps> = ({ devices }) => {
 
   return (
     <div className={styles.deviceCarouselContainer}>
-      <h4 className={styles.deviceCarouselTitle}>{devices[0].brand}</h4>
+      <h4 className={styles.deviceCarouselTitle}>{title}</h4>
       <Slider {...settings}>
         {devices.map((device) => (
           <div key={device.id} className={styles.deviceCarouselItem}>

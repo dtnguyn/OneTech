@@ -157,6 +157,8 @@ export type DeviceProblem = {
   updatedAt: Scalars['DateTime'];
   solvedBy?: Maybe<Scalars['String']>;
   solver?: Maybe<User>;
+  pickedSolutionId?: Maybe<Scalars['String']>;
+  pickedSolution?: Maybe<Solution>;
   authorId: Scalars['String'];
   author?: Maybe<User>;
   deviceId: Scalars['String'];
@@ -164,6 +166,37 @@ export type DeviceProblem = {
   stars?: Maybe<Array<DeviceProblemStar>>;
   solutions?: Maybe<Array<Solution>>;
   images: Array<ProblemImage>;
+};
+
+export type Solution = {
+  __typename?: 'Solution';
+  id: Scalars['String'];
+  content: Scalars['String'];
+  isPicked: Scalars['Boolean'];
+  createdAt: Scalars['DateTime'];
+  updatedAt: Scalars['DateTime'];
+  authorId: Scalars['String'];
+  author: User;
+  problemId: Scalars['String'];
+  stars?: Maybe<Array<SolutionStar>>;
+  images: Array<SolutionImage>;
+};
+
+export type SolutionStar = {
+  __typename?: 'SolutionStar';
+  userId: Scalars['String'];
+  solutionId: Scalars['String'];
+  createdAt: Scalars['String'];
+  updatedAt: Scalars['DateTime'];
+};
+
+export type SolutionImage = {
+  __typename?: 'SolutionImage';
+  path: Scalars['String'];
+  createdAt: Scalars['String'];
+  updatedAt: Scalars['DateTime'];
+  solutionId: Scalars['String'];
+  solution: Solution;
 };
 
 export type Device = {
@@ -252,37 +285,6 @@ export type DeviceProblemStar = {
   problemId: Scalars['String'];
   createdAt: Scalars['String'];
   updatedAt: Scalars['DateTime'];
-};
-
-export type Solution = {
-  __typename?: 'Solution';
-  id: Scalars['String'];
-  content: Scalars['String'];
-  isPicked: Scalars['Boolean'];
-  createdAt: Scalars['DateTime'];
-  updatedAt: Scalars['DateTime'];
-  authorId: Scalars['String'];
-  author: User;
-  problemId: Scalars['String'];
-  stars?: Maybe<Array<SolutionStar>>;
-  images: Array<SolutionImage>;
-};
-
-export type SolutionStar = {
-  __typename?: 'SolutionStar';
-  userId: Scalars['String'];
-  solutionId: Scalars['String'];
-  createdAt: Scalars['String'];
-  updatedAt: Scalars['DateTime'];
-};
-
-export type SolutionImage = {
-  __typename?: 'SolutionImage';
-  path: Scalars['String'];
-  createdAt: Scalars['String'];
-  updatedAt: Scalars['DateTime'];
-  solutionId: Scalars['String'];
-  solution: Solution;
 };
 
 export type ProblemImage = {
@@ -1121,7 +1123,7 @@ export type ProblemDetailQuery = (
     & Pick<ProblemResponse, 'status' | 'message'>
     & { data?: Maybe<Array<(
       { __typename?: 'DeviceProblem' }
-      & Pick<DeviceProblem, 'id' | 'title' | 'content' | 'solvedBy' | 'createdAt' | 'updatedAt'>
+      & Pick<DeviceProblem, 'id' | 'title' | 'content' | 'solvedBy' | 'pickedSolutionId' | 'createdAt' | 'updatedAt'>
       & { images: Array<(
         { __typename?: 'ProblemImage' }
         & Pick<ProblemImage, 'path'>
@@ -1174,6 +1176,34 @@ export type ReviewsQuery = (
         { __typename?: 'ReviewRating' }
         & Pick<ReviewRating, 'reviewId' | 'deviceId' | 'overall' | 'battery' | 'software' | 'display' | 'camera' | 'processor'>
       ) }
+    )>> }
+  ) }
+);
+
+export type SolutionsQueryVariables = Exact<{
+  userId?: Maybe<Scalars['String']>;
+  problemId?: Maybe<Scalars['String']>;
+}>;
+
+
+export type SolutionsQuery = (
+  { __typename?: 'Query' }
+  & { solutions: (
+    { __typename?: 'SolutionResponse' }
+    & Pick<SolutionResponse, 'status' | 'message'>
+    & { data?: Maybe<Array<(
+      { __typename?: 'Solution' }
+      & Pick<Solution, 'id' | 'content' | 'isPicked' | 'createdAt' | 'updatedAt'>
+      & { author: (
+        { __typename?: 'User' }
+        & Pick<User, 'username' | 'id' | 'avatar'>
+      ), stars?: Maybe<Array<(
+        { __typename?: 'SolutionStar' }
+        & Pick<SolutionStar, 'userId'>
+      )>>, images: Array<(
+        { __typename?: 'SolutionImage' }
+        & Pick<SolutionImage, 'path'>
+      )> }
     )>> }
   ) }
 );
@@ -2195,6 +2225,7 @@ export const ProblemDetailDocument = gql`
       title
       content
       solvedBy
+      pickedSolutionId
       createdAt
       updatedAt
       images {
@@ -2322,6 +2353,59 @@ export function useReviewsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<Re
 export type ReviewsQueryHookResult = ReturnType<typeof useReviewsQuery>;
 export type ReviewsLazyQueryHookResult = ReturnType<typeof useReviewsLazyQuery>;
 export type ReviewsQueryResult = Apollo.QueryResult<ReviewsQuery, ReviewsQueryVariables>;
+export const SolutionsDocument = gql`
+    query Solutions($userId: String, $problemId: String) {
+  solutions(userId: $userId, problemId: $problemId) {
+    status
+    message
+    data {
+      id
+      author {
+        username
+        id
+        avatar
+      }
+      content
+      stars {
+        userId
+      }
+      isPicked
+      createdAt
+      updatedAt
+      images {
+        path
+      }
+    }
+  }
+}
+    `;
+
+/**
+ * __useSolutionsQuery__
+ *
+ * To run a query within a React component, call `useSolutionsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useSolutionsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useSolutionsQuery({
+ *   variables: {
+ *      userId: // value for 'userId'
+ *      problemId: // value for 'problemId'
+ *   },
+ * });
+ */
+export function useSolutionsQuery(baseOptions?: Apollo.QueryHookOptions<SolutionsQuery, SolutionsQueryVariables>) {
+        return Apollo.useQuery<SolutionsQuery, SolutionsQueryVariables>(SolutionsDocument, baseOptions);
+      }
+export function useSolutionsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<SolutionsQuery, SolutionsQueryVariables>) {
+          return Apollo.useLazyQuery<SolutionsQuery, SolutionsQueryVariables>(SolutionsDocument, baseOptions);
+        }
+export type SolutionsQueryHookResult = ReturnType<typeof useSolutionsQuery>;
+export type SolutionsLazyQueryHookResult = ReturnType<typeof useSolutionsLazyQuery>;
+export type SolutionsQueryResult = Apollo.QueryResult<SolutionsQuery, SolutionsQueryVariables>;
 export const MeDocument = gql`
     query Me {
   me {

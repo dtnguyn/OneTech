@@ -45,6 +45,7 @@ query ProblemDetail($id: String!) {
       title
       content
       solvedBy
+      pickedSolutionId
       createdAt
       updatedAt
       images {

@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { useDevice } from "../../context/DeviceContext";
 import { Device } from "../../generated/graphql";
 import device from "../../pages/device";
-import DeviceCarousel from "./DeviceCarousel";
+import DeviceCarousel from "../DeviceCarousel";
 
 interface BodyProps {}
 
@@ -31,7 +31,11 @@ const Body: React.FC<BodyProps> = ({}) => {
   return (
     <div>
       {devicesArr?.map((devices) => (
-        <DeviceCarousel key={devices[0].brand} devices={devices} />
+        <DeviceCarousel
+          key={devices[0].brand}
+          title={devices[0].brand}
+          devices={devices}
+        />
       ))}
     </div>
   );
