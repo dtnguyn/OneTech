@@ -1,11 +1,13 @@
 import { useEffect, useState } from "react";
 import { useAuth } from "../../context/AuthContext";
+import { User } from "../../generated/graphql";
 import styles from "../../styles/User.module.css";
 
-interface HeaderProps {}
+interface HeaderProps {
+  user: User;
+}
 
-const Header: React.FC<HeaderProps> = ({}) => {
-  const { user } = useAuth();
+const Header: React.FC<HeaderProps> = ({ user }) => {
   const [starCount, setStarCount] = useState<number>();
 
   useEffect(() => {
@@ -37,7 +39,7 @@ const Header: React.FC<HeaderProps> = ({}) => {
             </div>
             <div className={styles.userIconInfo}>
               <img className={styles.userIcon} src="/images/check.png" />
-              <p>{user?.problemSolved?.length}</p>
+              <p>{user?.problemSolved ? user?.problemSolved.length : 0}</p>
             </div>
           </div>
         </div>

@@ -24,13 +24,9 @@ export class UserSetting {
   @JoinColumn({ name: "userId" })
   user: User;
 
-  @Field(() => Boolean, { nullable: true })
+  @Field(() => Boolean)
   @Column({ default: "false" })
   isPrivate: boolean;
-
-  @Field(() => Boolean, { nullable: true })
-  @Column({ default: "false" })
-  isDarkMode: boolean;
 
   @Field(() => String)
   @CreateDateColumn()

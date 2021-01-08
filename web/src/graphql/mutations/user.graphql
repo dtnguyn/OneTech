@@ -4,3 +4,10 @@ mutation Logout {
     message
   }
 }
+
+mutation updateUserSetting($userId: String!, $isPrivate: Boolean) {
+  updateSetting(userId: $userId, input: { isPrivate: $isPrivate }) {
+    status
+    message
+  }
+}

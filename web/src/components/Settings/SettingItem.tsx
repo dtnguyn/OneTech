@@ -1,12 +1,16 @@
-import { Switch } from "@material-ui/core";
 import { useState } from "react";
 import styles from "../../styles/Settings.module.css";
+import Switch from "react-switch";
 
 interface SettingItemProps {
   image: string;
   title: string;
   content: string;
   defaultValue: boolean;
+  checkedIcon?: JSX.Element;
+  unCheckedIcon?: JSX.Element;
+  onColor?: string;
+  offColor?: string;
   handleChange: (state: boolean) => void;
 }
 
@@ -15,6 +19,10 @@ const SettingItem: React.FC<SettingItemProps> = ({
   title,
   content,
   defaultValue,
+  onColor,
+  offColor,
+  checkedIcon,
+  unCheckedIcon,
   handleChange,
 }) => {
   const [on, setOn] = useState(defaultValue);
@@ -35,15 +43,15 @@ const SettingItem: React.FC<SettingItemProps> = ({
       <div className={styles.settingItemThirdSection}>
         <div className={styles.settingToggleContainer}>
           <Switch
-            size="medium"
             checked={on}
             onChange={() => {
               handleChange(!on);
               setOn(!on);
             }}
-            color="primary"
-            name="checkedB"
-            inputProps={{ "aria-label": "primary checkbox" }}
+            onColor={onColor}
+            offColor={offColor}
+            checkedIcon={checkedIcon ? checkedIcon : false}
+            uncheckedIcon={unCheckedIcon ? unCheckedIcon : false}
           />
         </div>
       </div>

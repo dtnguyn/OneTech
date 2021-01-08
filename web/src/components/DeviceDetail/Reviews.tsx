@@ -11,11 +11,10 @@ import ConfirmationDialog from "../ConfirmationDialog";
 import CustomEditor from "../CustomEditor";
 import ReviewItem from "./ReviewItem";
 import Slider from "@material-ui/core/Slider";
-import mitt from "next/dist/next-server/lib/mitt";
-import CustomSlider from "../CustomSlider";
 
 import { useReview } from "../../context/ReviewContext";
 import { useAuth } from "../../context/AuthContext";
+import CustomSlider from "../CustomSlider";
 
 interface ReviewsProps {
   deviceId: string;
@@ -279,7 +278,7 @@ const Reviews: React.FC<ReviewsProps> = ({
                     }}
                     aria-labelledby="discrete-slider"
                     valueLabelDisplay="auto"
-                    step={0}
+                    step={0.1}
                     min={0}
                     max={10}
                   />

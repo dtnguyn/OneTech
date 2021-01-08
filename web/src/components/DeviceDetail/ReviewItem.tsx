@@ -73,7 +73,7 @@ const ReviewItem: React.FC<ReviewItemProps> = ({
         </div>
       </div>
       <br />
-      <Divider />
+      <div className="divider" />
       <br />
     </div>
   );

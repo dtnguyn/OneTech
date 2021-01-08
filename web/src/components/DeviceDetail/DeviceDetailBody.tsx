@@ -81,8 +81,6 @@ const Body: React.FC<BodyProps> = ({ deviceId, deviceCategory }) => {
     console.log("setttt", problemArr);
     if (problemArr && problemArr.length != 0) {
       //found problems
-      if (!initialState.problems) {
-      }
       setProblems(problemArr);
       setInitialState({ ...initialState, problems: false });
     } else if (problemArr && problemArr.length == 0) {
@@ -96,10 +94,6 @@ const Body: React.FC<BodyProps> = ({ deviceId, deviceCategory }) => {
     console.log("review Array", reviewArr);
     if (reviewArr && reviewArr.length != 0) {
       //found reviews
-
-      if (!initialState.reviews) {
-      }
-
       setReviews(reviewArr);
       setInitialState({ ...initialState, reviews: false });
     } else if (reviewArr && reviewArr.length == 0) {

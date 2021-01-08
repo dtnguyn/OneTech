@@ -62,7 +62,7 @@ const DeviceDetail: React.FC<DeviceDetailProps> = ({}) => {
           <Header device={device} rating={rating} />
           <br />
           <br />
-          <Divider />
+          <div className="divider" />
           <br />
           <Body deviceId={device.id} deviceCategory={device.category} />
           <br />

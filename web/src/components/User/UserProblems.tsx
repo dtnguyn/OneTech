@@ -7,6 +7,7 @@ import {
   useDeleteImagesMutation,
   useDeleteProblemMutation,
   useProblemsQuery,
+  User,
   useToggleProblemStarMutation,
   useUpdateProblemMutation,
 } from "../../generated/graphql";
@@ -17,18 +18,18 @@ import CustomEditor from "../CustomEditor";
 import ProblemItem from "../DeviceDetail/ProblemItem";
 
 interface ProblemsProps {
+  user: User;
   problems: DeviceProblem[];
   editing: boolean;
   setEditing: (status: boolean) => void;
 }
 
 const Problems: React.FC<ProblemsProps> = ({
+  user,
   problems,
   editing,
   setEditing,
 }) => {
-  const { user } = useAuth();
-
   const [problemValue, setProblemValue] = useState({
     id: "",
     title: "",

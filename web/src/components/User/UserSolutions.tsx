@@ -4,6 +4,7 @@ import {
   useCreateSolutionMutation,
   useDeleteImagesMutation,
   useDeleteSolutionMutation,
+  User,
   useSolutionsQuery,
   useToggleSolutionPickedMutation,
   useToggleSolutionStarMutation,
@@ -19,12 +20,14 @@ import ConfirmationDialog from "../ConfirmationDialog";
 import SolutionItem from "../ProblemDetail/SolutionItem";
 
 interface SolutionsProps {
+  user: User;
   solutions: Solution[];
   editing: boolean;
   setEditing: (status: boolean) => void;
 }
 
 const Solutions: React.FC<SolutionsProps> = ({
+  user,
   solutions,
   editing,
   setEditing,
@@ -33,7 +36,6 @@ const Solutions: React.FC<SolutionsProps> = ({
     id: "",
     content: "",
   });
-  const { user } = useAuth();
 
   const [confirmationDialog, setConfirmationDialog] = useState({
     show: false,
@@ -49,12 +51,6 @@ const Solutions: React.FC<SolutionsProps> = ({
   const [deleteSolutionMutation, {}] = useDeleteSolutionMutation();
   const [deleteImagesMutation, {}] = useDeleteImagesMutation();
   const [toggleSolutionStarMutation, {}] = useToggleSolutionStarMutation();
-
-  const { data } = useSolutionsQuery({
-    variables: {
-      userId: user?.id,
-    },
-  });
 
   const handleUpdateSolution = async (
     id: string,
@@ -100,7 +96,6 @@ const Solutions: React.FC<SolutionsProps> = ({
           id,
         },
         update: (cache) => {
-          // cache.evict({ fieldName: "singleProblem" });
           cache.evict({ fieldName: "solutions" });
         },
       }).then((res) => {
@@ -120,7 +115,6 @@ const Solutions: React.FC<SolutionsProps> = ({
         userId,
       },
       update: (cache) => {
-        // cache.evict({ fieldName: "singleProblem" });
         cache.evict({ fieldName: "solutions" });
       },
     })

@@ -26,9 +26,6 @@ class UpdateUserInput {
 class UpdateSettingInput {
   @Field(() => Boolean, { nullable: true })
   isPrivate?: boolean;
-
-  @Field(() => String, { nullable: true })
-  isDarkMode?: boolean;
 }
 
 @Resolver()
@@ -115,18 +112,24 @@ export class UserResolver {
 
   @Query(() => UserResponse)
   async singleUser(@Arg("id") id: string) {
-    const user = await this.userRepo.findOne({ id }).catch((e) => {
+    try {
+      const user = await this.userRepo
+        .createQueryBuilder("user")
+        .leftJoinAndSelect("user.setting", "setting")
+        .where("user.id = :id", { id })
+        .getOne();
+
+      return {
+        status: true,
+        message: "Getting users successfully.",
+        data: [user],
+      };
+    } catch (error) {
       return {
         status: false,
-        message: e.message,
+        message: error.message,
       };
-    });
-
-    return {
-      status: true,
-      message: "Getting users successfully.",
-      data: [user],
-    };
+    }
   }
 
   @Query(() => UserResponse, { nullable: true })
@@ -171,7 +174,7 @@ export class UserResolver {
     };
   }
 
-  @Mutation(() => UserSetting)
+  @Mutation(() => UserSettingResponse)
   async updateSetting(
     @Arg("userId") userId: string,
     @Arg("input") input: UpdateSettingInput

@@ -1,5 +1,5 @@
 import { VerifyCallback } from "passport-google-oauth20";
-import { getRepository } from "typeorm";
+import { getConnection, getRepository } from "typeorm";
 import { User } from "./entities/User";
 
 import passport from "passport";
@@ -8,6 +8,7 @@ import { Strategy as FacebookStrategy } from "passport-facebook";
 import { Strategy as TwitterStrategy } from "passport-twitter";
 
 import { Router } from "express";
+import { UserSetting } from "./entities/UserSetting";
 
 const router = Router();
 
@@ -40,16 +41,31 @@ const handleRegister = async (
   username: string,
   avatar: string
 ) => {
-  const repo = getRepository(User);
-  const newUser = await repo.create({
-    oauthId,
-    email,
-    username,
-    avatar,
-  });
-  await repo.insert(newUser);
+  try {
+    const queryRunner = getConnection().createQueryRunner();
+    await queryRunner.connect();
+    await queryRunner.startTransaction();
 
-  return repo.findOne({ oauthId });
+    const manager = queryRunner.manager;
+
+    const newUser = await manager.create(User, {
+      oauthId,
+      email,
+      username,
+      avatar,
+    });
+
+    await manager.insert(User, newUser);
+
+    await manager.insert(UserSetting, { userId: newUser.id });
+
+    queryRunner.commitTransaction();
+
+    return newUser;
+  } catch (error) {
+    console.log(error.message);
+    return null;
+  }
 };
 
 const updateUserEmail = (id: string, email: string) => {
