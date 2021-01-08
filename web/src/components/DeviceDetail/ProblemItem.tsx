@@ -7,6 +7,7 @@ import parse from "html-react-parser";
 import classes from "@material-ui/styles";
 import { useAuth } from "../../context/AuthContext";
 import { useRouter } from "next/router";
+import { clearInterval } from "timers";
 
 interface ProblemItemProps {
   problem: DeviceProblem;
@@ -95,7 +96,7 @@ const ProblemItem: React.FC<ProblemItemProps> = ({
         </div>
       </div>
       <br />
-      <hr className="divider" />
+      <div className="divider" />
       <br />
     </div>
   );

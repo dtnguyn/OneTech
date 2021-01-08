@@ -2,24 +2,68 @@ import { Divider } from "@material-ui/core";
 import SettingItem from "../components/Settings/SettingItem";
 import styles from "../styles/Settings.module.css";
 import { useDarkMode } from "next-dark-mode";
+import { withApollo } from "../utils/withApollo";
+import {
+  UserSetting,
+  useSettingQuery,
+  useUpdateUserSettingMutation,
+} from "../generated/graphql";
+import { useAuth } from "../context/AuthContext";
+import { useEffect, useState } from "react";
 
 interface SettingsProps {}
 
 const Settings: React.FC<SettingsProps> = ({}) => {
   const { darkModeActive, switchToDarkMode, switchToLightMode } = useDarkMode();
+  const { user } = useAuth();
+  const [setting, setSetting] = useState<UserSetting>();
+
+  const [updateUserSettingMutation, {}] = useUpdateUserSettingMutation();
+
+  const { data } = useSettingQuery({
+    variables: {
+      userId: user?.id!,
+    },
+  });
+
+  useEffect(() => {
+    const arr = data?.setting?.data as UserSetting[];
+    console.log(arr);
+    if (arr && arr.length) {
+      setSetting(arr[0]);
+    }
+  }, [data]);
+
+  if (!setting) return null;
 
   return (
     <div className={styles.settingsPageContainer}>
       <p className={styles.settingsPageTitle}>Settings</p>
+
       <div className={styles.settingsSectionContainer}>
-        <p className={styles.settingsSectionTitle}>Account</p>
-        <SettingItem
-          image="/images/private.png"
-          title="Private mode"
-          content="If enabled, people cannot see your profile in detailed."
-          defaultValue={false}
-          handleChange={() => {}}
-        />
+        {user ? (
+          <>
+            <p className={styles.settingsSectionTitle}>Account</p>
+            <SettingItem
+              image="/images/private.png"
+              title="Private mode"
+              content="If enabled, people cannot see your profile in detailed."
+              defaultValue={setting ? setting.isPrivate : false}
+              handleChange={(state) => {
+                console.log(setting);
+                updateUserSettingMutation({
+                  variables: {
+                    userId: user?.id!,
+                    isPrivate: state,
+                  },
+                  update: (cache) => {
+                    cache.evict({ fieldName: "setting" });
+                  },
+                });
+              }}
+            />
+          </>
+        ) : null}
         <br />
         <p className={styles.settingsSectionTitle}>Website</p>
 
@@ -27,6 +71,13 @@ const Settings: React.FC<SettingsProps> = ({}) => {
           image="/images/dark-mode.png"
           title="Dark mode"
           content="If enabled, the website will be in dark with white text"
+          onColor="#404040"
+          checkedIcon={
+            <img src="/images/moon.png" className={styles.toggleIcon} />
+          }
+          unCheckedIcon={
+            <img src="/images/sunny.png" className={styles.toggleIcon} />
+          }
           defaultValue={darkModeActive}
           handleChange={(state) => {
             console.log(state);
@@ -39,4 +90,4 @@ const Settings: React.FC<SettingsProps> = ({}) => {
   );
 };
 
-export default Settings;
+export default withApollo({ ssr: false })(Settings);

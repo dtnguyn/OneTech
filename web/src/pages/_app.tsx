@@ -30,6 +30,8 @@ function MyApp({ Component, pageProps }: any) {
     }
   }, [data]);
 
+  console.log("darkmode ", darkModeActive);
+
   return (
     <AuthContext.Provider value={{ user, setUser }}>
       <div className={darkModeActive ? `darkMode` : `lightMode`}>

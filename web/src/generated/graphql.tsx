@@ -142,8 +142,7 @@ export type User = {
 export type UserSetting = {
   __typename?: 'UserSetting';
   userId: Scalars['String'];
-  isPrivate?: Maybe<Scalars['Boolean']>;
-  isDarkMode?: Maybe<Scalars['Boolean']>;
+  isPrivate: Scalars['Boolean'];
   createdAt: Scalars['String'];
   updatedAt: Scalars['DateTime'];
 };
@@ -372,7 +371,7 @@ export type Mutation = {
   deleteUser: UserResponse;
   logout: UserResponse;
   createSetting: UserSettingResponse;
-  updateSetting: UserSetting;
+  updateSetting: UserSettingResponse;
   createDevice?: Maybe<DeviceResponse>;
   updateDevice: DeviceResponse;
   deleteDevice: DeviceResponse;
@@ -597,7 +596,6 @@ export type UpdateUserInput = {
 
 export type UpdateSettingInput = {
   isPrivate?: Maybe<Scalars['Boolean']>;
-  isDarkMode?: Maybe<Scalars['String']>;
 };
 
 export type UpdateDeviceInput = {
@@ -976,6 +974,20 @@ export type LogoutMutation = (
   ) }
 );
 
+export type UpdateUserSettingMutationVariables = Exact<{
+  userId: Scalars['String'];
+  isPrivate?: Maybe<Scalars['Boolean']>;
+}>;
+
+
+export type UpdateUserSettingMutation = (
+  { __typename?: 'Mutation' }
+  & { updateSetting: (
+    { __typename?: 'UserSettingResponse' }
+    & Pick<UserSettingResponse, 'status' | 'message'>
+  ) }
+);
+
 export type DevicesQueryVariables = Exact<{
   all?: Maybe<Scalars['Boolean']>;
   category?: Maybe<Scalars['String']>;
@@ -1235,6 +1247,59 @@ export type MeQuery = (
         { __typename?: 'DeviceProblem' }
         & Pick<DeviceProblem, 'id'>
       )>> }
+    )>> }
+  )> }
+);
+
+export type SingleUserQueryVariables = Exact<{
+  id: Scalars['String'];
+}>;
+
+
+export type SingleUserQuery = (
+  { __typename?: 'Query' }
+  & { singleUser: (
+    { __typename?: 'UserResponse' }
+    & Pick<UserResponse, 'status'>
+    & { data?: Maybe<Array<(
+      { __typename?: 'User' }
+      & Pick<User, 'id' | 'oauthId' | 'username' | 'email' | 'avatar'>
+      & { setting?: Maybe<(
+        { __typename?: 'UserSetting' }
+        & Pick<UserSetting, 'isPrivate'>
+      )>, solutions?: Maybe<Array<(
+        { __typename?: 'Solution' }
+        & { stars?: Maybe<Array<(
+          { __typename?: 'SolutionStar' }
+          & Pick<SolutionStar, 'userId'>
+        )>> }
+      )>>, problems?: Maybe<Array<(
+        { __typename?: 'DeviceProblem' }
+        & { stars?: Maybe<Array<(
+          { __typename?: 'DeviceProblemStar' }
+          & Pick<DeviceProblemStar, 'userId'>
+        )>> }
+      )>>, problemSolved?: Maybe<Array<(
+        { __typename?: 'DeviceProblem' }
+        & Pick<DeviceProblem, 'id'>
+      )>> }
+    )>> }
+  ) }
+);
+
+export type SettingQueryVariables = Exact<{
+  userId: Scalars['String'];
+}>;
+
+
+export type SettingQuery = (
+  { __typename?: 'Query' }
+  & { setting?: Maybe<(
+    { __typename?: 'UserSettingResponse' }
+    & Pick<UserSettingResponse, 'status' | 'message'>
+    & { data?: Maybe<Array<(
+      { __typename?: 'UserSetting' }
+      & Pick<UserSetting, 'userId' | 'isPrivate'>
     )>> }
   )> }
 );
@@ -1959,6 +2024,40 @@ export function useLogoutMutation(baseOptions?: Apollo.MutationHookOptions<Logou
 export type LogoutMutationHookResult = ReturnType<typeof useLogoutMutation>;
 export type LogoutMutationResult = Apollo.MutationResult<LogoutMutation>;
 export type LogoutMutationOptions = Apollo.BaseMutationOptions<LogoutMutation, LogoutMutationVariables>;
+export const UpdateUserSettingDocument = gql`
+    mutation updateUserSetting($userId: String!, $isPrivate: Boolean) {
+  updateSetting(userId: $userId, input: {isPrivate: $isPrivate}) {
+    status
+    message
+  }
+}
+    `;
+export type UpdateUserSettingMutationFn = Apollo.MutationFunction<UpdateUserSettingMutation, UpdateUserSettingMutationVariables>;
+
+/**
+ * __useUpdateUserSettingMutation__
+ *
+ * To run a mutation, you first call `useUpdateUserSettingMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useUpdateUserSettingMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [updateUserSettingMutation, { data, loading, error }] = useUpdateUserSettingMutation({
+ *   variables: {
+ *      userId: // value for 'userId'
+ *      isPrivate: // value for 'isPrivate'
+ *   },
+ * });
+ */
+export function useUpdateUserSettingMutation(baseOptions?: Apollo.MutationHookOptions<UpdateUserSettingMutation, UpdateUserSettingMutationVariables>) {
+        return Apollo.useMutation<UpdateUserSettingMutation, UpdateUserSettingMutationVariables>(UpdateUserSettingDocument, baseOptions);
+      }
+export type UpdateUserSettingMutationHookResult = ReturnType<typeof useUpdateUserSettingMutation>;
+export type UpdateUserSettingMutationResult = Apollo.MutationResult<UpdateUserSettingMutation>;
+export type UpdateUserSettingMutationOptions = Apollo.BaseMutationOptions<UpdateUserSettingMutation, UpdateUserSettingMutationVariables>;
 export const DevicesDocument = gql`
     query Devices($all: Boolean, $category: String, $userId: String, $name: String) {
   devices(all: $all, category: $category, userId: $userId, name: $name) {
@@ -2474,3 +2573,97 @@ export function useMeLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<MeQuery
 export type MeQueryHookResult = ReturnType<typeof useMeQuery>;
 export type MeLazyQueryHookResult = ReturnType<typeof useMeLazyQuery>;
 export type MeQueryResult = Apollo.QueryResult<MeQuery, MeQueryVariables>;
+export const SingleUserDocument = gql`
+    query SingleUser($id: String!) {
+  singleUser(id: $id) {
+    status
+    data {
+      id
+      oauthId
+      username
+      email
+      setting {
+        isPrivate
+      }
+      avatar
+      solutions {
+        stars {
+          userId
+        }
+      }
+      problems {
+        stars {
+          userId
+        }
+      }
+      problemSolved {
+        id
+      }
+    }
+  }
+}
+    `;
+
+/**
+ * __useSingleUserQuery__
+ *
+ * To run a query within a React component, call `useSingleUserQuery` and pass it any options that fit your needs.
+ * When your component renders, `useSingleUserQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useSingleUserQuery({
+ *   variables: {
+ *      id: // value for 'id'
+ *   },
+ * });
+ */
+export function useSingleUserQuery(baseOptions: Apollo.QueryHookOptions<SingleUserQuery, SingleUserQueryVariables>) {
+        return Apollo.useQuery<SingleUserQuery, SingleUserQueryVariables>(SingleUserDocument, baseOptions);
+      }
+export function useSingleUserLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<SingleUserQuery, SingleUserQueryVariables>) {
+          return Apollo.useLazyQuery<SingleUserQuery, SingleUserQueryVariables>(SingleUserDocument, baseOptions);
+        }
+export type SingleUserQueryHookResult = ReturnType<typeof useSingleUserQuery>;
+export type SingleUserLazyQueryHookResult = ReturnType<typeof useSingleUserLazyQuery>;
+export type SingleUserQueryResult = Apollo.QueryResult<SingleUserQuery, SingleUserQueryVariables>;
+export const SettingDocument = gql`
+    query Setting($userId: String!) {
+  setting(userId: $userId) {
+    status
+    message
+    data {
+      userId
+      isPrivate
+    }
+  }
+}
+    `;
+
+/**
+ * __useSettingQuery__
+ *
+ * To run a query within a React component, call `useSettingQuery` and pass it any options that fit your needs.
+ * When your component renders, `useSettingQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useSettingQuery({
+ *   variables: {
+ *      userId: // value for 'userId'
+ *   },
+ * });
+ */
+export function useSettingQuery(baseOptions: Apollo.QueryHookOptions<SettingQuery, SettingQueryVariables>) {
+        return Apollo.useQuery<SettingQuery, SettingQueryVariables>(SettingDocument, baseOptions);
+      }
+export function useSettingLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<SettingQuery, SettingQueryVariables>) {
+          return Apollo.useLazyQuery<SettingQuery, SettingQueryVariables>(SettingDocument, baseOptions);
+        }
+export type SettingQueryHookResult = ReturnType<typeof useSettingQuery>;
+export type SettingLazyQueryHookResult = ReturnType<typeof useSettingLazyQuery>;
+export type SettingQueryResult = Apollo.QueryResult<SettingQuery, SettingQueryVariables>;

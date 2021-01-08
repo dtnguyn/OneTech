@@ -139,7 +139,7 @@ const SolutionItem: React.FC<SolutionItemProps> = ({
           </div>
         </div>
       </div>
-      <Divider />
+      <div className="divider" />
     </div>
   );
 };

@@ -237,7 +237,7 @@ const Problem: React.FC<ProblemProps> = ({ problem }) => {
               ) : null}
             </div>
 
-            <Divider />
+            <div className="divider" />
             <br />
             <div className={styles.problemItemContent}>
               {parse(problem.content)}
@@ -277,7 +277,7 @@ const Problem: React.FC<ProblemProps> = ({ problem }) => {
         </div>
       )}
 
-      <Divider />
+      <div className="divider" />
       <ConfirmationDialog
         show={confirmationDialog.show}
         title={confirmationDialog.title}

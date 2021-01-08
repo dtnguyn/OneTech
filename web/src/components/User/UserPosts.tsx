@@ -6,6 +6,7 @@ import {
   DeviceProblem,
   Solution,
   useProblemsQuery,
+  User,
   useReviewsQuery,
   useSolutionsQuery,
 } from "../../generated/graphql";
@@ -17,11 +18,11 @@ import Problems from "./UserProblems";
 import styles from "../../styles/User.module.css";
 import Solutions from "./UserSolutions";
 
-interface UserPostsProps {}
+interface UserPostsProps {
+  user: User;
+}
 
-const UserPosts: React.FC<UserPostsProps> = ({}) => {
-  const { user } = useAuth();
-
+const UserPosts: React.FC<UserPostsProps> = ({ user }) => {
   const [switchState, setSwitchState] = useState<string>("problems");
   const [editing, setEditing] = useState(false);
 
@@ -67,12 +68,14 @@ const UserPosts: React.FC<UserPostsProps> = ({}) => {
 
       {switchState === "problems" ? (
         <Problems
+          user={user}
           problems={problems}
           editing={editing}
           setEditing={(status) => setEditing(status)}
         />
       ) : (
         <Solutions
+          user={user}
           solutions={solutions}
           editing={editing}
           setEditing={(status) => setEditing(status)}
