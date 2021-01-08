@@ -1,5 +1,8 @@
 .problemDetailPageContainer {
   width: 100vw;
+  height: fit-content;
+  min-height: 100vh;
+  padding-bottom: 100px;
 }
 
 .problemContainer {

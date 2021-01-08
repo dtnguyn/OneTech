@@ -3,6 +3,7 @@ import { useDevice } from "../../context/DeviceContext";
 import { Device, useDevicesQuery } from "../../generated/graphql";
 import styles from "../../styles/Devices.module.css";
 import SearchBar from "../SearchBar";
+import { useDarkMode } from "next-dark-mode";
 
 interface HeaderProps {}
 
@@ -12,6 +13,7 @@ const Header: React.FC<HeaderProps> = ({}) => {
   const [searchValue, setSearchValue] = useState<string>("");
   const [inputValue, setInputValue] = useState<string>("");
   const [initialState, setInitialState] = useState<boolean>(true);
+  const { darkModeActive } = useDarkMode();
   const [category, setCategory] = useState<string>("phone");
   const { data } = useDevicesQuery({
     variables: {
@@ -64,7 +66,13 @@ const Header: React.FC<HeaderProps> = ({}) => {
   }, [data]);
 
   return (
-    <div className={styles.headerContainer}>
+    <div
+      className={
+        !darkModeActive
+          ? `${styles.headerContainer}`
+          : `${styles.headerContainerDarkMode}`
+      }
+    >
       <h4 className={styles.headerTitle}>Find your devices</h4>
       <SearchBar
         inputValue={inputValue}

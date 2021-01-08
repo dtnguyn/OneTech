@@ -1,3 +1,8 @@
+.authPageContainer {
+  width: 100vw;
+  height: 100vh;
+}
+
 .container {
   background-color: #e5e5e5;
 }
@@ -18,9 +23,26 @@
   box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
 }
 
+.authDarkModeContainer {
+  width: 400px;
+  position: absolute;
+  height: 500px;
+  top: 50%;
+  right: 50%;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  transform: translate(50%, -50%);
+  background-color: #404040;
+  box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
+}
+
 .authSwitch {
   width: 200px;
   height: 40px;
+  color: #313131;
   background-color: #ebebeb;
   position: absolute;
   top: -20px;
@@ -111,6 +133,19 @@
   cursor: pointer;
 }
 
+.authButtonDarkMode {
+  width: 270px;
+  height: 50px;
+  background: #313131;
+  margin: 10px 0 25px 0;
+  box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
+  border-radius: 15px;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  cursor: pointer;
+}
+
 .authButton:hover {
   transform: translateY(-3px);
   box-shadow: 0 1rem 2rem rgba(0, 0, 0, 0.2);
@@ -119,6 +154,16 @@
 .authButton:active {
   transform: translateY(-1px);
   box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.2);
+}
+
+.authButtonDarkMode:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 1rem 2rem rgba(185, 184, 184, 0.2);
+}
+
+.authButtonDarkMode:active {
+  transform: translateY(-1px);
+  box-shadow: 0 0.5rem 1rem rgba(185, 184, 184, 0.2);
 }
 
 .authTitle {

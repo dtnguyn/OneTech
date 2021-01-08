@@ -203,30 +203,28 @@ const Solutions: React.FC<SolutionsProps> = ({
       ) : (
         <>
           {solutions.map((solution) => {
-            if (solution.isPicked) return null;
-            else
-              return (
-                <SolutionItem
-                  key={solution.id}
-                  solution={solution}
-                  starred={isStarred(solution.stars ? solution.stars : [])}
-                  handleDelete={(id, images) => {
-                    initialDeleteSolutionDialog(id, images);
-                  }}
-                  handleEdit={(id, content) => {
-                    setSolutionValue({
-                      ...solutionValue,
-                      id,
-                      content,
-                    });
-                    setEditing(true);
-                  }}
-                  handleToggleStar={(id) => {
-                    if (!user) return;
-                    handleToggleSolutionStar(user.id, id);
-                  }}
-                />
-              );
+            return (
+              <SolutionItem
+                key={solution.id}
+                solution={solution}
+                starred={isStarred(solution.stars ? solution.stars : [])}
+                handleDelete={(id, images) => {
+                  initialDeleteSolutionDialog(id, images);
+                }}
+                handleEdit={(id, content) => {
+                  setSolutionValue({
+                    ...solutionValue,
+                    id,
+                    content,
+                  });
+                  setEditing(true);
+                }}
+                handleToggleStar={(id) => {
+                  if (!user) return;
+                  handleToggleSolutionStar(user.id, id);
+                }}
+              />
+            );
           })}
         </>
       )}

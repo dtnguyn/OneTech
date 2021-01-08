@@ -75,8 +75,8 @@ export class User {
   @OneToMany(() => Review, (review) => review.author)
   reviews: Review[];
 
-  @Field(() => [Review], { nullable: true })
-  @OneToMany(() => Review, (review) => review.author)
+  @Field(() => [DeviceProblem], { nullable: true })
+  @OneToMany(() => DeviceProblem, (problem) => problem.solver)
   problemSolved: DeviceProblem[];
 }
 

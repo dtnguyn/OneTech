@@ -1,7 +1,23 @@
+.devicesPageContainer {
+  width: 100vw;
+  height: fit-content;
+  min-height: 100vh;
+  padding-bottom: 100px;
+}
+
 .headerContainer {
   width: 100%;
   height: 500px;
   background-color: #a8d8ad;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.headerContainerDarkMode {
+  width: 100%;
+  height: 500px;
+  background-color: #336b39;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -26,7 +42,7 @@
   flex-direction: column;
   align-items: center;
   justify-content: space-between;
-  filter: invert(0.4);
+  filter: invert(0.2);
   cursor: pointer;
 }
 

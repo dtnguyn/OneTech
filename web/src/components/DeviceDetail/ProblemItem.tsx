@@ -95,7 +95,7 @@ const ProblemItem: React.FC<ProblemItemProps> = ({
         </div>
       </div>
       <br />
-      <Divider />
+      <hr className="divider" />
       <br />
     </div>
   );
