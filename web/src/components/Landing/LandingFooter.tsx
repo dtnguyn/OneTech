@@ -1,10 +1,19 @@
 import styles from "../../styles/Landing.module.css";
+import { useDarkMode } from "next-dark-mode";
 
 interface FooterProps {}
 
 const Footer: React.FC<FooterProps> = ({}) => {
+  const { darkModeActive } = useDarkMode();
+
   return (
-    <div className={styles.landingFooterContainer}>
+    <div
+      className={
+        !darkModeActive
+          ? styles.landingFooterContainer
+          : styles.landingFooterDarkModeContainer
+      }
+    >
       <h3 className={styles.landingFooterTitle}>Our Goals</h3>
       <p className={styles.landingFooterText}>
         Our goal is to bring a better experience to people when using

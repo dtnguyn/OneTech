@@ -1,0 +1,85 @@
+.settingsPageContainer {
+  width: 100vw;
+  height: fit-content;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.settingsPageTitle {
+  font-family: MBold;
+  font-size: 1.5rem;
+  align-self: center;
+  margin: 50px 0;
+}
+
+.settingsSectionContainer {
+  width: 90%;
+  align-self: center;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  margin-bottom: 30px;
+}
+
+.settingsSectionTitle {
+  width: 100%;
+  font-family: MSemiBold;
+  font-size: 1.3rem;
+  border-bottom: 1px solid rgb(219, 215, 215);
+}
+
+.settingItemContainer {
+  width: 100%;
+  display: flex;
+  flex-direction: row;
+  margin: 10px 0;
+}
+
+.settingItemFirstSection {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+}
+
+.settingItemSecondSection {
+  flex: 4;
+}
+
+.settingItemThirdSection {
+  flex: 2;
+}
+
+.settingsItemIconContainer {
+  width: 100%;
+  flex: 1;
+}
+
+.settingItemIcon {
+  width: 120px;
+  height: 120px;
+  margin: 0 10px;
+}
+
+.settingTextContainer {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.settingItemTitle {
+  font-family: MMedium;
+  font-size: 1.3rem;
+}
+
+.settingItemText {
+  font-family: MRegular;
+}
+
+.settingToggleContainer {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}

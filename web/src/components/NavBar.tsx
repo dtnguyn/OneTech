@@ -7,6 +7,7 @@ import { Avatar, Divider } from "@material-ui/core";
 import { useLogoutMutation } from "../generated/graphql";
 import { client } from "../utils/withApollo";
 import { Router, useRouter } from "next/router";
+import { useDarkMode } from "next-dark-mode";
 
 interface NavBarProps {}
 
@@ -17,15 +18,19 @@ const NavBar: React.FC<NavBarProps> = ({}) => {
   const [logoutMutation, {}] = useLogoutMutation({
     client: client,
   });
+  const { darkModeActive } = useDarkMode();
 
   return (
     <div className={styles.container}>
       <Navbar collapseOnSelect expand="lg">
-        {/* <Navbar.Brand href="#home" className={styles.navbarBrand}>
-          OneTech
-        </Navbar.Brand> */}
         <Link href="/">
-          <a className={styles.navbarBrand}>OneTech</a>
+          <a
+            className={
+              darkModeActive ? styles.navbarBrandDarkMode : styles.navbarBrand
+            }
+          >
+            OneTech
+          </a>
         </Link>
         <Navbar.Toggle aria-controls="responsive-navbar-nav" />
         <Navbar.Collapse id="responsive-navbar-nav">
@@ -105,22 +110,45 @@ const NavBar: React.FC<NavBarProps> = ({}) => {
         ) : null}
       </Navbar>
       {dropdown ? (
-        <div className={styles.dropdownMenu}>
+        <div
+          className={
+            !darkModeActive
+              ? `${styles.dropdownMenu}`
+              : `${styles.dropdownMenuDarkMode}`
+          }
+        >
           <Link href={`/user/${user?.id}`}>
             <p
-              className={styles.dropdownItem}
+              className={
+                !darkModeActive
+                  ? styles.dropdownItem
+                  : styles.dropdownItemDarkMode
+              }
               onClick={() => setDropDown(false)}
             >
               Account
             </p>
           </Link>
+          <Link href={`/settings`}>
+            <p
+              className={
+                !darkModeActive
+                  ? styles.dropdownItem
+                  : styles.dropdownItemDarkMode
+              }
+              onClick={() => setDropDown(false)}
+            >
+              Settings
+            </p>
+          </Link>
 
-          <p className={styles.dropdownItem} onClick={() => setDropDown(false)}>
-            Settings
-          </p>
           <Divider />
           <p
-            className={styles.dropdownItem}
+            className={
+              !darkModeActive
+                ? styles.dropdownItem
+                : styles.dropdownItemDarkMode
+            }
             onClick={() => {
               setDropDown(false);
               logoutMutation({

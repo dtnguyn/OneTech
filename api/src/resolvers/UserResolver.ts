@@ -132,13 +132,14 @@ export class UserResolver {
   @Query(() => UserResponse, { nullable: true })
   async me(@Ctx() { req }: MyContext) {
     const user = await this.userRepo
-      .findOne({ id: (req.session as any).userId })
-      .catch((e) => {
-        return {
-          status: false,
-          message: e.message,
-        };
-      });
+      .createQueryBuilder("user")
+      .leftJoinAndSelect("user.problems", "problems")
+      .leftJoinAndSelect("problems.stars", "problemStar")
+      .leftJoinAndSelect("user.solutions", "solutions")
+      .leftJoinAndSelect("solutions.stars", "solutionStar")
+      .leftJoinAndSelect("user.problemSolved", "solved")
+      .where("user.id = :id", { id: (req.session as any).userId })
+      .getOne();
 
     if (user) {
       return {

@@ -1,4 +1,5 @@
 import styles from "../../styles/Auth.module.css";
+import { useDarkMode } from "next-dark-mode";
 
 interface Props {
   logoSrc: string;
@@ -7,8 +8,15 @@ interface Props {
 }
 
 const AuthButton: React.FC<Props> = ({ logoSrc, text, onClick }) => {
+  const { darkModeActive } = useDarkMode();
+
   return (
-    <div className={styles.authButton} onClick={onClick}>
+    <div
+      className={
+        !darkModeActive ? styles.authButton : styles.authButtonDarkMode
+      }
+      onClick={onClick}
+    >
       <img className={styles.logoSmall} src={logoSrc} />
       {text}
     </div>

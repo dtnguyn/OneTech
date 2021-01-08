@@ -11,6 +11,13 @@
   background-color: #a8d8ad;
 }
 
+.landingHeaderDarkModeContainer {
+  width: 100vw;
+  height: fit-content;
+  padding: 100px 0;
+  background-color: #336b39;
+}
+
 .landingHeaderSectionContainer {
   width: 100%;
   display: flex;
@@ -92,6 +99,18 @@
   height: fit-content;
   padding: 100px 0;
   background-color: #a8d8ad;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 100px 0;
+}
+
+.landingFooterDarkModeContainer {
+  width: 100vw;
+  height: fit-content;
+  padding: 100px 0;
+  background-color: #336b39;
   display: flex;
   flex-direction: column;
   align-items: center;

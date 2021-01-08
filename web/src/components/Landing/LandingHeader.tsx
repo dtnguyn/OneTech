@@ -1,12 +1,21 @@
 import { useRouter } from "next/router";
 import styles from "../../styles/Landing.module.css";
+import { useDarkMode } from "next-dark-mode";
 
 interface HeaderProps {}
 
 const Header: React.FC<HeaderProps> = ({}) => {
+  const { darkModeActive } = useDarkMode();
+
   const router = useRouter();
   return (
-    <div className={`row ${styles.landingHeaderContainer}`}>
+    <div
+      className={`row ${
+        !darkModeActive
+          ? styles.landingHeaderContainer
+          : styles.landingHeaderDarkModeContainer
+      }`}
+    >
       <div
         className={`col-lg-7 col-md-12 ${styles.landingHeaderSectionContainer}`}
       >

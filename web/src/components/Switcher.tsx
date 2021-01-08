@@ -1,5 +1,6 @@
 import { Dispatch, SetStateAction } from "react";
 import styles from "../styles/Switcher.module.css";
+import { useDarkMode } from "next-dark-mode";
 
 interface SwitcherProps {
   switchState: string;
@@ -12,6 +13,8 @@ const Switcher: React.FC<SwitcherProps> = ({
   setSwitchState,
   switchStateArr,
 }) => {
+  const { darkModeActive } = useDarkMode();
+
   return (
     <div className={styles.switchContainer}>
       {switchStateArr.map((state, index) => (
@@ -26,8 +29,12 @@ const Switcher: React.FC<SwitcherProps> = ({
           }
           className={
             switchState === state.toLowerCase()
-              ? styles.itemSwitchPicked
-              : styles.itemSwitch
+              ? !darkModeActive
+                ? styles.itemSwitchPicked
+                : styles.itemSwitchDarkModePicked
+              : !darkModeActive
+              ? styles.itemSwitch
+              : styles.itemSwitchDarkMode
           }
           onClick={() => setSwitchState(state.toLowerCase())}
         >

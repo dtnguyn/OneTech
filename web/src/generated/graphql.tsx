@@ -135,7 +135,7 @@ export type User = {
   solutionStars?: Maybe<Array<SolutionStar>>;
   follows?: Maybe<Array<DeviceFollower>>;
   reviews?: Maybe<Array<Review>>;
-  problemSolved?: Maybe<Array<Review>>;
+  problemSolved?: Maybe<Array<DeviceProblem>>;
 };
 
 
@@ -1219,6 +1219,22 @@ export type MeQuery = (
     & { data?: Maybe<Array<(
       { __typename?: 'User' }
       & Pick<User, 'id' | 'oauthId' | 'username' | 'email' | 'avatar'>
+      & { solutions?: Maybe<Array<(
+        { __typename?: 'Solution' }
+        & { stars?: Maybe<Array<(
+          { __typename?: 'SolutionStar' }
+          & Pick<SolutionStar, 'userId'>
+        )>> }
+      )>>, problems?: Maybe<Array<(
+        { __typename?: 'DeviceProblem' }
+        & { stars?: Maybe<Array<(
+          { __typename?: 'DeviceProblemStar' }
+          & Pick<DeviceProblemStar, 'userId'>
+        )>> }
+      )>>, problemSolved?: Maybe<Array<(
+        { __typename?: 'DeviceProblem' }
+        & Pick<DeviceProblem, 'id'>
+      )>> }
     )>> }
   )> }
 );
@@ -2416,6 +2432,19 @@ export const MeDocument = gql`
       username
       email
       avatar
+      solutions {
+        stars {
+          userId
+        }
+      }
+      problems {
+        stars {
+          userId
+        }
+      }
+      problemSolved {
+        id
+      }
     }
   }
 }

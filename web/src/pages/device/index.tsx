@@ -4,6 +4,7 @@ import Header from "../../components/Devices/Header";
 import { DeviceContext } from "../../context/DeviceContext";
 import { Device, useDevicesQuery } from "../../generated/graphql";
 import { withApollo } from "../../utils/withApollo";
+import styles from "../../styles/Devices.module.css";
 
 interface DeviceProps {}
 
@@ -21,7 +22,7 @@ const Devices: React.FC<DeviceProps> = ({}) => {
 
   return (
     <DeviceContext.Provider value={{ devices, setDevices }}>
-      <div>
+      <div className={styles.devicesPageContainer}>
         <Header />
         <Body />
       </div>

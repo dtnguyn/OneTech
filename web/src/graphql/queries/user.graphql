@@ -7,6 +7,19 @@ query Me {
       username
       email
       avatar
+      solutions {
+        stars {
+          userId
+        }
+      }
+      problems {
+        stars {
+          userId
+        }
+      }
+      problemSolved {
+        id
+      }
     }
   }
 }
