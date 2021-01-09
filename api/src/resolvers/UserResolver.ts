@@ -176,9 +176,17 @@ export class UserResolver {
 
   @Mutation(() => UserSettingResponse)
   async updateSetting(
+    @Ctx() { req }: MyContext,
     @Arg("userId") userId: string,
     @Arg("input") input: UpdateSettingInput
   ) {
+    if (!(req.session as any).userId) {
+      return {
+        status: false,
+        message: "You haven't logged in. Please Log in and try again.",
+      };
+    }
+
     await this.settingRepo.update({ userId }, input).catch((e) => {
       return {
         status: false,

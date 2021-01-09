@@ -10,6 +10,17 @@ import { client } from "../utils/withApollo";
 import NavBar from "../components/NavBar";
 import withDarkMode from "next-dark-mode";
 import { useDarkMode } from "next-dark-mode";
+import { Router } from "next/router";
+import NProgress from "nprogress"; //nprogress module
+import "nprogress/nprogress.css"; //styles of nprogress
+import { positions, Provider } from "react-alert";
+import AlertTemplate from "react-alert-template-basic";
+
+//Binding events.
+NProgress.configure({ showSpinner: false });
+Router.events.on("routeChangeStart", () => NProgress.start());
+Router.events.on("routeChangeComplete", () => NProgress.done());
+Router.events.on("routeChangeError", () => NProgress.done());
 
 function MyApp({ Component, pageProps }: any) {
   const [user, setUser] = useState<User | null>(null);
@@ -30,15 +41,21 @@ function MyApp({ Component, pageProps }: any) {
     }
   }, [data]);
 
-  console.log("darkmode ", darkModeActive);
+  console.log("darkmode", darkModeActive);
 
   return (
-    <AuthContext.Provider value={{ user, setUser }}>
-      <div className={darkModeActive ? `darkMode` : `lightMode`}>
-        <NavBar />
-        <Component {...pageProps} />
-      </div>
-    </AuthContext.Provider>
+    <Provider
+      template={AlertTemplate}
+      timeout={5000}
+      position={positions.BOTTOM_CENTER}
+    >
+      <AuthContext.Provider value={{ user, setUser }}>
+        <div className={darkModeActive ? `darkMode` : `lightMode`}>
+          <NavBar />
+          <Component {...pageProps} />
+        </div>
+      </AuthContext.Provider>
+    </Provider>
   );
 }
 

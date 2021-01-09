@@ -18,6 +18,7 @@ import CustomEditor from "../CustomEditor";
 import { useAuth } from "../../context/AuthContext";
 import ConfirmationDialog from "../ConfirmationDialog";
 import SolutionItem from "../ProblemDetail/SolutionItem";
+import { useAlert } from "react-alert";
 
 interface SolutionsProps {
   user: User;
@@ -36,6 +37,8 @@ const Solutions: React.FC<SolutionsProps> = ({
     id: "",
     content: "",
   });
+  const { error: alert } = useAlert();
+  const { user: authUser } = useAuth();
 
   const [confirmationDialog, setConfirmationDialog] = useState({
     show: false,
@@ -58,6 +61,10 @@ const Solutions: React.FC<SolutionsProps> = ({
     content?: string,
     isPicked?: boolean
   ) => {
+    if (!user) {
+      alert("Please login first.");
+      return;
+    }
     await updateSolutionMutation({
       variables: {
         id,
@@ -83,6 +90,10 @@ const Solutions: React.FC<SolutionsProps> = ({
   };
 
   const handleDeleteSolution = async (id: string, images: string[]) => {
+    if (!user) {
+      alert("Please login first.");
+      return;
+    }
     try {
       if (images.length !== 0) {
         await deleteImagesMutation({
@@ -109,6 +120,10 @@ const Solutions: React.FC<SolutionsProps> = ({
   };
 
   const handleToggleSolutionStar = (userId: string, solutionId: string) => {
+    if (!user) {
+      alert("Please login first.");
+      return;
+    }
     toggleSolutionStarMutation({
       variables: {
         solutionId,
@@ -161,7 +176,7 @@ const Solutions: React.FC<SolutionsProps> = ({
 
   const isStarred = (stars: SolutionStar[]) => {
     for (const star of stars) {
-      if (star.userId === user?.id) {
+      if (star.userId === authUser?.id) {
         return true;
       }
     }
@@ -181,7 +196,7 @@ const Solutions: React.FC<SolutionsProps> = ({
               setSolutionValue({ ...solutionValue, content: text });
             }}
             handleSubmit={(images) => {
-              if (!user || !solutionValue.id) return;
+              if (!authUser || !solutionValue.id) return;
               handleUpdateSolution(
                 solutionValue.id,
                 images,
@@ -214,8 +229,8 @@ const Solutions: React.FC<SolutionsProps> = ({
                   setEditing(true);
                 }}
                 handleToggleStar={(id) => {
-                  if (!user) return;
-                  handleToggleSolutionStar(user.id, id);
+                  if (!authUser) return;
+                  handleToggleSolutionStar(authUser.id, id);
                 }}
               />
             );

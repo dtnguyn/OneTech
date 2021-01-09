@@ -8,12 +8,14 @@ import { useLogoutMutation } from "../generated/graphql";
 import { client } from "../utils/withApollo";
 import { Router, useRouter } from "next/router";
 import { useDarkMode } from "next-dark-mode";
+import { useAlert } from "react-alert";
 
 interface NavBarProps {}
 
 const NavBar: React.FC<NavBarProps> = ({}) => {
   const { user, setUser } = useAuth();
   const [dropdown, setDropDown] = useState(false);
+  const { error: alert } = useAlert();
   const router = useRouter();
   const [logoutMutation, {}] = useLogoutMutation({
     client: client,

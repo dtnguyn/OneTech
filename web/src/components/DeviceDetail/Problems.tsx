@@ -20,6 +20,7 @@ import { useAuth } from "../../context/AuthContext";
 import React, { useState } from "react";
 import CustomEditor from "../CustomEditor";
 import ConfirmationDialog from "../ConfirmationDialog";
+import { useAlert } from "react-alert";
 
 interface ProblemsProps {
   deviceId: string;
@@ -42,7 +43,7 @@ const Problems: React.FC<ProblemsProps> = ({
 }) => {
   const { problems, setProblems } = useProblem();
   const { user } = useAuth();
-
+  const { error: alert } = useAlert();
   const [problemValue, setProblemValue] = useState({
     id: "",
     title: "",
@@ -89,7 +90,10 @@ const Problems: React.FC<ProblemsProps> = ({
     content: string,
     images: string[]
   ) => {
-    if (!user) return;
+    if (!user) {
+      alert("Please login first.");
+      return;
+    }
     await createProblemMutation({
       variables: {
         deviceId,
@@ -170,7 +174,10 @@ const Problems: React.FC<ProblemsProps> = ({
   };
 
   const handleToggleProblemStar = async (problem: DeviceProblem) => {
-    if (!user) return;
+    if (!user) {
+      alert("Please login first.");
+      return;
+    }
     await toggleProblemStarMutation({
       variables: {
         problemId: problem.id,
@@ -233,16 +240,23 @@ const Problems: React.FC<ProblemsProps> = ({
             }}
             handleSubmit={(images) => {
               if (adding) {
-                if (!user) return;
+                if (!user) {
+                  alert("Please login first.");
+                  return;
+                }
                 handleCreateProblem(
                   deviceId,
-                  user!.id,
+                  user.id,
                   problemValue.title,
                   problemValue.content,
                   images
                 );
               } else {
-                if (!user || !problemValue.id) return;
+                if (!user) {
+                  alert("Please login first.");
+                  return;
+                }
+                if (!problemValue.id) return;
                 handleEditProblem(
                   problemValue.id,
                   problemValue.title,
@@ -266,9 +280,7 @@ const Problems: React.FC<ProblemsProps> = ({
               starred={starred}
               key={problem.id}
               problem={problem}
-              handleToggleStar={(problem, isStarred) =>
-                handleToggleProblemStar(problem)
-              }
+              handleToggleStar={(problem) => handleToggleProblemStar(problem)}
               handleDelete={initialDeleteProblemDialog}
               handleEdit={(problemId) => {
                 setProblemValue({

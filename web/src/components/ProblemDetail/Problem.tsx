@@ -18,6 +18,7 @@ import React, { useState } from "react";
 import CustomEditor from "../CustomEditor";
 import ConfirmationDialog from "../ConfirmationDialog";
 import { useRouter } from "next/router";
+import { useAlert } from "react-alert";
 
 interface ProblemProps {
   problem: DeviceProblem;
@@ -26,7 +27,7 @@ interface ProblemProps {
 const Problem: React.FC<ProblemProps> = ({ problem }) => {
   const router = useRouter();
   const { user } = useAuth();
-
+  const { error: alert } = useAlert();
   const [problemValue, setProblemValue] = useState({
     id: "",
     title: "",
@@ -73,6 +74,10 @@ const Problem: React.FC<ProblemProps> = ({ problem }) => {
     content: string,
     images: string[]
   ) => {
+    if (!user) {
+      alert("Please login first.");
+      return;
+    }
     await updateProblemMutation({
       variables: {
         id,
@@ -95,6 +100,10 @@ const Problem: React.FC<ProblemProps> = ({ problem }) => {
   };
 
   const handleDeleteProblem = async (id: string, images: string[]) => {
+    if (!user) {
+      alert("Please login first.");
+      return;
+    }
     try {
       if (images.length != 0) {
         await deleteImagesMutation({
@@ -125,7 +134,10 @@ const Problem: React.FC<ProblemProps> = ({ problem }) => {
   };
 
   const handleToggleProblemStar = async (problem: DeviceProblem) => {
-    if (!user) return;
+    if (!user) {
+      alert("Please login first.");
+      return;
+    }
     await toggleProblemStarMutation({
       variables: {
         problemId: problem.id,
@@ -171,7 +183,11 @@ const Problem: React.FC<ProblemProps> = ({ problem }) => {
       {!editing ? (
         <div className={detailStyles.problemContainer}>
           <div className={styles.problemItemStatsContainer}>
-            <img src={problem.author?.avatar} className={styles.postAvatar} />
+            <img
+              src={problem.author?.avatar}
+              className={styles.postAvatar}
+              onClick={() => router.push(`/user/${problem?.author?.id}`)}
+            />
 
             <StatsBox
               number={problem.stars!.length ? problem.stars!.length : 0}

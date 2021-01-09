@@ -1,5 +1,13 @@
 import { ProblemImage } from "../entities/ProblemImage";
-import { Arg, Field, InputType, Mutation, Query, Resolver } from "type-graphql";
+import {
+  Arg,
+  Ctx,
+  Field,
+  InputType,
+  Mutation,
+  Query,
+  Resolver,
+} from "type-graphql";
 import { getRepository } from "typeorm";
 
 import { DeviceProblem, ProblemResponse } from "../entities/DeviceProblem";
@@ -7,6 +15,7 @@ import {
   DeviceProblemStar,
   ProblemStarResponse,
 } from "../entities/DeviceProblemStar";
+import { MyContext } from "../types";
 
 @InputType()
 class UpdateProblemInput {
@@ -29,12 +38,20 @@ export class ProblemResolver {
 
   @Mutation(() => ProblemResponse, { nullable: true })
   async createProblem(
+    @Ctx() { req }: MyContext,
     @Arg("title") title: string,
     @Arg("content") content: string,
     @Arg("authorId") authorId: string,
     @Arg("deviceId") deviceId: string,
     @Arg("images", () => [String]) images: string[]
   ) {
+    if (!(req.session as any).userId) {
+      return {
+        status: false,
+        message: "You haven't logged in. Please Log in and try again.",
+      };
+    }
+
     const newProblem = await this.problemRepo.create({
       title,
       content,
@@ -99,7 +116,14 @@ export class ProblemResolver {
   }
 
   @Mutation(() => ProblemResponse)
-  async deleteProblem(@Arg("id") id: string) {
+  async deleteProblem(@Ctx() { req }: MyContext, @Arg("id") id: string) {
+    if (!(req.session as any).userId) {
+      return {
+        status: false,
+        message: "You haven't logged in. Please Log in and try again.",
+      };
+    }
+
     await this.problemRepo.delete({ id }).catch((e) => {
       return {
         status: false,
@@ -114,10 +138,18 @@ export class ProblemResolver {
 
   @Mutation(() => ProblemResponse)
   async updateProblem(
+    @Ctx() { req }: MyContext,
     @Arg("id") id: string,
     @Arg("input") input: UpdateProblemInput,
     @Arg("images", () => [String]) images: string[]
   ) {
+    if (!(req.session as any).userId) {
+      return {
+        status: false,
+        message: "You haven't logged in. Please Log in and try again.",
+      };
+    }
+
     await this.problemRepo.update({ id }, input).catch((e) => {
       return {
         status: false,
@@ -256,9 +288,17 @@ export class ProblemResolver {
 
   @Mutation(() => ProblemResponse)
   async toggleProblemStar(
+    @Ctx() { req }: MyContext,
     @Arg("userId") userId: string,
     @Arg("problemId") problemId: string
   ) {
+    if (!(req.session as any).userId) {
+      return {
+        status: false,
+        message: "You haven't logged in. Please Log in and try again.",
+      };
+    }
+
     const star = await this.starRepo.findOne({ userId, problemId });
     console.log("star: ", star);
     if (star) {

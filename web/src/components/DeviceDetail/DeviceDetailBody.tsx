@@ -1,6 +1,7 @@
 import { TextField } from "@material-ui/core";
 import { StringValueNode } from "graphql";
 import { ChangeEvent, KeyboardEvent, useEffect, useState } from "react";
+import { useAlert } from "react-alert";
 import { Button } from "react-bootstrap";
 import { useAuth } from "../../context/AuthContext";
 import { useProblem } from "../../context/ProblemContext";
@@ -44,7 +45,7 @@ const Body: React.FC<BodyProps> = ({ deviceId, deviceCategory }) => {
   const [editingReview, setEditingReview] = useState<boolean>(false);
 
   const { user } = useAuth();
-
+  const { error: alert } = useAlert();
   const [switchState, setSwitchState] = useState<string>("problems");
 
   const { data: problemsData } = useProblemsQuery({

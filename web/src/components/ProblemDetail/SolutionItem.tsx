@@ -5,6 +5,7 @@ import StatsBox from "../StatsBox";
 import parse from "html-react-parser";
 import { Divider } from "@material-ui/core";
 import { useAuth } from "../../context/AuthContext";
+import { useRouter } from "next/router";
 
 interface SolutionItemProps {
   solution: Solution;
@@ -26,6 +27,7 @@ const SolutionItem: React.FC<SolutionItemProps> = ({
   handleEdit,
 }) => {
   const { user } = useAuth();
+  const router = useRouter();
 
   return (
     <div className={styles.solutionItemBox}>
@@ -114,7 +116,10 @@ const SolutionItem: React.FC<SolutionItemProps> = ({
           </div>
         </div>
         <div className={styles.solutionPostSection}>
-          <div className={styles.solutionHeaderContainer}>
+          <div
+            className={styles.solutionHeaderContainer}
+            onClick={() => router.push(`/user/${solution.author.id}`)}
+          >
             <img
               className={styles.solutionAuthorAvatar}
               src={solution.author.avatar}

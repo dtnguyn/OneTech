@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import { useAlert } from "react-alert";
 import { useAuth } from "../../context/AuthContext";
 import {
   DeviceProblem,
@@ -30,11 +31,14 @@ const Problems: React.FC<ProblemsProps> = ({
   editing,
   setEditing,
 }) => {
+  const { error: alert } = useAlert();
   const [problemValue, setProblemValue] = useState({
     id: "",
     title: "",
     content: "",
   });
+
+  const { user: authUser } = useAuth();
 
   const [confirmationDialog, setConfirmationDialog] = useState({
     show: false,
@@ -60,7 +64,7 @@ const Problems: React.FC<ProblemsProps> = ({
 
   const isStarred = (stars: DeviceProblemStar[]) => {
     for (const star of stars) {
-      if (star.userId === user?.id) {
+      if (star.userId === authUser?.id) {
         return true;
       }
     }
@@ -81,6 +85,10 @@ const Problems: React.FC<ProblemsProps> = ({
     content: string,
     images: string[]
   ) => {
+    if (!user) {
+      alert("Please login first.");
+      return;
+    }
     await updateProblemMutation({
       variables: {
         id,
@@ -103,6 +111,10 @@ const Problems: React.FC<ProblemsProps> = ({
   };
 
   const handleDeleteProblem = async (id: string, images: string[]) => {
+    if (!user) {
+      alert("Please login first.");
+      return;
+    }
     try {
       if (images.length != 0) {
         await deleteImagesMutation({
@@ -131,11 +143,15 @@ const Problems: React.FC<ProblemsProps> = ({
   };
 
   const handleToggleProblemStar = async (problem: DeviceProblem) => {
-    if (!user) return;
+    if (!user) {
+      alert("Please login first.");
+      return;
+    }
+    if (!authUser) return;
     await toggleProblemStarMutation({
       variables: {
         problemId: problem.id,
-        userId: user!.id,
+        userId: authUser!.id,
       },
     })
       .then((res) => {
@@ -193,7 +209,7 @@ const Problems: React.FC<ProblemsProps> = ({
               setProblemValue({ ...problemValue, content: text });
             }}
             handleSubmit={(images) => {
-              if (!user || !problemValue.id) return;
+              if (!authUser || !problemValue.id) return;
               handleEditProblem(
                 problemValue.id,
                 problemValue.title,
@@ -215,9 +231,7 @@ const Problems: React.FC<ProblemsProps> = ({
               starred={starred}
               key={problem.id}
               problem={problem}
-              handleToggleStar={(problem, isStarred) =>
-                handleToggleProblemStar(problem)
-              }
+              handleToggleStar={(problem) => handleToggleProblemStar(problem)}
               handleDelete={initialDeleteProblemDialog}
               handleEdit={(problemId) => {
                 setProblemValue({

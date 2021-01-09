@@ -15,6 +15,7 @@ import Slider from "@material-ui/core/Slider";
 import { useReview } from "../../context/ReviewContext";
 import { useAuth } from "../../context/AuthContext";
 import CustomSlider from "../CustomSlider";
+import { useAlert } from "react-alert";
 
 interface ReviewsProps {
   deviceId: string;
@@ -39,7 +40,7 @@ const Reviews: React.FC<ReviewsProps> = ({
 }) => {
   const { reviews, setReviews } = useReview();
   const { user } = useAuth();
-
+  const { error: alert } = useAlert();
   const [reviewValue, setReviewValue] = useState({
     id: "",
     title: "",
@@ -300,7 +301,10 @@ const Reviews: React.FC<ReviewsProps> = ({
                 handleSubmit={(images) => {
                   if (adding) {
                     //adding review
-                    if (!user) return;
+                    if (!user) {
+                      alert("Please login first.");
+                      return;
+                    }
                     handleCreateReview(
                       deviceId,
                       user.id,
@@ -310,7 +314,10 @@ const Reviews: React.FC<ReviewsProps> = ({
                       images
                     );
                   } else {
-                    if (!user) return;
+                    if (!user) {
+                      alert("Please login first.");
+                      return;
+                    }
                     //edit review
                     handleUpdateReview(
                       reviewValue.id,

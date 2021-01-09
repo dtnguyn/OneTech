@@ -12,7 +12,7 @@ import { clearInterval } from "timers";
 interface ProblemItemProps {
   problem: DeviceProblem;
   starred: boolean;
-  handleToggleStar: (problem: DeviceProblem, isStarred: boolean) => void;
+  handleToggleStar: (problem: DeviceProblem) => void;
   handleDelete: (problemId: string, images: string[]) => void;
   handleEdit: (problemId: string) => void;
 }
@@ -31,7 +31,11 @@ const ProblemItem: React.FC<ProblemItemProps> = ({
     <div>
       <div className={styles.problemItemContainer}>
         <div className={styles.problemItemStatsContainer}>
-          <img src={problem.author?.avatar} className={styles.postAvatar} />
+          <img
+            src={problem.author?.avatar}
+            className={styles.postAvatar}
+            onClick={() => router.push(`/user/${problem.author?.id}`)}
+          />
 
           <StatsBox
             number={problem.stars?.length ? problem.stars.length : 0}
@@ -64,8 +68,7 @@ const ProblemItem: React.FC<ProblemItemProps> = ({
               src={starred ? `/images/starred.png` : `/images/star.png`}
               className={styles.postItemButton}
               onClick={() => {
-                console.log("starState: ", starred);
-                handleToggleStar(problem, starred);
+                handleToggleStar(problem);
               }}
             />
 

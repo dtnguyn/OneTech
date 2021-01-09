@@ -3,13 +3,14 @@ import {
   ProblemImageResponse,
   UploadImageResponse,
 } from "../entities/ProblemImage";
-import { Arg, Mutation, Query, Resolver } from "type-graphql";
+import { Arg, Ctx, Mutation, Query, Resolver } from "type-graphql";
 import { Storage } from "@google-cloud/storage";
 import path from "path";
 import stream from "stream";
 import { getRepository } from "typeorm";
 import { ReviewImage, ReviewImageResponse } from "../entities/ReviewImage";
 import { rejects } from "assert";
+import { MyContext } from "../types";
 
 const gc = new Storage({
   keyFilename: path.join(__dirname, `../../${process.env.GOOGLE_STORAGE}`),
@@ -25,9 +26,16 @@ export class ImageResolver {
 
   @Mutation(() => UploadImageResponse)
   async uploadImage(
+    @Ctx() { req }: MyContext,
     @Arg("image", () => String) image: string,
     @Arg("imageId", () => String) imageId: string
   ) {
+    if (!(req.session as any).userId) {
+      return {
+        status: false,
+        message: "You haven't logged in. Please Log in and try again.",
+      };
+    }
     console.log("upload images", imageId);
     const url: string = await new Promise((resolve, reject) => {
       var bufferStream = new stream.PassThrough();
@@ -72,7 +80,16 @@ export class ImageResolver {
   }
 
   @Mutation(() => UploadImageResponse)
-  async deleteImages(@Arg("imageIds", () => [String]) imageIds: string[]) {
+  async deleteImages(
+    @Ctx() { req }: MyContext,
+    @Arg("imageIds", () => [String]) imageIds: string[]
+  ) {
+    if (!(req.session as any).userId) {
+      return {
+        status: false,
+        message: "You haven't logged in. Please Log in and try again.",
+      };
+    }
     console.log("delete images", imageIds);
     try {
       let counter = 0;

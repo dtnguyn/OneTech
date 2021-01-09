@@ -1,6 +1,7 @@
 import { Divider } from "@material-ui/core";
 import parse from "html-react-parser";
 import moment from "moment";
+import { useRouter } from "next/router";
 import { useAuth } from "../../context/AuthContext";
 import { Review, ReviewRating } from "../../generated/graphql";
 import styles from "../../styles/DeviceDetail.module.css";
@@ -18,11 +19,15 @@ const ReviewItem: React.FC<ReviewItemProps> = ({
   handleDelete,
 }) => {
   const { user } = useAuth();
+  const router = useRouter();
 
   return (
     <div>
       <div className={styles.reviewContainer}>
-        <div className={styles.reviewHeaderContainer}>
+        <div
+          className={styles.reviewHeaderContainer}
+          onClick={() => router.push(`/user/${review.author.id}`)}
+        >
           <img src={review.author.avatar} className={styles.postAvatar} />
           <div className={styles.reviewHeaderTextContainer}>
             <p className={styles.reviewAuthorName}>{review.author.username}</p>
