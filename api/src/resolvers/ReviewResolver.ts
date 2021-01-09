@@ -2,6 +2,7 @@ import { Review, ReviewResponse } from "../entities/Review";
 import { ReviewRating, ReviewRatingResponse } from "../entities/ReviewRating";
 import {
   Arg,
+  Ctx,
   Field,
   Float,
   InputType,
@@ -11,6 +12,7 @@ import {
 } from "type-graphql";
 import { getConnection, getRepository } from "typeorm";
 import { ReviewImage } from "../entities/ReviewImage";
+import { MyContext } from "../types";
 
 @InputType()
 class UpdateReviewInput {
@@ -49,6 +51,7 @@ export class ReviewResolver {
 
   @Mutation(() => ReviewResponse, { nullable: true })
   async createReview(
+    @Ctx() { req }: MyContext,
     @Arg("title") title: string,
     @Arg("content") content: string,
     @Arg("authorId") authorId: string,
@@ -61,6 +64,12 @@ export class ReviewResolver {
     @Arg("processor", () => Float, { nullable: true }) processor: number | null,
     @Arg("images", () => [String]) images: string[]
   ) {
+    if (!(req.session as any).userId) {
+      return {
+        status: false,
+        message: "You haven't logged in. Please Log in and try again.",
+      };
+    }
     const queryRunner = getConnection().createQueryRunner();
     await queryRunner.connect();
     await queryRunner.startTransaction();
@@ -135,11 +144,18 @@ export class ReviewResolver {
 
   @Mutation(() => ReviewResponse, { nullable: true })
   async updateReview(
+    @Ctx() { req }: MyContext,
     @Arg("id") id: string,
     @Arg("reviewInput") reviewInput: UpdateReviewInput,
     @Arg("ratingInput") ratingInput: UpdateRatingInput,
     @Arg("images", () => [String]) images: string[]
   ) {
+    if (!(req.session as any).userId) {
+      return {
+        status: false,
+        message: "You haven't logged in. Please Log in and try again.",
+      };
+    }
     const queryRunner = getConnection().createQueryRunner();
     await queryRunner.connect();
     await queryRunner.startTransaction();
@@ -198,7 +214,13 @@ export class ReviewResolver {
   }
 
   @Mutation(() => ReviewResponse)
-  async deleteReview(@Arg("id") id: string) {
+  async deleteReview(@Ctx() { req }: MyContext, @Arg("id") id: string) {
+    if (!(req.session as any).userId) {
+      return {
+        status: false,
+        message: "You haven't logged in. Please Log in and try again.",
+      };
+    }
     await this.reviewRepo.delete({ id }).catch((e) => {
       return {
         status: false,
@@ -280,6 +302,7 @@ export class ReviewResolver {
 
   @Mutation(() => ReviewRatingResponse, { nullable: true })
   async createRating(
+    @Ctx() { req }: MyContext,
     @Arg("reviewId") reviewId: string,
     @Arg("deviceId") deviceId: string,
     @Arg("overall", () => Float, { nullable: true }) overall: number | null,
@@ -289,6 +312,12 @@ export class ReviewResolver {
     @Arg("camera", () => Float, { nullable: true }) camera: number | null,
     @Arg("processor", () => Float, { nullable: true }) processor: number | null
   ) {
+    if (!(req.session as any).userId) {
+      return {
+        status: false,
+        message: "You haven't logged in. Please Log in and try again.",
+      };
+    }
     try {
       let newRating = await this.ratingRepo.create({
         deviceId,
@@ -319,9 +348,16 @@ export class ReviewResolver {
 
   @Mutation(() => ReviewRatingResponse, { nullable: true })
   async updateRating(
+    @Ctx() { req }: MyContext,
     @Arg("reviewId") reviewId: string,
     @Arg("input") input: UpdateRatingInput
   ) {
+    if (!(req.session as any).userId) {
+      return {
+        status: false,
+        message: "You haven't logged in. Please Log in and try again.",
+      };
+    }
     await this.ratingRepo.update({ reviewId }, input).catch((e) => {
       return {
         status: false,

@@ -1,10 +1,12 @@
 import AuthButton from "./AuthButton";
 import styles from "../../styles/Auth.module.css";
 import router from "next/router";
+import { useAlert } from "react-alert";
 
 interface LoginProps {}
 
 const Login: React.FC<LoginProps> = ({}) => {
+  const { error: alert } = useAlert();
   const onLoginClick = (method: string) => {
     switch (method) {
       case "google": {

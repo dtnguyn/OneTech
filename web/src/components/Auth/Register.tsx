@@ -3,13 +3,14 @@ import styles from "../../styles/Auth.module.css";
 import { ChangeEvent, useState } from "react";
 import { useRouter } from "next/router";
 import IsEmail from "isemail";
+import { useAlert } from "react-alert";
 
 interface RegisterProps {}
 
 const Register: React.FC<RegisterProps> = ({}) => {
   const [email, setEmail] = useState<string>("");
   const [error, setError] = useState<boolean>(false);
-
+  const { error: alert } = useAlert();
   const router = useRouter();
 
   const handleEmailInputChange: (

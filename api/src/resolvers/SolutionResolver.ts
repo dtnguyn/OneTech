@@ -1,9 +1,18 @@
 import { Solution, SolutionResponse } from "../entities/Solution";
-import { Arg, Field, InputType, Mutation, Query, Resolver } from "type-graphql";
+import {
+  Arg,
+  Ctx,
+  Field,
+  InputType,
+  Mutation,
+  Query,
+  Resolver,
+} from "type-graphql";
 import { getConnection, getRepository } from "typeorm";
 import { SolutionStar, SolutionStarResponse } from "../entities/SolutionStar";
 import { SolutionImage } from "../entities/SolutionImage";
 import { DeviceProblem } from "../entities/DeviceProblem";
+import { MyContext } from "../types";
 
 @InputType()
 class UpdateSolutionInput {
@@ -21,11 +30,19 @@ export class SolutionResolver {
 
   @Mutation(() => SolutionResponse)
   async createSolution(
+    @Ctx() { req }: MyContext,
     @Arg("content") content: string,
     @Arg("authorId") authorId: string,
     @Arg("problemId") problemId: string,
     @Arg("images", () => [String]) images: string[]
   ) {
+    if (!(req.session as any).userId) {
+      return {
+        status: false,
+        message: "You haven't logged in. Please Log in and try again.",
+      };
+    }
+
     const queryRunner = getConnection().createQueryRunner();
     await queryRunner.connect();
     await queryRunner.startTransaction();
@@ -80,10 +97,18 @@ export class SolutionResolver {
 
   @Mutation(() => SolutionResponse)
   async updateSolution(
+    @Ctx() { req }: MyContext,
     @Arg("id") id: string,
     @Arg("input") input: UpdateSolutionInput,
     @Arg("images", () => [String]) images: string[]
   ) {
+    if (!(req.session as any).userId) {
+      return {
+        status: false,
+        message: "You haven't logged in. Please Log in and try again.",
+      };
+    }
+
     const queryRunner = getConnection().createQueryRunner();
     await queryRunner.connect();
     await queryRunner.startTransaction();
@@ -133,7 +158,14 @@ export class SolutionResolver {
   }
 
   @Mutation(() => SolutionResponse)
-  async deleteSolution(@Arg("id") id: string) {
+  async deleteSolution(@Ctx() { req }: MyContext, @Arg("id") id: string) {
+    if (!(req.session as any).userId) {
+      return {
+        status: false,
+        message: "You haven't logged in. Please Log in and try again.",
+      };
+    }
+
     await this.solutionRepo.delete({ id }).catch((e) => {
       return {
         status: false,
@@ -195,9 +227,17 @@ export class SolutionResolver {
 
   @Mutation(() => SolutionResponse)
   async toggleSolutionStar(
+    @Ctx() { req }: MyContext,
     @Arg("userId") userId: string,
     @Arg("solutionId") solutionId: string
   ) {
+    if (!(req.session as any).userId) {
+      return {
+        status: false,
+        message: "You haven't logged in. Please Log in and try again.",
+      };
+    }
+
     const star = await this.starRepo.findOne({ userId, solutionId });
     console.log("star: ", star);
     if (star) {
@@ -230,10 +270,18 @@ export class SolutionResolver {
 
   @Mutation(() => SolutionResponse)
   async toggleSolutionPicked(
+    @Ctx() { req }: MyContext,
     @Arg("problemId") problemId: string,
     @Arg("solutionId") solutionId: string,
     @Arg("solverId") solverId: string
   ) {
+    if (!(req.session as any).userId) {
+      return {
+        status: false,
+        message: "You haven't logged in. Please Log in and try again.",
+      };
+    }
+
     const queryRunner = getConnection().createQueryRunner();
     await queryRunner.connect();
     await queryRunner.startTransaction();

@@ -9,6 +9,7 @@ import styles from "../../styles/DeviceDetail.module.css";
 import SpecsTable from "./SpecsTable";
 import Switcher from "../Switcher";
 import { useAuth } from "../../context/AuthContext";
+import { useAlert } from "react-alert";
 
 interface HeaderProps {
   device: Device;
@@ -19,7 +20,7 @@ const Header: React.FC<HeaderProps> = ({ device, rating }) => {
   const [switchState, setSwitchState] = useState("technical");
   const [followed, setFollowed] = useState(false);
   const { user } = useAuth();
-
+  const { error: alert } = useAlert();
   const [toggleDeviceFollowMutation, {}] = useToggleDeviceFollowMutation();
 
   const handleToggleFollowDevice = async (

@@ -15,6 +15,7 @@ import { useEffect, useState } from "react";
 import CustomEditor from "../CustomEditor";
 import { useAuth } from "../../context/AuthContext";
 import ConfirmationDialog from "../ConfirmationDialog";
+import { useAlert } from "react-alert";
 
 interface SolutionsProps {
   problemId: string;
@@ -27,6 +28,7 @@ const Solutions: React.FC<SolutionsProps> = ({
   problemId,
   problemAuthorId,
 }) => {
+  const { error: alert } = useAlert();
   const [pickedSolution, setPickedSolution] = useState<Solution | null>(null);
   const [adding, setAdding] = useState(false);
   const [editing, setEditing] = useState(false);
@@ -35,7 +37,6 @@ const Solutions: React.FC<SolutionsProps> = ({
     content: "",
   });
   const { user } = useAuth();
-
   const [confirmationDialog, setConfirmationDialog] = useState({
     show: false,
     title: "",
@@ -253,7 +254,10 @@ const Solutions: React.FC<SolutionsProps> = ({
             }}
             handleSubmit={(images) => {
               if (adding) {
-                if (!user) return;
+                if (!user) {
+                  alert("Please login first.");
+                  return;
+                }
                 handleCreateSolution(
                   problemId,
                   user!.id,
@@ -261,7 +265,11 @@ const Solutions: React.FC<SolutionsProps> = ({
                   images
                 );
               } else {
-                if (!user || !solutionValue.id) return;
+                if (!user) {
+                  alert("Please login first.");
+                  return;
+                }
+                if (!solutionValue.id) return;
                 handleUpdateSolution(
                   solutionValue.id,
                   images,
@@ -300,11 +308,17 @@ const Solutions: React.FC<SolutionsProps> = ({
                   setEditing(true);
                 }}
                 handleToggleStar={(id) => {
-                  if (!user) return;
+                  if (!user) {
+                    alert("Please login first.");
+                    return;
+                  }
                   handleToggleSolutionStar(user.id, id);
                 }}
                 handleTogglePicked={(solutionId, solverId) => {
-                  if (!user) return;
+                  if (!user) {
+                    alert("Please login first.");
+                    return;
+                  }
                   handleToggleSolutionPicked(solverId, solutionId, problemId);
                 }}
               />
@@ -335,11 +349,17 @@ const Solutions: React.FC<SolutionsProps> = ({
                     setEditing(true);
                   }}
                   handleToggleStar={(id) => {
-                    if (!user) return;
+                    if (!user) {
+                      alert("Please login first.");
+                      return;
+                    }
                     handleToggleSolutionStar(user.id, id);
                   }}
                   handleTogglePicked={(solutionId, solverId) => {
-                    if (!user) return;
+                    if (!user) {
+                      alert("Please login first.");
+                      return;
+                    }
                     handleToggleSolutionPicked(solverId, solutionId, problemId);
                   }}
                 />

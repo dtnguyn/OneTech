@@ -1,8 +1,17 @@
 import { Device, DeviceResponse } from "../entities/Device";
-import { Arg, Field, InputType, Mutation, Query, Resolver } from "type-graphql";
+import {
+  Arg,
+  Ctx,
+  Field,
+  InputType,
+  Mutation,
+  Query,
+  Resolver,
+} from "type-graphql";
 import { getRepository } from "typeorm";
 import { DeviceSpec, DeviceSpecResponse } from "../entities/DeviceSpec";
 import { DeviceFollower } from "../entities/DeviceFollower";
+import { MyContext } from "../types";
 
 @InputType()
 class UpdateDeviceInput {
@@ -133,9 +142,16 @@ export class DeviceResolver {
 
   @Mutation(() => DeviceResponse)
   async toggleDeviceFollow(
+    @Ctx() { req }: MyContext,
     @Arg("userId") userId: string,
     @Arg("deviceId") deviceId: string
   ) {
+    if (!(req.session as any).userId) {
+      return {
+        status: false,
+        message: "You haven't logged in. Please Log in and try again.",
+      };
+    }
     const follow = await this.followRepo.findOne({ userId, deviceId });
     console.log("follow: ", follow);
     if (follow) {
