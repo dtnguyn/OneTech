@@ -1,6 +1,7 @@
 import {
   Solution,
   SolutionStar,
+  useCreateReportMutation,
   useCreateSolutionMutation,
   useDeleteImagesMutation,
   useDeleteSolutionMutation,
@@ -16,6 +17,7 @@ import CustomEditor from "../CustomEditor";
 import { useAuth } from "../../context/AuthContext";
 import ConfirmationDialog from "../ConfirmationDialog";
 import { useAlert } from "react-alert";
+import FormDialog from "../FormDialog";
 
 interface SolutionsProps {
   problemId: string;
@@ -47,12 +49,23 @@ const Solutions: React.FC<SolutionsProps> = ({
     handlePositive: () => {},
   });
 
+  const [formDialog, setFormDialog] = useState({
+    id: "",
+    show: false,
+    title: "",
+    cancelText: "",
+    submitText: "",
+    handleCancel: () => {},
+    handleSubmit: (title: string, content: string) => {},
+  });
+
   const [createSolutionMutation, {}] = useCreateSolutionMutation();
   const [updateSolutionMutation, {}] = useUpdateSolutionMutation();
   const [deleteSolutionMutation, {}] = useDeleteSolutionMutation();
   const [deleteImagesMutation, {}] = useDeleteImagesMutation();
   const [toggleSolutionStarMutation, {}] = useToggleSolutionStarMutation();
   const [toggleSolutionPickedMutation, {}] = useToggleSolutionPickedMutation();
+  const [createReportMutation] = useCreateReportMutation();
 
   const handleCreateSolution = async (
     problemId: string,
@@ -220,6 +233,46 @@ const Solutions: React.FC<SolutionsProps> = ({
     });
   };
 
+  const initialReportSolutionDialog = (id: string) => {
+    setFormDialog({
+      ...formDialog,
+      id,
+      show: true,
+      title: "Report this solution!",
+      submitText: "Submit",
+      cancelText: "Cancel",
+      handleCancel: () => {
+        setFormDialog({
+          ...formDialog,
+          show: false,
+        });
+      },
+      handleSubmit: (title, content) => {
+        createReportMutation({
+          variables: {
+            title,
+            content,
+            authorId: user?.id as string,
+            solutionId: id,
+          },
+        })
+          .then((response) => {
+            if (response.data?.createReport.status) {
+              setFormDialog({
+                ...formDialog,
+                show: false,
+              });
+            } else {
+              throw new Error(response.data?.createReport.message);
+            }
+          })
+          .catch((error) => {
+            alert(error.message);
+          });
+      },
+    });
+  };
+
   const isStarred = (stars: SolutionStar[]) => {
     for (const star of stars) {
       if (star.userId === user?.id) {
@@ -293,6 +346,7 @@ const Solutions: React.FC<SolutionsProps> = ({
               <SolutionItem
                 solution={pickedSolution}
                 problemAuthorId={problemAuthorId}
+                handleReport={initialReportSolutionDialog}
                 starred={isStarred(
                   pickedSolution.stars ? pickedSolution.stars : []
                 )}
@@ -362,6 +416,7 @@ const Solutions: React.FC<SolutionsProps> = ({
                     }
                     handleToggleSolutionPicked(solverId, solutionId, problemId);
                   }}
+                  handleReport={initialReportSolutionDialog}
                 />
               );
           })}
@@ -375,6 +430,15 @@ const Solutions: React.FC<SolutionsProps> = ({
         positiveText={confirmationDialog.positiveText}
         handleNegativeButtonClick={confirmationDialog.handleNegative}
         handlePositiveButtonClick={confirmationDialog.handlePositive}
+      />
+
+      <FormDialog
+        title={formDialog.title}
+        show={formDialog.show}
+        handleClose={formDialog.handleCancel}
+        handleSubmit={formDialog.handleSubmit}
+        closeText={formDialog.cancelText}
+        submitText={formDialog.submitText}
       />
     </div>
   );

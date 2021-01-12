@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { DeviceSpec, ReviewRating } from "../../generated/graphql";
 import device from "../../pages/device";
 import styles from "../../styles/DeviceDetail.module.css";
+import { laptopSpec, mobileSpec, pcSpec } from "../../utils/specArr";
 import RatingBar from "./RatingBar";
 import TextContent from "./SpecsTableTextContent";
 
@@ -23,13 +24,13 @@ const SpecsTable: React.FC<SpecsTableProps> = ({
   useEffect(() => {
     switch (category) {
       case "phone":
-        setSpecsArr(["Display", "Processor", "Battery", "Software", "Camera"]);
+        setSpecsArr(mobileSpec);
         break;
       case "laptop":
-        setSpecsArr(["Display", "Processor", "Battery", "Software", "Camera"]);
+        setSpecsArr(laptopSpec);
         break;
       case "pc":
-        setSpecsArr(["Display", "Processor", "Battery", "Software", "Camera"]);
+        setSpecsArr(pcSpec);
         break;
     }
   }, []);

@@ -35,6 +35,7 @@ export type Query = {
   ratings: ReviewRatingResponse;
   problemImages: ProblemImageResponse;
   reviewImages: ReviewImageResponse;
+  reports: ReportResponse;
 };
 
 
@@ -129,6 +130,7 @@ export type User = {
   createdAt: Scalars['String'];
   updatedAt: Scalars['DateTime'];
   setting?: Maybe<UserSetting>;
+  reports?: Maybe<Array<Report>>;
   problems?: Maybe<Array<DeviceProblem>>;
   deviceProblemStars?: Maybe<Array<DeviceProblemStar>>;
   solutions?: Maybe<Array<Solution>>;
@@ -147,6 +149,20 @@ export type UserSetting = {
   updatedAt: Scalars['DateTime'];
 };
 
+export type Report = {
+  __typename?: 'Report';
+  id: Scalars['String'];
+  title: Scalars['String'];
+  content: Scalars['String'];
+  createdAt: Scalars['DateTime'];
+  updatedAt: Scalars['DateTime'];
+  authorId: Scalars['String'];
+  author: User;
+  problemId?: Maybe<Scalars['String']>;
+  reviewId?: Maybe<Scalars['String']>;
+  solutionId?: Maybe<Scalars['String']>;
+};
+
 export type DeviceProblem = {
   __typename?: 'DeviceProblem';
   id: Scalars['String'];
@@ -163,6 +179,7 @@ export type DeviceProblem = {
   deviceId: Scalars['String'];
   device: Device;
   stars?: Maybe<Array<DeviceProblemStar>>;
+  reports?: Maybe<Array<Report>>;
   solutions?: Maybe<Array<Solution>>;
   images: Array<ProblemImage>;
 };
@@ -177,7 +194,9 @@ export type Solution = {
   authorId: Scalars['String'];
   author: User;
   problemId: Scalars['String'];
+  problem: DeviceProblem;
   stars?: Maybe<Array<SolutionStar>>;
+  reports?: Maybe<Array<Report>>;
   images: Array<SolutionImage>;
 };
 
@@ -206,6 +225,7 @@ export type Device = {
   category: Scalars['String'];
   subCategory?: Maybe<Scalars['String']>;
   buyLink?: Maybe<Scalars['String']>;
+  price?: Maybe<Scalars['String']>;
   coverImage: Scalars['String'];
   createdAt: Scalars['String'];
   updatedAt: Scalars['DateTime'];
@@ -229,6 +249,14 @@ export type DeviceSpec = {
   cameraSimplify?: Maybe<Scalars['String']>;
   processor?: Maybe<Scalars['String']>;
   processorSimplify?: Maybe<Scalars['String']>;
+  gpu?: Maybe<Scalars['String']>;
+  gpuSimplify?: Maybe<Scalars['String']>;
+  memory?: Maybe<Scalars['String']>;
+  memorySimplify?: Maybe<Scalars['String']>;
+  thermals?: Maybe<Scalars['String']>;
+  thermalsSimplify?: Maybe<Scalars['String']>;
+  ports?: Maybe<Scalars['String']>;
+  portsSimplify?: Maybe<Scalars['String']>;
   createdAt: Scalars['String'];
   updatedAt: Scalars['DateTime'];
 };
@@ -252,6 +280,7 @@ export type Review = {
   authorId: Scalars['String'];
   author: User;
   deviceId: Scalars['String'];
+  reports?: Maybe<Array<Report>>;
   images: Array<ReviewImage>;
 };
 
@@ -365,6 +394,13 @@ export type ReviewImageResponse = {
   data?: Maybe<Array<ReviewImage>>;
 };
 
+export type ReportResponse = {
+  __typename?: 'ReportResponse';
+  status: Scalars['Boolean'];
+  message: Scalars['String'];
+  data?: Maybe<Array<Report>>;
+};
+
 export type Mutation = {
   __typename?: 'Mutation';
   updateUser: UserResponse;
@@ -395,6 +431,7 @@ export type Mutation = {
   updateRating?: Maybe<ReviewRatingResponse>;
   uploadImage: UploadImageResponse;
   deleteImages: UploadImageResponse;
+  createReport: ReportResponse;
 };
 
 
@@ -421,9 +458,28 @@ export type MutationUpdateSettingArgs = {
 
 
 export type MutationCreateDeviceArgs = {
+  ports_simplify?: Maybe<Scalars['String']>;
+  ports?: Maybe<Scalars['String']>;
+  thermals_simplify?: Maybe<Scalars['String']>;
+  thermals?: Maybe<Scalars['String']>;
+  memory_simplify?: Maybe<Scalars['String']>;
+  memory?: Maybe<Scalars['String']>;
+  gpu_simplify?: Maybe<Scalars['String']>;
+  gpu?: Maybe<Scalars['String']>;
+  processor_simplify?: Maybe<Scalars['String']>;
+  processor?: Maybe<Scalars['String']>;
+  camera_simplify?: Maybe<Scalars['String']>;
+  camera?: Maybe<Scalars['String']>;
+  software_simplify?: Maybe<Scalars['String']>;
+  software?: Maybe<Scalars['String']>;
+  battery_simplify?: Maybe<Scalars['String']>;
+  battery?: Maybe<Scalars['String']>;
+  display_simplify?: Maybe<Scalars['String']>;
+  display?: Maybe<Scalars['String']>;
   coverImage?: Maybe<Scalars['String']>;
   buyLink?: Maybe<Scalars['String']>;
   subCategory?: Maybe<Scalars['String']>;
+  price?: Maybe<Scalars['String']>;
   category: Scalars['String'];
   brand: Scalars['String'];
   name: Scalars['String'];
@@ -431,7 +487,8 @@ export type MutationCreateDeviceArgs = {
 
 
 export type MutationUpdateDeviceArgs = {
-  input: UpdateDeviceInput;
+  specInput: UpdateDeviceSpecInput;
+  deviceInput: UpdateDeviceInput;
   id: Scalars['String'];
 };
 
@@ -589,6 +646,16 @@ export type MutationDeleteImagesArgs = {
   imageIds: Array<Scalars['String']>;
 };
 
+
+export type MutationCreateReportArgs = {
+  solutionId?: Maybe<Scalars['String']>;
+  reviewId?: Maybe<Scalars['String']>;
+  problemId?: Maybe<Scalars['String']>;
+  authorId: Scalars['String'];
+  content: Scalars['String'];
+  title: Scalars['String'];
+};
+
 export type UpdateUserInput = {
   username?: Maybe<Scalars['String']>;
   email?: Maybe<Scalars['String']>;
@@ -596,20 +663,6 @@ export type UpdateUserInput = {
 
 export type UpdateSettingInput = {
   isPrivate?: Maybe<Scalars['Boolean']>;
-};
-
-export type UpdateDeviceInput = {
-  name?: Maybe<Scalars['String']>;
-  category?: Maybe<Scalars['String']>;
-  buyLink?: Maybe<Scalars['String']>;
-  coverImage?: Maybe<Scalars['String']>;
-};
-
-export type DeviceSpecResponse = {
-  __typename?: 'DeviceSpecResponse';
-  status: Scalars['Boolean'];
-  message: Scalars['String'];
-  data?: Maybe<Array<DeviceSpec>>;
 };
 
 export type UpdateDeviceSpecInput = {
@@ -623,6 +676,29 @@ export type UpdateDeviceSpecInput = {
   processorSimplify?: Maybe<Scalars['String']>;
   camera?: Maybe<Scalars['String']>;
   cameraSimplify?: Maybe<Scalars['String']>;
+  gpu?: Maybe<Scalars['String']>;
+  gpuSimplify?: Maybe<Scalars['String']>;
+  memory?: Maybe<Scalars['String']>;
+  memorySimplify?: Maybe<Scalars['String']>;
+  thermals?: Maybe<Scalars['String']>;
+  thermalsSimplify?: Maybe<Scalars['String']>;
+  ports?: Maybe<Scalars['String']>;
+  portsSimplify?: Maybe<Scalars['String']>;
+};
+
+export type UpdateDeviceInput = {
+  name?: Maybe<Scalars['String']>;
+  category?: Maybe<Scalars['String']>;
+  buyLink?: Maybe<Scalars['String']>;
+  coverImage?: Maybe<Scalars['String']>;
+  price?: Maybe<Scalars['String']>;
+};
+
+export type DeviceSpecResponse = {
+  __typename?: 'DeviceSpecResponse';
+  status: Scalars['Boolean'];
+  message: Scalars['String'];
+  data?: Maybe<Array<DeviceSpec>>;
 };
 
 export type UpdateProblemInput = {
@@ -806,6 +882,24 @@ export type UpdateProblemMutation = (
         & Pick<ProblemImage, 'path'>
       )> }
     )>> }
+  ) }
+);
+
+export type CreateReportMutationVariables = Exact<{
+  title: Scalars['String'];
+  content: Scalars['String'];
+  problemId?: Maybe<Scalars['String']>;
+  solutionId?: Maybe<Scalars['String']>;
+  authorId: Scalars['String'];
+  reviewId?: Maybe<Scalars['String']>;
+}>;
+
+
+export type CreateReportMutation = (
+  { __typename?: 'Mutation' }
+  & { createReport: (
+    { __typename?: 'ReportResponse' }
+    & Pick<ReportResponse, 'status' | 'message'>
   ) }
 );
 
@@ -1068,7 +1162,7 @@ export type DeviceDetailQuery = (
         ) }
       )>>, spec?: Maybe<(
         { __typename?: 'DeviceSpec' }
-        & Pick<DeviceSpec, 'display' | 'battery' | 'software' | 'camera' | 'processor' | 'displaySimplify' | 'batterySimplify' | 'softwareSimplify' | 'cameraSimplify' | 'processorSimplify'>
+        & Pick<DeviceSpec, 'display' | 'battery' | 'software' | 'camera' | 'processor' | 'gpu' | 'memory' | 'thermals' | 'ports' | 'displaySimplify' | 'batterySimplify' | 'softwareSimplify' | 'cameraSimplify' | 'processorSimplify' | 'gpuSimplify' | 'memorySimplify' | 'thermalsSimplify' | 'portsSimplify'>
       )> }
     )>> }
   )> }
@@ -1106,7 +1200,10 @@ export type ProblemsQuery = (
     & { data?: Maybe<Array<(
       { __typename?: 'DeviceProblem' }
       & Pick<DeviceProblem, 'id' | 'title' | 'content' | 'solvedBy' | 'createdAt' | 'updatedAt'>
-      & { images: Array<(
+      & { device: (
+        { __typename?: 'Device' }
+        & Pick<Device, 'id' | 'name'>
+      ), images: Array<(
         { __typename?: 'ProblemImage' }
         & Pick<ProblemImage, 'path'>
       )>, author?: Maybe<(
@@ -1209,6 +1306,9 @@ export type SolutionsQuery = (
       & { author: (
         { __typename?: 'User' }
         & Pick<User, 'username' | 'id' | 'avatar'>
+      ), problem: (
+        { __typename?: 'DeviceProblem' }
+        & Pick<DeviceProblem, 'id' | 'title' | 'content'>
       ), stars?: Maybe<Array<(
         { __typename?: 'SolutionStar' }
         & Pick<SolutionStar, 'userId'>
@@ -1626,6 +1726,51 @@ export function useUpdateProblemMutation(baseOptions?: Apollo.MutationHookOption
 export type UpdateProblemMutationHookResult = ReturnType<typeof useUpdateProblemMutation>;
 export type UpdateProblemMutationResult = Apollo.MutationResult<UpdateProblemMutation>;
 export type UpdateProblemMutationOptions = Apollo.BaseMutationOptions<UpdateProblemMutation, UpdateProblemMutationVariables>;
+export const CreateReportDocument = gql`
+    mutation createReport($title: String!, $content: String!, $problemId: String, $solutionId: String, $authorId: String!, $reviewId: String) {
+  createReport(
+    title: $title
+    content: $content
+    problemId: $problemId
+    solutionId: $solutionId
+    reviewId: $reviewId
+    authorId: $authorId
+  ) {
+    status
+    message
+  }
+}
+    `;
+export type CreateReportMutationFn = Apollo.MutationFunction<CreateReportMutation, CreateReportMutationVariables>;
+
+/**
+ * __useCreateReportMutation__
+ *
+ * To run a mutation, you first call `useCreateReportMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useCreateReportMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [createReportMutation, { data, loading, error }] = useCreateReportMutation({
+ *   variables: {
+ *      title: // value for 'title'
+ *      content: // value for 'content'
+ *      problemId: // value for 'problemId'
+ *      solutionId: // value for 'solutionId'
+ *      authorId: // value for 'authorId'
+ *      reviewId: // value for 'reviewId'
+ *   },
+ * });
+ */
+export function useCreateReportMutation(baseOptions?: Apollo.MutationHookOptions<CreateReportMutation, CreateReportMutationVariables>) {
+        return Apollo.useMutation<CreateReportMutation, CreateReportMutationVariables>(CreateReportDocument, baseOptions);
+      }
+export type CreateReportMutationHookResult = ReturnType<typeof useCreateReportMutation>;
+export type CreateReportMutationResult = Apollo.MutationResult<CreateReportMutation>;
+export type CreateReportMutationOptions = Apollo.BaseMutationOptions<CreateReportMutation, CreateReportMutationVariables>;
 export const CreateReviewDocument = gql`
     mutation CreateReview($deviceId: String!, $authorId: String!, $title: String!, $content: String!, $overall: Float, $display: Float, $processor: Float, $battery: Float, $software: Float, $camera: Float, $images: [String!]!) {
   createReview(
@@ -2189,11 +2334,19 @@ export const DeviceDetailDocument = gql`
         software
         camera
         processor
+        gpu
+        memory
+        thermals
+        ports
         displaySimplify
         batterySimplify
         softwareSimplify
         cameraSimplify
         processorSimplify
+        gpuSimplify
+        memorySimplify
+        thermalsSimplify
+        portsSimplify
       }
     }
   }
@@ -2282,6 +2435,10 @@ export const ProblemsDocument = gql`
       solvedBy
       createdAt
       updatedAt
+      device {
+        id
+        name
+      }
       images {
         path
       }
@@ -2481,6 +2638,11 @@ export const SolutionsDocument = gql`
         avatar
       }
       content
+      problem {
+        id
+        title
+        content
+      }
       stars {
         userId
       }

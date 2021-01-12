@@ -15,6 +15,7 @@ import { DeviceProblemStar } from "./DeviceProblemStar";
 import { ProblemImage } from "./ProblemImage";
 import { Solution } from "./Solution";
 import { User } from "./User";
+import { Report } from "./Report";
 
 @ObjectType()
 @Entity()
@@ -83,6 +84,10 @@ export class DeviceProblem {
   @Field(() => [DeviceProblemStar], { nullable: true })
   @OneToMany(() => DeviceProblemStar, (star) => star.problem)
   stars: DeviceProblemStar[];
+
+  @Field(() => [Report], { nullable: true })
+  @OneToMany(() => Report, (report) => report.problem)
+  reports: Report[];
 
   @Field(() => [Solution], { nullable: true })
   @OneToMany(() => Solution, (solution) => solution.problem)

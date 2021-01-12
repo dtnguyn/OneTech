@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import {
   Review,
+  useCreateReportMutation,
   useCreateReviewMutation,
   useDeleteImagesMutation,
   useDeleteReviewMutation,
@@ -16,6 +17,7 @@ import { useReview } from "../../context/ReviewContext";
 import { useAuth } from "../../context/AuthContext";
 import CustomSlider from "../CustomSlider";
 import { useAlert } from "react-alert";
+import FormDialog from "../FormDialog";
 
 interface ReviewsProps {
   deviceId: string;
@@ -65,12 +67,23 @@ const Reviews: React.FC<ReviewsProps> = ({
     handlePositive: () => {},
   });
 
+  const [formDialog, setFormDialog] = useState({
+    id: "",
+    show: false,
+    title: "",
+    cancelText: "",
+    submitText: "",
+    handleCancel: () => {},
+    handleSubmit: (title: string, content: string) => {},
+  });
+
   const [specsArr, setSpecsArr] = useState<Array<string>>([]);
 
   const [createReviewMutation, {}] = useCreateReviewMutation();
   const [deleteReviewMutation, {}] = useDeleteReviewMutation();
   const [updateReviewMutation, {}] = useUpdateReviewMutation();
   const [deleteImagesMutation, {}] = useDeleteImagesMutation();
+  const [createReportMutation] = useCreateReportMutation();
 
   const resetReviewValue = () => {
     setReviewValue({
@@ -235,6 +248,46 @@ const Reviews: React.FC<ReviewsProps> = ({
     });
   };
 
+  const initialReportReviewDialog = (id: string) => {
+    setFormDialog({
+      ...formDialog,
+      id,
+      show: true,
+      title: "Report this review!",
+      submitText: "Submit",
+      cancelText: "Cancel",
+      handleCancel: () => {
+        setFormDialog({
+          ...formDialog,
+          show: false,
+        });
+      },
+      handleSubmit: (title, content) => {
+        createReportMutation({
+          variables: {
+            title,
+            content,
+            authorId: user?.id as string,
+            reviewId: id,
+          },
+        })
+          .then((response) => {
+            if (response.data?.createReport.status) {
+              setFormDialog({
+                ...formDialog,
+                show: false,
+              });
+            } else {
+              throw new Error(response.data?.createReport.message);
+            }
+          })
+          .catch((error) => {
+            alert(error.message);
+          });
+      },
+    });
+  };
+
   useEffect(() => {
     switch (category) {
       case "phone":
@@ -363,6 +416,7 @@ const Reviews: React.FC<ReviewsProps> = ({
                 });
                 openEditing();
               }}
+              handleReport={initialReportReviewDialog}
             />
           );
         })
@@ -375,6 +429,15 @@ const Reviews: React.FC<ReviewsProps> = ({
         positiveText={confirmationDialog.positiveText}
         handleNegativeButtonClick={confirmationDialog.handleNegative}
         handlePositiveButtonClick={confirmationDialog.handlePositive}
+      />
+
+      <FormDialog
+        title={formDialog.title}
+        show={formDialog.show}
+        handleClose={formDialog.handleCancel}
+        handleSubmit={formDialog.handleSubmit}
+        closeText={formDialog.cancelText}
+        submitText={formDialog.submitText}
       />
     </div>
   );

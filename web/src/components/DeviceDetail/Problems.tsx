@@ -10,6 +10,7 @@ import {
   ProblemsDocument,
   ProblemsQuery,
   useCreateProblemMutation,
+  useCreateReportMutation,
   useDeleteImagesMutation,
   useDeleteProblemMutation,
   useToggleProblemStarMutation,
@@ -21,6 +22,7 @@ import React, { useState } from "react";
 import CustomEditor from "../CustomEditor";
 import ConfirmationDialog from "../ConfirmationDialog";
 import { useAlert } from "react-alert";
+import FormDialog from "../FormDialog";
 
 interface ProblemsProps {
   deviceId: string;
@@ -60,11 +62,22 @@ const Problems: React.FC<ProblemsProps> = ({
     handlePositive: () => {},
   });
 
+  const [formDialog, setFormDialog] = useState({
+    id: "",
+    show: false,
+    title: "",
+    cancelText: "",
+    submitText: "",
+    handleCancel: () => {},
+    handleSubmit: (title: string, content: string) => {},
+  });
+
   const [toggleProblemStarMutation, {}] = useToggleProblemStarMutation();
   const [createProblemMutation, {}] = useCreateProblemMutation();
   const [deleteProblemMutation, {}] = useDeleteProblemMutation();
   const [updateProblemMutation, {}] = useUpdateProblemMutation();
   const [deleteImagesMutation, {}] = useDeleteImagesMutation();
+  const [createReportMutation] = useCreateReportMutation();
 
   const isStarred = (stars: DeviceProblemStar[]) => {
     for (const star of stars) {
@@ -218,6 +231,46 @@ const Problems: React.FC<ProblemsProps> = ({
     });
   };
 
+  const initialReportProblemDialog = (id: string) => {
+    setFormDialog({
+      ...formDialog,
+      id,
+      show: true,
+      title: "Report this problem!",
+      submitText: "Submit",
+      cancelText: "Cancel",
+      handleCancel: () => {
+        setFormDialog({
+          ...formDialog,
+          show: false,
+        });
+      },
+      handleSubmit: (title, content) => {
+        createReportMutation({
+          variables: {
+            title,
+            content,
+            authorId: user?.id as string,
+            problemId: id,
+          },
+        })
+          .then((response) => {
+            if (response.data?.createReport.status) {
+              setFormDialog({
+                ...formDialog,
+                show: false,
+              });
+            } else {
+              throw new Error(response.data?.createReport.message);
+            }
+          })
+          .catch((error) => {
+            alert(error.message);
+          });
+      },
+    });
+  };
+
   return (
     <div className={styles.problemsContainer}>
       {adding || editing ? (
@@ -282,6 +335,7 @@ const Problems: React.FC<ProblemsProps> = ({
               problem={problem}
               handleToggleStar={(problem) => handleToggleProblemStar(problem)}
               handleDelete={initialDeleteProblemDialog}
+              handleReport={initialReportProblemDialog}
               handleEdit={(problemId) => {
                 setProblemValue({
                   ...problemValue,
@@ -289,7 +343,6 @@ const Problems: React.FC<ProblemsProps> = ({
                   title: problem.title,
                   content: problem.content,
                 });
-
                 openEditing();
               }}
             />
@@ -304,6 +357,14 @@ const Problems: React.FC<ProblemsProps> = ({
         positiveText={confirmationDialog.positiveText}
         handleNegativeButtonClick={confirmationDialog.handleNegative}
         handlePositiveButtonClick={confirmationDialog.handlePositive}
+      />
+      <FormDialog
+        title={formDialog.title}
+        show={formDialog.show}
+        handleClose={formDialog.handleCancel}
+        handleSubmit={formDialog.handleSubmit}
+        closeText={formDialog.cancelText}
+        submitText={formDialog.submitText}
       />
     </div>
   );

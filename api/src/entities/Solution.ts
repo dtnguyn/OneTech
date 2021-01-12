@@ -10,6 +10,7 @@ import {
   OneToMany,
 } from "typeorm";
 import { DeviceProblem } from "./DeviceProblem";
+import { Report } from "./Report";
 import { SolutionImage } from "./SolutionImage";
 import { SolutionStar } from "./SolutionStar";
 import { User } from "./User";
@@ -55,12 +56,17 @@ export class Solution {
     onDelete: "CASCADE",
     onUpdate: "CASCADE",
   })
+  @Field(() => DeviceProblem)
   @JoinColumn({ name: "problemId" })
   problem: DeviceProblem;
 
   @Field(() => [SolutionStar], { nullable: true })
   @OneToMany(() => SolutionStar, (star) => star.solution)
   stars: SolutionStar[];
+
+  @Field(() => [Report], { nullable: true })
+  @OneToMany(() => Report, (report) => report.solution)
+  reports: Report[];
 
   @Field(() => [SolutionImage])
   @OneToMany(() => SolutionImage, (image) => image.solution)

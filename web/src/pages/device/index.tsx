@@ -12,7 +12,7 @@ const Devices: React.FC<DeviceProps> = ({}) => {
   const [devices, setDevices] = useState<Array<Device>>([]);
   const { data, error, loading } = useDevicesQuery({
     variables: {
-      all: true,
+      category: "phone",
     },
   });
 

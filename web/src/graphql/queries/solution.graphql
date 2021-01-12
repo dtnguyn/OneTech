@@ -10,6 +10,11 @@ query Solutions($userId: String, $problemId: String) {
         avatar
       }
       content
+      problem {
+        id
+        title
+        content
+      }
       stars {
         userId
       }
