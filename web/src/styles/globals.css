@@ -20,6 +20,15 @@ html {
   color: black;
 }
 
+.moreInfo {
+  color: #a4a2a2;
+  cursor: pointer;
+}
+
+.moreInfo:hover {
+  text-decoration: underline;
+}
+
 .divider {
   background-color: #b7b7b7;
   width: 100%;
@@ -31,7 +40,8 @@ a {
   text-decoration: none;
 }
 
-input {
+input,
+textarea {
   width: 100%;
   padding: 10px 20px;
   margin: 10px 0 10px 0 !important;

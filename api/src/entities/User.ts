@@ -11,6 +11,7 @@ import {
 import { DeviceFollower } from "./DeviceFollower";
 import { DeviceProblem } from "./DeviceProblem";
 import { DeviceProblemStar } from "./DeviceProblemStar";
+import { Report } from "./Report";
 import { Review } from "./Review";
 import { Solution } from "./Solution";
 import { SolutionStar } from "./SolutionStar";
@@ -50,6 +51,10 @@ export class User {
   @Field(() => UserSetting, { nullable: true })
   @OneToOne(() => UserSetting, (setting) => setting.user)
   setting: UserSetting;
+
+  @Field(() => [Report], { nullable: true })
+  @OneToMany(() => Report, (report) => report.author)
+  reports: Report[];
 
   @Field(() => [DeviceProblem], { nullable: true })
   @OneToMany(() => DeviceProblem, (deviceProblem) => deviceProblem.author)

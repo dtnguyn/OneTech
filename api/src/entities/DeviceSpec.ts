@@ -63,6 +63,38 @@ export class DeviceSpec {
   @Column({ nullable: true })
   processorSimplify?: string;
 
+  @Field(() => String, { nullable: true })
+  @Column({ nullable: true })
+  gpu?: string;
+
+  @Field(() => String, { nullable: true })
+  @Column({ nullable: true })
+  gpuSimplify?: string;
+
+  @Field(() => String, { nullable: true })
+  @Column({ nullable: true })
+  memory?: string;
+
+  @Field(() => String, { nullable: true })
+  @Column({ nullable: true })
+  memorySimplify?: string;
+
+  @Field(() => String, { nullable: true })
+  @Column({ nullable: true })
+  thermals?: string;
+
+  @Field(() => String, { nullable: true })
+  @Column({ nullable: true })
+  thermalsSimplify?: string;
+
+  @Field(() => String, { nullable: true })
+  @Column({ nullable: true })
+  ports?: string;
+
+  @Field(() => String, { nullable: true })
+  @Column({ nullable: true })
+  portsSimplify?: string;
+
   @Field(() => String)
   @CreateDateColumn()
   createdAt: Date;

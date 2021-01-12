@@ -17,6 +17,10 @@ query Problems(
       solvedBy
       createdAt
       updatedAt
+      device {
+        id
+        name
+      }
       images {
         path
       }

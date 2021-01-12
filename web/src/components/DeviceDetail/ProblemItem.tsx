@@ -12,17 +12,21 @@ import { clearInterval } from "timers";
 interface ProblemItemProps {
   problem: DeviceProblem;
   starred: boolean;
+  accountPage?: boolean;
   handleToggleStar: (problem: DeviceProblem) => void;
   handleDelete: (problemId: string, images: string[]) => void;
   handleEdit: (problemId: string) => void;
+  handleReport: (id: string) => void;
 }
 
 const ProblemItem: React.FC<ProblemItemProps> = ({
   problem,
   starred,
+  accountPage,
   handleToggleStar,
   handleDelete,
   handleEdit,
+  handleReport,
 }) => {
   const router = useRouter();
   const { user } = useAuth();
@@ -59,7 +63,17 @@ const ProblemItem: React.FC<ProblemItemProps> = ({
           <p className={styles.postDate}>
             {moment(problem.createdAt).format("LL")}
           </p>
+
           <div className={styles.problemItemContent}>
+            {accountPage ? (
+              <p
+                className="moreInfo"
+                onClick={() => router.push(`/device/${problem.device.id}`)}
+              >
+                Device: {problem.device.name}
+              </p>
+            ) : null}
+
             {parse(problem.content)}
           </div>
 
@@ -72,7 +86,13 @@ const ProblemItem: React.FC<ProblemItemProps> = ({
               }}
             />
 
-            <img src="/images/flag.png" className={styles.postItemButton} />
+            <img
+              src="/images/flag.png"
+              className={styles.postItemButton}
+              onClick={() => {
+                handleReport(problem.id);
+              }}
+            />
             {user?.id === problem.author?.id ? (
               <div>
                 <img

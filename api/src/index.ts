@@ -19,6 +19,7 @@ import { SolutionResolver } from "./resolvers/SolutionResolver";
 import { ReviewResolver } from "./resolvers/ReviewResolver";
 import cors from "cors";
 import { ImageResolver } from "./resolvers/ImageResolver";
+import { ReportResolver } from "./resolvers/ReportResolver";
 
 (async () => {
   await createConnection();
@@ -74,6 +75,7 @@ import { ImageResolver } from "./resolvers/ImageResolver";
         SolutionResolver,
         ReviewResolver,
         ImageResolver,
+        ReportResolver,
       ],
       validate: false,
     }),

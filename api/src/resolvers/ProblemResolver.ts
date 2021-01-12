@@ -218,6 +218,7 @@ export class ProblemResolver {
       const builder = this.problemRepo.createQueryBuilder("problem");
       builder
         .leftJoinAndSelect("problem.author", "author")
+        .leftJoinAndSelect("problem.device", "device")
         .leftJoinAndSelect("problem.stars", "stars")
         .leftJoinAndSelect("problem.images", "images")
         .leftJoinAndSelect("problem.solutions", "solutions");

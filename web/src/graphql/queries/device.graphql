@@ -103,11 +103,19 @@ query DeviceDetail($id: String!) {
         software
         camera
         processor
+        gpu
+        memory
+        thermals
+        ports
         displaySimplify
         batterySimplify
         softwareSimplify
         cameraSimplify
         processorSimplify
+        gpuSimplify
+        memorySimplify
+        thermalsSimplify
+        portsSimplify
       }
     }
   }

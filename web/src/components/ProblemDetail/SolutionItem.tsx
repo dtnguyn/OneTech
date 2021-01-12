@@ -11,20 +11,24 @@ interface SolutionItemProps {
   solution: Solution;
   starred: boolean;
   problemAuthorId?: string;
+  accountPage?: boolean;
   handleDelete: (id: string, images: string[]) => void;
   handleEdit: (id: string, content: string) => void;
   handleToggleStar: (id: string) => void;
   handleTogglePicked?: (id: string, solverId: string) => void;
+  handleReport: (id: string) => void;
 }
 
 const SolutionItem: React.FC<SolutionItemProps> = ({
   solution,
   starred,
   problemAuthorId,
+  accountPage,
   handleToggleStar,
   handleTogglePicked,
   handleDelete,
   handleEdit,
+  handleReport,
 }) => {
   const { user } = useAuth();
   const router = useRouter();
@@ -105,7 +109,9 @@ const SolutionItem: React.FC<SolutionItemProps> = ({
 
             <div
               className={styles.solutionButton}
-              onClick={() => console.log(problemAuthorId, user?.id)}
+              onClick={() => {
+                handleReport(solution.id);
+              }}
             >
               <img
                 src="/images/flag.png"
@@ -140,6 +146,14 @@ const SolutionItem: React.FC<SolutionItemProps> = ({
             ) : null}
           </div>
           <div className={styles.solutionContentContainer}>
+            {accountPage ? (
+              <p
+                className="moreInfo"
+                onClick={() => router.push(`/problem/${solution.problem.id}`)}
+              >
+                Problem: {solution.problem.title}
+              </p>
+            ) : null}
             {parse(solution.content)}
           </div>
         </div>

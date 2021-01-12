@@ -8,7 +8,7 @@ import {
   Query,
   Resolver,
 } from "type-graphql";
-import { getRepository } from "typeorm";
+import { getConnection, getRepository } from "typeorm";
 import { DeviceSpec, DeviceSpecResponse } from "../entities/DeviceSpec";
 import { DeviceFollower } from "../entities/DeviceFollower";
 import { MyContext } from "../types";
@@ -26,6 +26,9 @@ class UpdateDeviceInput {
 
   @Field(() => String, { nullable: true })
   coverImage?: string;
+
+  @Field(() => String, { nullable: true })
+  price?: string;
 }
 
 @InputType()
@@ -59,6 +62,30 @@ class UpdateDeviceSpecInput {
 
   @Field(() => String, { nullable: true })
   cameraSimplify?: string;
+
+  @Field(() => String, { nullable: true })
+  gpu?: string;
+
+  @Field(() => String, { nullable: true })
+  gpuSimplify?: string;
+
+  @Field(() => String, { nullable: true })
+  memory?: string;
+
+  @Field(() => String, { nullable: true })
+  memorySimplify?: string;
+
+  @Field(() => String, { nullable: true })
+  thermals?: string;
+
+  @Field(() => String, { nullable: true })
+  thermalsSimplify?: string;
+
+  @Field(() => String, { nullable: true })
+  ports?: string;
+
+  @Field(() => String, { nullable: true })
+  portsSimplify?: string;
 }
 
 const sleep = (ms: number) => new Promise((res) => setTimeout(res, ms));
@@ -73,56 +100,131 @@ export class DeviceResolver {
     @Arg("name") name: string,
     @Arg("brand") brand: string,
     @Arg("category") category: string,
+    @Arg("price", { nullable: true }) price: string,
     @Arg("subCategory", { nullable: true }) subCategory: string,
     @Arg("buyLink", { nullable: true }) buyLink: string,
-    @Arg("coverImage", { nullable: true }) coverImage: string
+    @Arg("coverImage", { nullable: true }) coverImage: string,
+    @Arg("display", () => String, { nullable: true }) display: string | null,
+    @Arg("display_simplify", () => String, { nullable: true })
+    displaySimplify: string | null,
+    @Arg("battery", () => String, { nullable: true }) battery: string | null,
+    @Arg("battery_simplify", () => String, { nullable: true })
+    batterySimplify: string | null,
+    @Arg("software", () => String, { nullable: true }) software: string | null,
+    @Arg("software_simplify", () => String, { nullable: true })
+    softwareSimplify: string | null,
+    @Arg("camera", () => String, { nullable: true }) camera: string | null,
+    @Arg("camera_simplify", () => String, { nullable: true })
+    cameraSimplify: string | null,
+    @Arg("processor", () => String, { nullable: true })
+    processor: string | null,
+    @Arg("processor_simplify", () => String, { nullable: true })
+    processorSimplify: string | null,
+    @Arg("gpu", () => String, { nullable: true })
+    gpu: string | null,
+    @Arg("gpu_simplify", () => String, { nullable: true })
+    gpuSimplify: string | null,
+    @Arg("memory", () => String, { nullable: true })
+    memory: string | null,
+    @Arg("memory_simplify", () => String, { nullable: true })
+    memorySimplify: string | null,
+    @Arg("thermals", () => String, { nullable: true })
+    thermals: string | null,
+    @Arg("thermals_simplify", () => String, { nullable: true })
+    thermalsSimplify: string | null,
+    @Arg("ports", () => String, { nullable: true })
+    ports: string | null,
+    @Arg("ports_simplify", () => String, { nullable: true })
+    portsSimplify: string | null
   ) {
-    const newDevice = this.deviceRepo.create({
-      name,
-      category,
-      brand,
-      buyLink,
-      subCategory,
-      coverImage,
-    });
+    const queryRunner = getConnection().createQueryRunner();
+    await queryRunner.connect();
+    await queryRunner.startTransaction();
 
-    console.log("new device: ", newDevice);
-    await this.deviceRepo.save(newDevice).catch((e) => {
+    try {
+      const manager = queryRunner.manager;
+
+      const newDevice = await manager.create(Device, {
+        name,
+        category,
+        brand,
+        buyLink,
+        subCategory,
+        coverImage,
+      });
+
+      await manager.insert(Device, newDevice);
+
+      await manager.insert(DeviceSpec, {
+        deviceId: newDevice.id,
+        display,
+        displaySimplify,
+        battery,
+        batterySimplify,
+        software,
+        softwareSimplify,
+        camera,
+        cameraSimplify,
+        processor,
+        processorSimplify,
+        gpu,
+        gpuSimplify,
+        memory,
+        memorySimplify,
+        thermals,
+        thermalsSimplify,
+        ports,
+        portsSimplify,
+      } as DeviceSpec);
+
+      await queryRunner.commitTransaction();
+      queryRunner.release();
+
+      return {
+        status: true,
+        message: "Create device successfully",
+        data: [newDevice],
+      };
+    } catch (error) {
+      await queryRunner.rollbackTransaction();
       return {
         status: false,
-        message: e.message,
+        message: error.message,
       };
-    });
-    return {
-      status: true,
-      message: "Create device successfully.",
-      data: [newDevice],
-    };
+    }
   }
 
   @Mutation(() => DeviceResponse)
   async updateDevice(
     @Arg("id") id: string,
-    @Arg("input") input: UpdateDeviceInput
+    @Arg("deviceInput") deviceInput: UpdateDeviceInput,
+    @Arg("specInput") specInput: UpdateDeviceSpecInput
   ) {
-    await this.deviceRepo.update({ id }, input).catch((e) => {
-      return {
-        status: false,
-        message: e.message,
-      };
-    });
-    const device = await this.deviceRepo.findOne({ id }).catch((e) => {
-      return {
-        status: false,
-        message: e.message,
-      };
-    });
+    const queryRunner = getConnection().createQueryRunner();
+    await queryRunner.connect();
+    await queryRunner.startTransaction();
 
-    return {
-      status: true,
-      message: "Update device successfully.",
-      data: [device],
-    };
+    try {
+      const manager = queryRunner.manager;
+
+      await manager.update(Device, { id }, deviceInput);
+
+      await manager.update(DeviceSpec, { deviceId: id }, specInput);
+
+      await queryRunner.commitTransaction();
+      queryRunner.release();
+
+      return {
+        status: true,
+        message: "Update device successfully",
+      };
+    } catch (error) {
+      queryRunner.rollbackTransaction();
+      return {
+        status: false,
+        message: error.message,
+      };
+    }
   }
 
   @Mutation(() => DeviceResponse)

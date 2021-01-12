@@ -41,6 +41,10 @@ export class Device {
   @Column({ unique: true, nullable: true })
   buyLink?: string;
 
+  @Field(() => String, { nullable: true })
+  @Column({ unique: true, nullable: true })
+  price?: string;
+
   @Field(() => String)
   @Column({ nullable: true })
   coverImage?: string;

@@ -11,12 +11,14 @@ interface ReviewItemProps {
   review: Review;
   handleEdit: (review: Review) => void;
   handleDelete: (id: string, images: string[]) => void;
+  handleReport: (id: string) => void;
 }
 
 const ReviewItem: React.FC<ReviewItemProps> = ({
   review,
   handleEdit,
   handleDelete,
+  handleReport,
 }) => {
   const { user } = useAuth();
   const router = useRouter();
@@ -52,7 +54,13 @@ const ReviewItem: React.FC<ReviewItemProps> = ({
           </div>
         </div>
         <div className={styles.postItemButtonsContainer}>
-          <img src="/images/flag.png" className={styles.postItemButton} />
+          <img
+            src="/images/flag.png"
+            className={styles.postItemButton}
+            onClick={() => {
+              handleReport(review.id);
+            }}
+          />
           {user?.id === review.author?.id ? (
             <div>
               <img

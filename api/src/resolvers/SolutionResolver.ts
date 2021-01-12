@@ -187,6 +187,7 @@ export class SolutionResolver {
       const builder = this.solutionRepo
         .createQueryBuilder("solution")
         .leftJoinAndSelect("solution.stars", "stars")
+        .leftJoinAndSelect("solution.problem", "problem")
         .orderBy("solution.createdAt", "DESC")
         .leftJoinAndSelect("solution.author", "author")
         .leftJoinAndSelect("solution.images", "images");

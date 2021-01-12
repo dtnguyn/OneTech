@@ -11,6 +11,7 @@ import {
   OneToMany,
 } from "typeorm";
 import { Device } from "./Device";
+import { Report } from "./Report";
 import { ReviewImage } from "./ReviewImage";
 import { ReviewRating } from "./ReviewRating";
 import { User } from "./User";
@@ -62,6 +63,10 @@ export class Review {
   })
   @JoinColumn({ name: "deviceId" })
   device: Device;
+
+  @Field(() => [Report], { nullable: true })
+  @OneToMany(() => Report, (report) => report.review)
+  reports: Report[];
 
   @Field(() => [ReviewImage])
   @OneToMany(() => ReviewImage, (image) => image.review)
