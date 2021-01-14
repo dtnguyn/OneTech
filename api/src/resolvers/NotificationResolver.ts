@@ -43,7 +43,7 @@ export class NotificationResolver {
 
       if (userId === notification?.userId) {
         this.notificationRepo.delete({ id });
-      } else throw new Error("You are not the owner of the notification.");
+      } else throw new Error("You are not the owner of the notification.`");
 
       return {
         status: true,

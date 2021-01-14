@@ -58,17 +58,6 @@ const NavBar: React.FC<NavBarProps> = ({}) => {
                 About
               </a>
             </Link>
-            {user ? null : (
-              <Link href="/auth">
-                <a
-                  className={styles.navbarLink}
-                  onClick={() => setDropDown(false)}
-                >
-                  Login
-                </a>
-              </Link>
-            )}
-
             {user && innerWidth < 992 ? (
               <div className={styles.navbarLinkContainer}>
                 <Link href={`/user/${user.id}`}>
@@ -81,9 +70,9 @@ const NavBar: React.FC<NavBarProps> = ({}) => {
                 </Link>
               </div>
             ) : null}
-            {user && innerWidth < 992 ? (
+            {!user ? (
               <div className={styles.navbarLinkContainer}>
-                <Link href="/device">
+                <Link href="/settings">
                   <a
                     className={styles.navbarLink}
                     onClick={() => setDropDown(false)}
@@ -93,6 +82,30 @@ const NavBar: React.FC<NavBarProps> = ({}) => {
                 </Link>
               </div>
             ) : null}
+
+            {user && innerWidth < 992 ? (
+              <div className={styles.navbarLinkContainer}>
+                <Link href="/notifications">
+                  <a
+                    className={styles.navbarLink}
+                    onClick={() => setDropDown(false)}
+                  >
+                    Notifications
+                  </a>
+                </Link>
+              </div>
+            ) : null}
+            {user ? null : (
+              <Link href="/auth">
+                <a
+                  className={styles.navbarLink}
+                  onClick={() => setDropDown(false)}
+                >
+                  Login
+                </a>
+              </Link>
+            )}
+
             {user && innerWidth < 992 ? (
               <div className={styles.navbarLinkContainer}>
                 <Link href="/device">
@@ -148,7 +161,20 @@ const NavBar: React.FC<NavBarProps> = ({}) => {
             </p>
           </Link>
 
-          <Divider />
+          <Link href={`/notifications`}>
+            <p
+              className={
+                !darkModeActive
+                  ? styles.dropdownItem
+                  : styles.dropdownItemDarkMode
+              }
+              onClick={() => setDropDown(false)}
+            >
+              Notifications
+            </p>
+          </Link>
+
+          <div className="divider divider-with-space" />
           <p
             className={
               !darkModeActive

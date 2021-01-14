@@ -1,0 +1,76 @@
+.notificationsPageContainer {
+  width: 100%;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.notificationsPageTitle {
+  font-size: 1.5rem;
+  font-family: MBold;
+  margin: 30px;
+}
+
+.notificationsContainer {
+  width: 80%;
+  display: flex;
+  flex-direction: column;
+}
+
+.notificationIconBox {
+  position: relative;
+  cursor: pointer;
+  margin: 10px 0;
+}
+
+.notificationItemContainer {
+  width: 100%;
+  display: flex;
+  margin: 5px 0;
+}
+
+.notificationIconContainer {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.notificationIcon {
+  width: 100px;
+}
+
+.notificationTextContainer {
+  flex: 5;
+
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.notificationItemTitle {
+  margin-top: 10px;
+  font-family: MSemiBold;
+  font-size: 1.3rem;
+  margin-bottom: 0;
+}
+
+.notificationItemTitle:hover {
+  text-decoration: underline;
+}
+
+.notificationItemContent {
+  margin-top: 10px;
+}
+
+.notificationDeleteIcon {
+  position: absolute;
+  width: 24px;
+  bottom: 10px;
+  right: 10px;
+}
+
+.notificationDeleteIcon:active {
+  padding: 4px;
+}

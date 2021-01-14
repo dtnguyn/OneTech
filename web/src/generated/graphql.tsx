@@ -36,6 +36,7 @@ export type Query = {
   problemImages: ProblemImageResponse;
   reviewImages: ReviewImageResponse;
   reports: ReportResponse;
+  notifications: NotificationResponse;
 };
 
 
@@ -135,6 +136,7 @@ export type User = {
   deviceProblemStars?: Maybe<Array<DeviceProblemStar>>;
   solutions?: Maybe<Array<Solution>>;
   solutionStars?: Maybe<Array<SolutionStar>>;
+  notifications?: Maybe<Array<Notification>>;
   follows?: Maybe<Array<DeviceFollower>>;
   reviews?: Maybe<Array<Review>>;
   problemSolved?: Maybe<Array<DeviceProblem>>;
@@ -324,6 +326,19 @@ export type ProblemImage = {
   problem: DeviceProblem;
 };
 
+export type Notification = {
+  __typename?: 'Notification';
+  id: Scalars['String'];
+  title: Scalars['String'];
+  content: Scalars['String'];
+  link: Scalars['String'];
+  category: Scalars['String'];
+  userId: Scalars['String'];
+  user: User;
+  createdAt: Scalars['DateTime'];
+  updatedAt: Scalars['DateTime'];
+};
+
 export type UserSettingResponse = {
   __typename?: 'UserSettingResponse';
   status: Scalars['Boolean'];
@@ -401,6 +416,13 @@ export type ReportResponse = {
   data?: Maybe<Array<Report>>;
 };
 
+export type NotificationResponse = {
+  __typename?: 'NotificationResponse';
+  status: Scalars['Boolean'];
+  message: Scalars['String'];
+  data?: Maybe<Array<Notification>>;
+};
+
 export type Mutation = {
   __typename?: 'Mutation';
   updateUser: UserResponse;
@@ -432,6 +454,7 @@ export type Mutation = {
   uploadImage: UploadImageResponse;
   deleteImages: UploadImageResponse;
   createReport: ReportResponse;
+  deleteNotification: NotificationResponse;
 };
 
 
@@ -656,6 +679,11 @@ export type MutationCreateReportArgs = {
   title: Scalars['String'];
 };
 
+
+export type MutationDeleteNotificationArgs = {
+  id: Scalars['String'];
+};
+
 export type UpdateUserInput = {
   username?: Maybe<Scalars['String']>;
   email?: Maybe<Scalars['String']>;
@@ -771,6 +799,19 @@ export type DeleteImagesMutation = (
   & { deleteImages: (
     { __typename?: 'UploadImageResponse' }
     & Pick<UploadImageResponse, 'status' | 'message'>
+  ) }
+);
+
+export type DeleteNotificationMutationVariables = Exact<{
+  id: Scalars['String'];
+}>;
+
+
+export type DeleteNotificationMutation = (
+  { __typename?: 'Mutation' }
+  & { deleteNotification: (
+    { __typename?: 'NotificationResponse' }
+    & Pick<NotificationResponse, 'status' | 'message'>
   ) }
 );
 
@@ -1185,6 +1226,21 @@ export type DeviceRatingsQuery = (
   ) }
 );
 
+export type NotificationsQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type NotificationsQuery = (
+  { __typename?: 'Query' }
+  & { notifications: (
+    { __typename?: 'NotificationResponse' }
+    & Pick<NotificationResponse, 'status' | 'message'>
+    & { data?: Maybe<Array<(
+      { __typename?: 'Notification' }
+      & Pick<Notification, 'id' | 'title' | 'content' | 'link' | 'category' | 'createdAt'>
+    )>> }
+  ) }
+);
+
 export type ProblemsQueryVariables = Exact<{
   deviceId?: Maybe<Scalars['String']>;
   authorId?: Maybe<Scalars['String']>;
@@ -1507,6 +1563,39 @@ export function useDeleteImagesMutation(baseOptions?: Apollo.MutationHookOptions
 export type DeleteImagesMutationHookResult = ReturnType<typeof useDeleteImagesMutation>;
 export type DeleteImagesMutationResult = Apollo.MutationResult<DeleteImagesMutation>;
 export type DeleteImagesMutationOptions = Apollo.BaseMutationOptions<DeleteImagesMutation, DeleteImagesMutationVariables>;
+export const DeleteNotificationDocument = gql`
+    mutation deleteNotification($id: String!) {
+  deleteNotification(id: $id) {
+    status
+    message
+  }
+}
+    `;
+export type DeleteNotificationMutationFn = Apollo.MutationFunction<DeleteNotificationMutation, DeleteNotificationMutationVariables>;
+
+/**
+ * __useDeleteNotificationMutation__
+ *
+ * To run a mutation, you first call `useDeleteNotificationMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useDeleteNotificationMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [deleteNotificationMutation, { data, loading, error }] = useDeleteNotificationMutation({
+ *   variables: {
+ *      id: // value for 'id'
+ *   },
+ * });
+ */
+export function useDeleteNotificationMutation(baseOptions?: Apollo.MutationHookOptions<DeleteNotificationMutation, DeleteNotificationMutationVariables>) {
+        return Apollo.useMutation<DeleteNotificationMutation, DeleteNotificationMutationVariables>(DeleteNotificationDocument, baseOptions);
+      }
+export type DeleteNotificationMutationHookResult = ReturnType<typeof useDeleteNotificationMutation>;
+export type DeleteNotificationMutationResult = Apollo.MutationResult<DeleteNotificationMutation>;
+export type DeleteNotificationMutationOptions = Apollo.BaseMutationOptions<DeleteNotificationMutation, DeleteNotificationMutationVariables>;
 export const ToggleProblemStarDocument = gql`
     mutation ToggleProblemStar($problemId: String!, $userId: String!) {
   toggleProblemStar(problemId: $problemId, userId: $userId) {
@@ -2420,6 +2509,47 @@ export function useDeviceRatingsLazyQuery(baseOptions?: Apollo.LazyQueryHookOpti
 export type DeviceRatingsQueryHookResult = ReturnType<typeof useDeviceRatingsQuery>;
 export type DeviceRatingsLazyQueryHookResult = ReturnType<typeof useDeviceRatingsLazyQuery>;
 export type DeviceRatingsQueryResult = Apollo.QueryResult<DeviceRatingsQuery, DeviceRatingsQueryVariables>;
+export const NotificationsDocument = gql`
+    query notifications {
+  notifications {
+    status
+    message
+    data {
+      id
+      title
+      content
+      link
+      category
+      createdAt
+    }
+  }
+}
+    `;
+
+/**
+ * __useNotificationsQuery__
+ *
+ * To run a query within a React component, call `useNotificationsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useNotificationsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useNotificationsQuery({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useNotificationsQuery(baseOptions?: Apollo.QueryHookOptions<NotificationsQuery, NotificationsQueryVariables>) {
+        return Apollo.useQuery<NotificationsQuery, NotificationsQueryVariables>(NotificationsDocument, baseOptions);
+      }
+export function useNotificationsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<NotificationsQuery, NotificationsQueryVariables>) {
+          return Apollo.useLazyQuery<NotificationsQuery, NotificationsQueryVariables>(NotificationsDocument, baseOptions);
+        }
+export type NotificationsQueryHookResult = ReturnType<typeof useNotificationsQuery>;
+export type NotificationsLazyQueryHookResult = ReturnType<typeof useNotificationsLazyQuery>;
+export type NotificationsQueryResult = Apollo.QueryResult<NotificationsQuery, NotificationsQueryVariables>;
 export const ProblemsDocument = gql`
     query Problems($deviceId: String, $authorId: String, $content: String, $title: String) {
   problems(

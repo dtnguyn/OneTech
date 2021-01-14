@@ -1,0 +1,6 @@
+mutation deleteNotification($id: String!) {
+  deleteNotification(id: $id) {
+    status
+    message
+  }
+}
