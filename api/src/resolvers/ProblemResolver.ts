@@ -8,7 +8,7 @@ import {
   Query,
   Resolver,
 } from "type-graphql";
-import { getRepository } from "typeorm";
+import { getConnection, getRepository } from "typeorm";
 
 import { DeviceProblem, ProblemResponse } from "../entities/DeviceProblem";
 import {
@@ -16,6 +16,9 @@ import {
   ProblemStarResponse,
 } from "../entities/DeviceProblemStar";
 import { MyContext } from "../types";
+import { Notification } from "../entities/Notification";
+import { Device } from "../entities/Device";
+import { User } from "../entities/User";
 
 @InputType()
 class UpdateProblemInput {
@@ -35,6 +38,7 @@ export class ProblemResolver {
   problemRepo = getRepository(DeviceProblem);
   starRepo = getRepository(DeviceProblemStar);
   imageRepo = getRepository(ProblemImage);
+  notiRepo = getRepository(Notification);
 
   @Mutation(() => ProblemResponse, { nullable: true })
   async createProblem(
@@ -52,67 +56,98 @@ export class ProblemResolver {
       };
     }
 
-    const newProblem = await this.problemRepo.create({
-      title,
-      content,
-      authorId,
-      deviceId,
-    });
+    const queryRunner = getConnection().createQueryRunner();
+    await queryRunner.connect();
+    await queryRunner.startTransaction();
 
-    await this.problemRepo.save(newProblem).catch((e) => {
-      return {
-        status: false,
-        message: e.message,
-      };
-    });
+    try {
+      const manager = queryRunner.manager;
 
-    let result = true;
-    if (images.length != 0) {
-      result = await new Promise((resolve) => {
-        let counter = 0;
-        for (const image of images) {
-          this.imageRepo
-            .insert({
-              path: image,
-              problemId: newProblem.id,
-            })
-            .then(() => {
-              counter += 1;
-              if (counter === images.length) {
-                resolve(true);
-              }
-            })
-            .catch((e) => {
-              console.log(e.message);
-              resolve(false);
-            });
-        }
+      const newProblem = await manager.create(DeviceProblem, {
+        title,
+        content,
+        authorId,
+        deviceId,
       });
-    }
 
-    const problem = await this.problemRepo
-      .createQueryBuilder("problem")
-      .leftJoinAndSelect("problem.stars", "problemStars")
-      .leftJoinAndSelect("problem.solutions", "solutions")
-      .leftJoinAndSelect("problem.author", "author")
-      .leftJoinAndSelect("solutions.stars", "solutionStars")
-      .leftJoinAndSelect("problem.images", "images")
-      .where("problem.id = :id", { id: newProblem.id })
-      .getOne();
+      await this.problemRepo.insert(newProblem);
 
-    console.log(problem?.author);
+      if (images.length != 0) {
+        await new Promise((resolve, reject) => {
+          let counter = 0;
+          for (const image of images) {
+            this.imageRepo
+              .insert({
+                path: image,
+                problemId: newProblem.id,
+              })
+              .then(() => {
+                counter += 1;
+                if (counter === images.length) {
+                  resolve(true);
+                }
+              })
+              .catch((e) => {
+                console.log(e.message);
+                reject(e);
+              });
+          }
+        });
+      }
 
-    if (result)
+      const device = await manager
+        .createQueryBuilder(Device, "device")
+        .leftJoinAndSelect("device.followers", "follower")
+        .where("device.id = :deviceId", { deviceId })
+        .getOne();
+
+      const followers = device?.followers;
+
+      if (followers && followers.length) {
+        await new Promise((resolve, reject) => {
+          let counter = 0;
+          for (const follower of followers) {
+            if (follower.userId === authorId) {
+              counter++;
+              if (counter === followers.length) resolve(true);
+              continue;
+            }
+            manager
+              .insert(Notification, {
+                title: `${device?.name} has a new problem`,
+                content:
+                  "There's a new problem posted for iPhone12, Check it out!",
+                userId: follower.userId,
+                link: `${process.env.CLIENT_URL}/problem/${newProblem.id}`,
+                category: "problem",
+              })
+              .then(() => {
+                counter++;
+                if (counter === followers.length) resolve(true);
+              })
+              .catch((error) => {
+                reject(error);
+              });
+          }
+        });
+      } else {
+        throw new Error("Couldn't find device.");
+      }
+
+      await queryRunner.commitTransaction();
+      await queryRunner.release();
+
       return {
         status: true,
         message: "Create problem successfully.",
-        data: [problem],
       };
-    else
+    } catch (error) {
+      await queryRunner.rollbackTransaction();
       return {
         status: false,
-        message: "Fail to create problem",
+        message: error.message,
       };
+    }
   }
 
   @Mutation(() => ProblemResponse)
@@ -150,55 +185,46 @@ export class ProblemResolver {
       };
     }
 
-    await this.problemRepo.update({ id }, input).catch((e) => {
-      return {
-        status: false,
-        message: e.message,
-      };
-    });
+    const queryRunner = getConnection().createQueryRunner();
+    await queryRunner.connect();
+    await queryRunner.startTransaction();
 
-    let result = true;
-    if (images && images.length != 0) {
-      result = await new Promise((resolve) => {
-        let counter = 0;
-        for (const image of images) {
-          this.imageRepo
-            .insert({
-              path: image,
-              problemId: id,
-            })
-            .then(() => {
-              counter += 1;
-              if (counter === images.length) {
-                resolve(true);
-              }
-            })
-            .catch((e) => {
-              console.log(e.message);
-              resolve(false);
-            });
-        }
-      });
-    }
+    try {
+      const manager = queryRunner.manager;
+      await manager.update(DeviceProblem, { id }, input);
 
-    const problem = await this.problemRepo
-      .createQueryBuilder("problem")
-      .leftJoinAndSelect("problem.stars", "problemStars")
-      .leftJoinAndSelect("problem.solutions", "solutions")
-      .leftJoinAndSelect("problem.author", "author")
-      .leftJoinAndSelect("solutions.stars", "solutionStars")
-      .leftJoinAndSelect("problem.images", "images")
-      .where("problem.id = :id", { id })
-      .getOne();
+      if (images && images.length != 0) {
+        await new Promise((resolve, reject) => {
+          let counter = 0;
+          for (const image of images) {
+            this.imageRepo
+              .insert({
+                path: image,
+                problemId: id,
+              })
+              .then(() => {
+                counter += 1;
+                if (counter === images.length) {
+                  resolve(true);
+                }
+              })
+              .catch((e) => {
+                console.log(e.message);
+                reject(e);
+              });
+          }
+        });
+      }
 
-    console.log(problem);
-    if (result) {
+      await queryRunner.commitTransaction();
+      await queryRunner.release();
+
       return {
         status: true,
         message: "Update problem successfully.",
-        data: [problem],
       };
-    } else {
+    } catch (error) {
+      await queryRunner.rollbackTransaction();
       return {
         status: false,
         message: "Fail to update problem.",
@@ -300,55 +326,62 @@ export class ProblemResolver {
       };
     }
 
-    const star = await this.starRepo.findOne({ userId, problemId });
-    console.log("star: ", star);
-    if (star) {
-      await this.starRepo.delete({ userId, problemId }).catch((err) => {
-        console.log("Error when star problem: ", err);
-        return {
-          status: false,
-          message: err.message,
-        };
+    const queryRunner = getConnection().createQueryRunner();
+    await queryRunner.connect();
+    await queryRunner.startTransaction();
+
+    try {
+      const manager = queryRunner.manager;
+      const star = await manager.findOne(DeviceProblemStar, {
+        userId,
+        problemId,
       });
-      const problem = await this.problemRepo
-        .createQueryBuilder("problem")
-        .leftJoinAndSelect("problem.stars", "problemStars")
-        .leftJoinAndSelect("problem.solutions", "solutions")
-        .leftJoinAndSelect("problem.author", "author")
-        .leftJoinAndSelect("solutions.stars", "solutionStars")
-        .leftJoinAndSelect("problem.images", "images")
-        .where("problem.id = :id", { id: problemId })
-        .getOne();
+
+      if (star) {
+        await manager.delete(DeviceProblemStar, { userId, problemId });
+      } else {
+        await manager.insert(DeviceProblemStar, {
+          userId,
+          problemId,
+        });
+
+        const problem = await manager
+          .createQueryBuilder(DeviceProblem, "problem")
+          .leftJoinAndSelect("problem.author", "author")
+          .where("problem.id = :problemId", { problemId })
+          .getOne();
+
+        const problemAuthor = problem?.author;
+
+        const starAuthor = await manager.findOne(User, { id: userId });
+
+        if (problemAuthor && starAuthor) {
+          if (problemAuthor.id !== starAuthor.id) {
+            await manager.insert(Notification, {
+              title: `Someone stars your problem post.`,
+              content: `${starAuthor.username} give you a star to your problem!`,
+              userId: problemAuthor.id,
+              link: `${process.env.CLIENT_URL}/problem/${problemId}`,
+              category: "star",
+            });
+          }
+        } else {
+          throw new Error("Not found problem.");
+        }
+      }
+
+      await queryRunner.commitTransaction();
+      await queryRunner.release();
 
       return {
         status: true,
-        message: "Un-star problem successfully.",
-        data: [problem],
+        message: "Toggle star problem successfully.",
       };
-    } else {
-      const newStar = this.starRepo.create({ userId, problemId });
-      await this.starRepo.save(newStar).catch((err) => {
-        console.log("Error when star problem: ", err);
-        return {
-          status: false,
-          message: err.message,
-        };
-      });
-
-      const problem = await this.problemRepo
-        .createQueryBuilder("problem")
-        .leftJoinAndSelect("problem.stars", "problemStars")
-        .leftJoinAndSelect("problem.solutions", "solutions")
-        .leftJoinAndSelect("problem.author", "author")
-        .leftJoinAndSelect("solutions.stars", "solutionStars")
-        .leftJoinAndSelect("problem.images", "images")
-        .where("problem.id = :id", { id: problemId })
-        .getOne();
-
+    } catch (error) {
+      queryRunner.rollbackTransaction();
       return {
-        status: true,
-        message: "Star problem successfully.",
-        data: [problem],
+        status: false,
+        message: error.message,
       };
     }
   }

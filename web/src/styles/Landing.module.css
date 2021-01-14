@@ -5,14 +5,14 @@
 }
 
 .landingHeaderContainer {
-  width: 100vw;
+  width: 100%;
   height: fit-content;
   padding: 100px 0;
   background-color: #a8d8ad;
 }
 
 .landingHeaderDarkModeContainer {
-  width: 100vw;
+  width: 100%;
   height: fit-content;
   padding: 100px 0;
   background-color: #336b39;
@@ -95,7 +95,7 @@
 }
 
 .landingFooterContainer {
-  width: 100vw;
+  width: 100%;
   height: fit-content;
   padding: 100px 0;
   background-color: #a8d8ad;
@@ -107,7 +107,7 @@
 }
 
 .landingFooterDarkModeContainer {
-  width: 100vw;
+  width: 100%;
   height: fit-content;
   padding: 100px 0;
   background-color: #336b39;

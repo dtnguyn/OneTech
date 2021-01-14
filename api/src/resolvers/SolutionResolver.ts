@@ -13,6 +13,8 @@ import { SolutionStar, SolutionStarResponse } from "../entities/SolutionStar";
 import { SolutionImage } from "../entities/SolutionImage";
 import { DeviceProblem } from "../entities/DeviceProblem";
 import { MyContext } from "../types";
+import { Notification } from "../entities/Notification";
+import { User } from "../entities/User";
 
 @InputType()
 class UpdateSolutionInput {
@@ -79,6 +81,30 @@ export class SolutionResolver {
         });
       }
 
+      const problem = await manager
+        .createQueryBuilder(DeviceProblem, "problem")
+        .leftJoinAndSelect("problem.author", "author")
+        .where("problem.id = :problemId", { problemId })
+        .getOne();
+
+      const problemAuthor = problem?.author;
+
+      const solutionAuthor = await manager.findOne(User, { id: authorId });
+
+      if (problemAuthor && solutionAuthor) {
+        if (problemAuthor.id !== solutionAuthor.id) {
+          await manager.insert(Notification, {
+            title: `Someone answers your question.`,
+            content: `${solutionAuthor.username} posted a new solution. Check it out!`,
+            userId: problemAuthor.id,
+            link: `${process.env.CLIENT_URL}/problem/${problemId}`,
+            category: "solution",
+          });
+        }
+      } else {
+        throw new Error("Not found problem.");
+      }
+
       await queryRunner.commitTransaction();
       await queryRunner.release();
 
@@ -88,6 +114,7 @@ export class SolutionResolver {
         data: [solution],
       };
     } catch (error) {
+      queryRunner.rollbackTransaction();
       return {
         status: false,
         message: error.message,
@@ -239,34 +266,58 @@ export class SolutionResolver {
       };
     }
 
-    const star = await this.starRepo.findOne({ userId, solutionId });
-    console.log("star: ", star);
-    if (star) {
-      await this.starRepo.delete({ userId, solutionId }).catch((err) => {
-        console.log("Error when star solution: ", err);
-        return {
-          status: false,
-          message: err.message,
-        };
-      });
+    const queryRunner = getConnection().createQueryRunner();
+    await queryRunner.connect();
+    await queryRunner.startTransaction();
+
+    try {
+      const manager = queryRunner.manager;
+      const star = await manager.findOne(SolutionStar, { userId, solutionId });
+
+      if (star) {
+        await manager.delete(SolutionStar, { userId, solutionId });
+      } else {
+        await manager.insert(SolutionStar, { userId, solutionId });
+
+        const solution = await manager
+          .createQueryBuilder(Solution, "solution")
+          .leftJoinAndSelect("solution.author", "author")
+          .where("solution.id = :solutionId", { solutionId })
+          .getOne();
+
+        const solutionAuthor = solution?.author;
+
+        const starAuthor = await manager.findOne(User, { id: userId });
+
+        if (solutionAuthor && starAuthor) {
+          if (solutionAuthor.id !== starAuthor.id) {
+            await manager.insert(Notification, {
+              title: `Someone stars your solution post.`,
+              content: `${starAuthor.username} give you a star to your solution!`,
+              userId: solutionAuthor.id,
+              link: `${process.env.CLIENT_URL}/problem/${solution!.problemId}`,
+              category: "star",
+            });
+          }
+        } else {
+          throw new Error("Not found problem.");
+        }
+      }
+    } catch (error) {
+      queryRunner.rollbackTransaction();
       return {
-        status: true,
-        message: "Un-star solution successfully.",
-      };
-    } else {
-      const newStar = this.starRepo.create({ userId, solutionId });
-      await this.starRepo.save(newStar).catch((err) => {
-        console.log("Error when star solution: ", err);
-        return {
-          status: false,
-          message: err.message,
-        };
-      });
-      return {
-        status: true,
-        message: "Star solution successfully.",
+        status: false,
+        message: error.message,
       };
     }
+
+    await queryRunner.commitTransaction();
+    await queryRunner.release();
+
+    return {
+      status: true,
+      message: "Toggle star solution successfully.",
+    };
   }
 
   @Mutation(() => SolutionResponse)
@@ -289,7 +340,11 @@ export class SolutionResolver {
 
     try {
       const manager = queryRunner.manager;
-      const problem = await manager.findOne(DeviceProblem, { id: problemId });
+      const problem = await await manager
+        .createQueryBuilder(DeviceProblem, "problem")
+        .leftJoinAndSelect("problem.author", "author")
+        .where("problem.id = :problemId", { problemId })
+        .getOne();
       if (problem?.solvedBy) {
         //Unpicked
         if (problem.pickedSolutionId === solutionId) {
@@ -332,6 +387,30 @@ export class SolutionResolver {
             isPicked: true,
           }
         );
+
+        const solution = await manager
+          .createQueryBuilder(Solution, "solution")
+          .leftJoinAndSelect("solution.author", "author")
+          .where("solution.id = :solutionId", { solutionId })
+          .getOne();
+
+        const solutionAuthor = solution?.author;
+
+        const problemAuthor = problem?.author;
+
+        if (solutionAuthor && problemAuthor) {
+          if (solutionAuthor.id !== problemAuthor.id) {
+            await manager.insert(Notification, {
+              title: `Your solution has been picked!`,
+              content: `${problemAuthor.username} has picked your solution!`,
+              userId: solutionAuthor.id,
+              link: `${process.env.CLIENT_URL}/problem/${problemId}`,
+              category: "pick",
+            });
+          }
+        } else {
+          throw new Error("Not found problem.");
+        }
       }
 
       await queryRunner.commitTransaction();
@@ -342,6 +421,7 @@ export class SolutionResolver {
         message: "Toggle solution picked successfully.",
       };
     } catch (error) {
+      queryRunner.rollbackTransaction();
       return {
         status: false,
         message: error.message,

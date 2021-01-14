@@ -7,7 +7,7 @@ import { useEffect, useState } from "react";
 import { useMeQuery, User } from "../generated/graphql";
 import { AuthContext } from "../context/AuthContext";
 import { client } from "../utils/withApollo";
-import NavBar from "../components/NavBar";
+//import NavBar from "../components/NavBar";
 import withDarkMode from "next-dark-mode";
 import { useDarkMode } from "next-dark-mode";
 import { Router } from "next/router";
@@ -15,12 +15,20 @@ import NProgress from "nprogress"; //nprogress module
 import "nprogress/nprogress.css"; //styles of nprogress
 import { positions, Provider } from "react-alert";
 import AlertTemplate from "react-alert-template-basic";
+import dynamic from "next/dynamic";
 
 //Binding events.
 NProgress.configure({ showSpinner: false });
 Router.events.on("routeChangeStart", () => NProgress.start());
 Router.events.on("routeChangeComplete", () => NProgress.done());
 Router.events.on("routeChangeError", () => NProgress.done());
+
+const NavBar = dynamic(
+  () => {
+    return import("../components/NavBar");
+  },
+  { ssr: false }
+);
 
 function MyApp({ Component, pageProps }: any) {
   const [user, setUser] = useState<User | null>(null);

@@ -9,6 +9,7 @@ import { client } from "../utils/withApollo";
 import { Router, useRouter } from "next/router";
 import { useDarkMode } from "next-dark-mode";
 import { useAlert } from "react-alert";
+import useWindowDimensions from "../utils/useWindowDimensions";
 
 interface NavBarProps {}
 
@@ -16,11 +17,14 @@ const NavBar: React.FC<NavBarProps> = ({}) => {
   const { user, setUser } = useAuth();
   const [dropdown, setDropDown] = useState(false);
   const { error: alert } = useAlert();
+  const [small, setSmall] = useState(false);
   const router = useRouter();
   const [logoutMutation, {}] = useLogoutMutation({
     client: client,
   });
   const { darkModeActive } = useDarkMode();
+
+  const { height, width } = useWindowDimensions();
 
   return (
     <div className={styles.container}>
