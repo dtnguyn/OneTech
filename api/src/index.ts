@@ -20,6 +20,8 @@ import { ReviewResolver } from "./resolvers/ReviewResolver";
 import cors from "cors";
 import { ImageResolver } from "./resolvers/ImageResolver";
 import { ReportResolver } from "./resolvers/ReportResolver";
+import { NotificationResponse } from "./entities/Notification";
+import { NotificationResolver } from "./resolvers/NotificationResolver";
 
 (async () => {
   await createConnection();
@@ -76,6 +78,7 @@ import { ReportResolver } from "./resolvers/ReportResolver";
         ReviewResolver,
         ImageResolver,
         ReportResolver,
+        NotificationResolver,
       ],
       validate: false,
     }),

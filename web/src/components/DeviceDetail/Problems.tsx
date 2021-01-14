@@ -196,6 +196,9 @@ const Problems: React.FC<ProblemsProps> = ({
         problemId: problem.id,
         userId: user!.id,
       },
+      update: (cache) => {
+        cache.evict({ fieldName: "problems" });
+      },
     })
       .then((res) => {
         if (!res.data?.toggleProblemStar.status) {

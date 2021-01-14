@@ -11,6 +11,7 @@ import {
 import { DeviceFollower } from "./DeviceFollower";
 import { DeviceProblem } from "./DeviceProblem";
 import { DeviceProblemStar } from "./DeviceProblemStar";
+import { Notification } from "./Notification";
 import { Report } from "./Report";
 import { Review } from "./Review";
 import { Solution } from "./Solution";
@@ -71,6 +72,10 @@ export class User {
   @Field(() => [SolutionStar], { nullable: true })
   @OneToMany(() => SolutionStar, (star) => star.user)
   solutionStars: SolutionStar[];
+
+  @Field(() => [Notification], { nullable: true })
+  @OneToMany(() => Notification, (notification) => notification.user)
+  notifications: Notification[];
 
   @Field(() => [DeviceFollower], { nullable: true })
   @OneToMany(() => DeviceFollower, (follow) => follow.user)
