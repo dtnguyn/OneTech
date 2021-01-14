@@ -1,0 +1,14 @@
+query notifications {
+  notifications {
+    status
+    message
+    data {
+      id
+      title
+      content
+      link
+      category
+      createdAt
+    }
+  }
+}

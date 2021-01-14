@@ -34,14 +34,12 @@ const Settings: React.FC<SettingsProps> = ({}) => {
     }
   }, [data]);
 
-  if (!setting) return null;
-
   return (
     <div className={styles.settingsPageContainer}>
       <p className={styles.settingsPageTitle}>Settings</p>
 
       <div className={styles.settingsSectionContainer}>
-        {user ? (
+        {user && setting ? (
           <>
             <p className={styles.settingsSectionTitle}>Account</p>
             <SettingItem

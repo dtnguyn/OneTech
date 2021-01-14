@@ -30,10 +30,21 @@ html {
   text-decoration: underline;
 }
 
+.date {
+  font-family: MLight;
+  color: #a4a2a2;
+  margin: 0;
+  line-height: 20px;
+}
+
 .divider {
   background-color: #b7b7b7;
   width: 100%;
   height: 1px;
+}
+
+.divider-with-space {
+  margin: 5px 0;
 }
 
 a {

@@ -44,7 +44,7 @@ export class Notification {
   @JoinColumn({ name: "userId" })
   user: User;
 
-  @Field(() => String)
+  @Field()
   @CreateDateColumn()
   createdAt: Date;
 
