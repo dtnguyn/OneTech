@@ -94,3 +94,24 @@
 .dropdownItemDarkMode:hover {
   background-color: #676666;
 }
+
+.avatarContainer {
+  width: fit-content;
+  height: fit-content;
+  position: relative;
+}
+
+.notificationIcon {
+  width: 18px;
+  height: 18px;
+  font-size: 12px;
+  background-color: indianred;
+  color: white;
+  border-radius: 40px;
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}

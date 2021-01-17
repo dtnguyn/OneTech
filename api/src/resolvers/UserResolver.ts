@@ -26,6 +26,9 @@ class UpdateUserInput {
 class UpdateSettingInput {
   @Field(() => Boolean, { nullable: true })
   isPrivate?: boolean;
+
+  @Field(() => Boolean, { nullable: true })
+  notifications?: boolean;
 }
 
 @Resolver()
@@ -136,6 +139,7 @@ export class UserResolver {
   async me(@Ctx() { req }: MyContext) {
     const user = await this.userRepo
       .createQueryBuilder("user")
+      .leftJoinAndSelect("user.setting", "setting")
       .leftJoinAndSelect("user.problems", "problems")
       .leftJoinAndSelect("problems.stars", "problemStar")
       .leftJoinAndSelect("user.solutions", "solutions")

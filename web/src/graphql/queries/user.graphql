@@ -7,6 +7,9 @@ query Me {
       username
       email
       avatar
+      setting {
+        notifications
+      }
       solutions {
         stars {
           userId
@@ -60,6 +63,7 @@ query Setting($userId: String!) {
     data {
       userId
       isPrivate
+      notifications
     }
   }
 }

@@ -4,7 +4,12 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 import { useEffect, useState } from "react";
-import { useMeQuery, User } from "../generated/graphql";
+import {
+  Notification,
+  useMeQuery,
+  useNotificationsQuery,
+  User,
+} from "../generated/graphql";
 import { AuthContext } from "../context/AuthContext";
 import { client } from "../utils/withApollo";
 //import NavBar from "../components/NavBar";

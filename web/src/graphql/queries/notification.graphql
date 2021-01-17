@@ -1,5 +1,5 @@
-query notifications {
-  notifications {
+query notifications($unseen: Boolean) {
+  notifications(unseen: $unseen) {
     status
     message
     data {
@@ -7,6 +7,7 @@ query notifications {
       title
       content
       link
+      seen
       category
       createdAt
     }

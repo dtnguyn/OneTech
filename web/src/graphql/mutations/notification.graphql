@@ -4,3 +4,10 @@ mutation deleteNotification($id: String!) {
     message
   }
 }
+
+mutation seenNotifications {
+  seenNotifications {
+    status
+    message
+  }
+}

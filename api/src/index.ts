@@ -1,32 +1,40 @@
 require("dotenv").config();
-import "reflect-metadata";
-import { createConnection } from "typeorm";
-import express from "express";
-import { buildSchema, ID } from "type-graphql";
 import { ApolloServer } from "apollo-server-express";
-import { HelloWorldResolver } from "./resolvers/HelloWorldResolver";
-import { UserResolver } from "./resolvers/UserResolver";
-
-import redis from "redis";
-import session from "express-session";
 import connectRedis from "connect-redis";
-import { __prod__ } from "./constants";
-import { MyContext } from "./types";
-import auth from "./auth";
-import { DeviceResolver } from "./resolvers/DeviceResolver";
-import { ProblemResolver } from "./resolvers/ProblemResolver";
-import { SolutionResolver } from "./resolvers/SolutionResolver";
-import { ReviewResolver } from "./resolvers/ReviewResolver";
 import cors from "cors";
+import express from "express";
+import session from "express-session";
+import redis from "redis";
+import "reflect-metadata";
+import { buildSchema } from "type-graphql";
+import { createConnection } from "typeorm";
+import auth from "./auth";
+import { __prod__ } from "./constants";
+import { DeviceResolver } from "./resolvers/DeviceResolver";
+import { HelloWorldResolver } from "./resolvers/HelloWorldResolver";
 import { ImageResolver } from "./resolvers/ImageResolver";
-import { ReportResolver } from "./resolvers/ReportResolver";
-import { NotificationResponse } from "./entities/Notification";
 import { NotificationResolver } from "./resolvers/NotificationResolver";
+import { ProblemResolver } from "./resolvers/ProblemResolver";
+import { ReportResolver } from "./resolvers/ReportResolver";
+import { ReviewResolver } from "./resolvers/ReviewResolver";
+import { SolutionResolver } from "./resolvers/SolutionResolver";
+import { UserResolver } from "./resolvers/UserResolver";
+import { MyContext } from "./types";
+import * as socketio from "socket.io";
 
 (async () => {
   await createConnection();
 
   const app = express();
+  let http = require("http").Server(app);
+  // set up socket.io and bind it to our
+  // http server.
+  let io = require("socket.io")(http, {
+    cors: {
+      origin: "http://localhost:3000",
+      methods: ["GET", "POST"],
+    },
+  });
 
   const RedisStore = connectRedis(session);
   const redisClient = redis.createClient();
@@ -67,6 +75,10 @@ import { NotificationResolver } from "./resolvers/NotificationResolver";
 
   app.use("/auth", auth);
 
+  io.on("connection", (socket) => {
+    console.log("New user connected");
+  });
+
   const apolloServer = new ApolloServer({
     schema: await buildSchema({
       resolvers: [
@@ -83,13 +95,13 @@ import { NotificationResolver } from "./resolvers/NotificationResolver";
       validate: false,
     }),
     context: ({ req, res }): MyContext => {
-      return { req, res };
+      return { req, res, io };
     },
   });
 
   apolloServer.applyMiddleware({ app, cors: false });
 
-  app.listen(4000, () => {
+  http.listen(4000, () => {
     console.log("One-tech server running on port 4000");
   });
 })();

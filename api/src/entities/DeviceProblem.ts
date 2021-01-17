@@ -47,7 +47,7 @@ export class DeviceProblem {
     onDelete: "CASCADE",
     onUpdate: "CASCADE",
   })
-  @Field({ nullable: true })
+  @Field(() => User, { nullable: true })
   @JoinColumn({ name: "solvedBy" })
   solver: User;
 
@@ -66,7 +66,7 @@ export class DeviceProblem {
     onDelete: "CASCADE",
     onUpdate: "CASCADE",
   })
-  @Field({ nullable: true })
+  @Field(() => User, { nullable: true })
   @JoinColumn({ name: "authorId" })
   author: User;
 

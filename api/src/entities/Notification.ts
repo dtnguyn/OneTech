@@ -33,6 +33,10 @@ export class Notification {
   @Column()
   category: string;
 
+  @Field(() => Boolean)
+  @Column({ default: "false" })
+  seen: boolean;
+
   @Field()
   @Column()
   userId: string;
