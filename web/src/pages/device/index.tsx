@@ -30,4 +30,4 @@ const Devices: React.FC<DeviceProps> = ({}) => {
   );
 };
 
-export default withApollo({ ssr: true })(Devices);
+export default withApollo({ ssr: false })(Devices);

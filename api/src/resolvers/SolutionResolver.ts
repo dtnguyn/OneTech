@@ -32,7 +32,7 @@ export class SolutionResolver {
 
   @Mutation(() => SolutionResponse)
   async createSolution(
-    @Ctx() { req }: MyContext,
+    @Ctx() { req, io }: MyContext,
     @Arg("content") content: string,
     @Arg("authorId") authorId: string,
     @Arg("problemId") problemId: string,
@@ -100,6 +100,7 @@ export class SolutionResolver {
             link: `${process.env.CLIENT_URL}/problem/${problemId}`,
             category: "solution",
           });
+          io.emit(`notification:${problemAuthor.id}`, true);
         }
       } else {
         throw new Error("Not found problem.");
@@ -255,7 +256,7 @@ export class SolutionResolver {
 
   @Mutation(() => SolutionResponse)
   async toggleSolutionStar(
-    @Ctx() { req }: MyContext,
+    @Ctx() { req, io }: MyContext,
     @Arg("userId") userId: string,
     @Arg("solutionId") solutionId: string
   ) {
@@ -298,6 +299,7 @@ export class SolutionResolver {
               link: `${process.env.CLIENT_URL}/problem/${solution!.problemId}`,
               category: "star",
             });
+            io.emit(`notification:${solutionAuthor.id}`, true);
           }
         } else {
           throw new Error("Not found problem.");
@@ -322,7 +324,7 @@ export class SolutionResolver {
 
   @Mutation(() => SolutionResponse)
   async toggleSolutionPicked(
-    @Ctx() { req }: MyContext,
+    @Ctx() { req, io }: MyContext,
     @Arg("problemId") problemId: string,
     @Arg("solutionId") solutionId: string,
     @Arg("solverId") solverId: string
@@ -407,6 +409,7 @@ export class SolutionResolver {
               link: `${process.env.CLIENT_URL}/problem/${problemId}`,
               category: "pick",
             });
+            io.emit(`notification:${solutionAuthor.id}`, true);
           }
         } else {
           throw new Error("Not found problem.");

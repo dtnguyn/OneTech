@@ -28,6 +28,10 @@ export class UserSetting {
   @Column({ default: "false" })
   isPrivate: boolean;
 
+  @Field(() => Boolean)
+  @Column({ default: "true" })
+  notifications: boolean;
+
   @Field(() => String)
   @CreateDateColumn()
   createdAt: Date;

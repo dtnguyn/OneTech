@@ -42,7 +42,7 @@ export class ProblemResolver {
 
   @Mutation(() => ProblemResponse, { nullable: true })
   async createProblem(
-    @Ctx() { req }: MyContext,
+    @Ctx() { req, io }: MyContext,
     @Arg("title") title: string,
     @Arg("content") content: string,
     @Arg("authorId") authorId: string,
@@ -122,6 +122,7 @@ export class ProblemResolver {
                 category: "problem",
               })
               .then(() => {
+                io.emit(`notification:${follower.userId}`, true);
                 counter++;
                 if (counter === followers.length) resolve(true);
               })
@@ -315,7 +316,7 @@ export class ProblemResolver {
 
   @Mutation(() => ProblemResponse)
   async toggleProblemStar(
-    @Ctx() { req }: MyContext,
+    @Ctx() { req, io }: MyContext,
     @Arg("userId") userId: string,
     @Arg("problemId") problemId: string
   ) {
@@ -364,6 +365,7 @@ export class ProblemResolver {
               link: `${process.env.CLIENT_URL}/problem/${problemId}`,
               category: "star",
             });
+            io.emit(`notification:${problemAuthor.id}`, true);
           }
         } else {
           throw new Error("Not found problem.");

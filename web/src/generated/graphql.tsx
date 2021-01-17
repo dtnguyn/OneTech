@@ -17,36 +17,26 @@ export type Scalars = {
 
 export type Query = {
   __typename?: 'Query';
+  devices: DeviceResponse;
+  singleDevice?: Maybe<DeviceResponse>;
   hello: Scalars['String'];
+  problemImages: ProblemImageResponse;
+  reviewImages: ReviewImageResponse;
+  notifications: NotificationResponse;
+  problems?: Maybe<ProblemResponse>;
+  singleProblem: ProblemResponse;
+  findProblemStars: ProblemStarResponse;
+  reports: ReportResponse;
+  reviews: ReviewResponse;
+  singleReview: ReviewResponse;
+  ratings: ReviewRatingResponse;
+  solutions: SolutionResponse;
+  singleSolution: SolutionResponse;
+  findSolutionStars: SolutionStarResponse;
   users: UserResponse;
   singleUser: UserResponse;
   me?: Maybe<UserResponse>;
   setting?: Maybe<UserSettingResponse>;
-  devices: DeviceResponse;
-  singleDevice?: Maybe<DeviceResponse>;
-  problems?: Maybe<ProblemResponse>;
-  singleProblem: ProblemResponse;
-  findProblemStars: ProblemStarResponse;
-  solutions: SolutionResponse;
-  singleSolution: SolutionResponse;
-  findSolutionStars: SolutionStarResponse;
-  reviews: ReviewResponse;
-  singleReview: ReviewResponse;
-  ratings: ReviewRatingResponse;
-  problemImages: ProblemImageResponse;
-  reviewImages: ReviewImageResponse;
-  reports: ReportResponse;
-  notifications: NotificationResponse;
-};
-
-
-export type QuerySingleUserArgs = {
-  id: Scalars['String'];
-};
-
-
-export type QuerySettingArgs = {
-  userId: Scalars['String'];
 };
 
 
@@ -60,6 +50,11 @@ export type QueryDevicesArgs = {
 
 export type QuerySingleDeviceArgs = {
   id: Scalars['String'];
+};
+
+
+export type QueryNotificationsArgs = {
+  unseen?: Maybe<Scalars['Boolean']>;
 };
 
 
@@ -81,22 +76,6 @@ export type QueryFindProblemStarsArgs = {
 };
 
 
-export type QuerySolutionsArgs = {
-  userId?: Maybe<Scalars['String']>;
-  problemId?: Maybe<Scalars['String']>;
-};
-
-
-export type QuerySingleSolutionArgs = {
-  id: Scalars['String'];
-};
-
-
-export type QueryFindSolutionStarsArgs = {
-  solutionId: Scalars['String'];
-};
-
-
 export type QueryReviewsArgs = {
   content?: Maybe<Scalars['String']>;
   title?: Maybe<Scalars['String']>;
@@ -114,11 +93,103 @@ export type QueryRatingsArgs = {
   deviceId: Scalars['String'];
 };
 
-export type UserResponse = {
-  __typename?: 'UserResponse';
+
+export type QuerySolutionsArgs = {
+  userId?: Maybe<Scalars['String']>;
+  problemId?: Maybe<Scalars['String']>;
+};
+
+
+export type QuerySingleSolutionArgs = {
+  id: Scalars['String'];
+};
+
+
+export type QueryFindSolutionStarsArgs = {
+  solutionId: Scalars['String'];
+};
+
+
+export type QuerySingleUserArgs = {
+  id: Scalars['String'];
+};
+
+
+export type QuerySettingArgs = {
+  userId: Scalars['String'];
+};
+
+export type DeviceResponse = {
+  __typename?: 'DeviceResponse';
   status: Scalars['Boolean'];
   message: Scalars['String'];
-  data?: Maybe<Array<User>>;
+  data?: Maybe<Array<Device>>;
+};
+
+export type Device = {
+  __typename?: 'Device';
+  id: Scalars['String'];
+  name: Scalars['String'];
+  brand: Scalars['String'];
+  category: Scalars['String'];
+  subCategory?: Maybe<Scalars['String']>;
+  buyLink?: Maybe<Scalars['String']>;
+  price?: Maybe<Scalars['String']>;
+  coverImage: Scalars['String'];
+  createdAt: Scalars['String'];
+  updatedAt: Scalars['DateTime'];
+  spec?: Maybe<DeviceSpec>;
+  problems?: Maybe<Array<DeviceProblem>>;
+  followers?: Maybe<Array<DeviceFollower>>;
+  reviews?: Maybe<Array<Review>>;
+  ratings?: Maybe<Array<ReviewRating>>;
+};
+
+
+export type DeviceSpec = {
+  __typename?: 'DeviceSpec';
+  deviceId: Scalars['String'];
+  display?: Maybe<Scalars['String']>;
+  displaySimplify?: Maybe<Scalars['String']>;
+  battery?: Maybe<Scalars['String']>;
+  batterySimplify?: Maybe<Scalars['String']>;
+  software?: Maybe<Scalars['String']>;
+  softwareSimplify?: Maybe<Scalars['String']>;
+  camera?: Maybe<Scalars['String']>;
+  cameraSimplify?: Maybe<Scalars['String']>;
+  processor?: Maybe<Scalars['String']>;
+  processorSimplify?: Maybe<Scalars['String']>;
+  gpu?: Maybe<Scalars['String']>;
+  gpuSimplify?: Maybe<Scalars['String']>;
+  memory?: Maybe<Scalars['String']>;
+  memorySimplify?: Maybe<Scalars['String']>;
+  thermals?: Maybe<Scalars['String']>;
+  thermalsSimplify?: Maybe<Scalars['String']>;
+  ports?: Maybe<Scalars['String']>;
+  portsSimplify?: Maybe<Scalars['String']>;
+  createdAt: Scalars['String'];
+  updatedAt: Scalars['DateTime'];
+};
+
+export type DeviceProblem = {
+  __typename?: 'DeviceProblem';
+  id: Scalars['String'];
+  title: Scalars['String'];
+  content: Scalars['String'];
+  createdAt: Scalars['DateTime'];
+  updatedAt: Scalars['DateTime'];
+  solvedBy?: Maybe<Scalars['String']>;
+  solver?: Maybe<User>;
+  pickedSolutionId?: Maybe<Scalars['String']>;
+  pickedSolution?: Maybe<Solution>;
+  authorId: Scalars['String'];
+  author?: Maybe<User>;
+  deviceId: Scalars['String'];
+  device: Device;
+  stars?: Maybe<Array<DeviceProblemStar>>;
+  reports?: Maybe<Array<Report>>;
+  solutions?: Maybe<Array<Solution>>;
+  images: Array<ProblemImage>;
 };
 
 export type User = {
@@ -142,11 +213,11 @@ export type User = {
   problemSolved?: Maybe<Array<DeviceProblem>>;
 };
 
-
 export type UserSetting = {
   __typename?: 'UserSetting';
   userId: Scalars['String'];
   isPrivate: Scalars['Boolean'];
+  notifications: Scalars['Boolean'];
   createdAt: Scalars['String'];
   updatedAt: Scalars['DateTime'];
 };
@@ -165,25 +236,12 @@ export type Report = {
   solutionId?: Maybe<Scalars['String']>;
 };
 
-export type DeviceProblem = {
-  __typename?: 'DeviceProblem';
-  id: Scalars['String'];
-  title: Scalars['String'];
-  content: Scalars['String'];
-  createdAt: Scalars['DateTime'];
+export type DeviceProblemStar = {
+  __typename?: 'DeviceProblemStar';
+  userId: Scalars['String'];
+  problemId: Scalars['String'];
+  createdAt: Scalars['String'];
   updatedAt: Scalars['DateTime'];
-  solvedBy?: Maybe<Scalars['String']>;
-  solver?: Maybe<User>;
-  pickedSolutionId?: Maybe<Scalars['String']>;
-  pickedSolution?: Maybe<Solution>;
-  authorId: Scalars['String'];
-  author?: Maybe<User>;
-  deviceId: Scalars['String'];
-  device: Device;
-  stars?: Maybe<Array<DeviceProblemStar>>;
-  reports?: Maybe<Array<Report>>;
-  solutions?: Maybe<Array<Solution>>;
-  images: Array<ProblemImage>;
 };
 
 export type Solution = {
@@ -219,47 +277,17 @@ export type SolutionImage = {
   solution: Solution;
 };
 
-export type Device = {
-  __typename?: 'Device';
+export type Notification = {
+  __typename?: 'Notification';
   id: Scalars['String'];
-  name: Scalars['String'];
-  brand: Scalars['String'];
+  title: Scalars['String'];
+  content: Scalars['String'];
+  link: Scalars['String'];
   category: Scalars['String'];
-  subCategory?: Maybe<Scalars['String']>;
-  buyLink?: Maybe<Scalars['String']>;
-  price?: Maybe<Scalars['String']>;
-  coverImage: Scalars['String'];
-  createdAt: Scalars['String'];
-  updatedAt: Scalars['DateTime'];
-  spec?: Maybe<DeviceSpec>;
-  problems?: Maybe<Array<DeviceProblem>>;
-  followers?: Maybe<Array<DeviceFollower>>;
-  reviews?: Maybe<Array<Review>>;
-  ratings?: Maybe<Array<ReviewRating>>;
-};
-
-export type DeviceSpec = {
-  __typename?: 'DeviceSpec';
-  deviceId: Scalars['String'];
-  display?: Maybe<Scalars['String']>;
-  displaySimplify?: Maybe<Scalars['String']>;
-  battery?: Maybe<Scalars['String']>;
-  batterySimplify?: Maybe<Scalars['String']>;
-  software?: Maybe<Scalars['String']>;
-  softwareSimplify?: Maybe<Scalars['String']>;
-  camera?: Maybe<Scalars['String']>;
-  cameraSimplify?: Maybe<Scalars['String']>;
-  processor?: Maybe<Scalars['String']>;
-  processorSimplify?: Maybe<Scalars['String']>;
-  gpu?: Maybe<Scalars['String']>;
-  gpuSimplify?: Maybe<Scalars['String']>;
-  memory?: Maybe<Scalars['String']>;
-  memorySimplify?: Maybe<Scalars['String']>;
-  thermals?: Maybe<Scalars['String']>;
-  thermalsSimplify?: Maybe<Scalars['String']>;
-  ports?: Maybe<Scalars['String']>;
-  portsSimplify?: Maybe<Scalars['String']>;
-  createdAt: Scalars['String'];
+  seen: Scalars['Boolean'];
+  userId: Scalars['String'];
+  user: User;
+  createdAt: Scalars['DateTime'];
   updatedAt: Scalars['DateTime'];
 };
 
@@ -309,14 +337,6 @@ export type ReviewImage = {
   review: Review;
 };
 
-export type DeviceProblemStar = {
-  __typename?: 'DeviceProblemStar';
-  userId: Scalars['String'];
-  problemId: Scalars['String'];
-  createdAt: Scalars['String'];
-  updatedAt: Scalars['DateTime'];
-};
-
 export type ProblemImage = {
   __typename?: 'ProblemImage';
   path: Scalars['String'];
@@ -324,75 +344,6 @@ export type ProblemImage = {
   updatedAt: Scalars['DateTime'];
   problemId: Scalars['String'];
   problem: DeviceProblem;
-};
-
-export type Notification = {
-  __typename?: 'Notification';
-  id: Scalars['String'];
-  title: Scalars['String'];
-  content: Scalars['String'];
-  link: Scalars['String'];
-  category: Scalars['String'];
-  userId: Scalars['String'];
-  user: User;
-  createdAt: Scalars['DateTime'];
-  updatedAt: Scalars['DateTime'];
-};
-
-export type UserSettingResponse = {
-  __typename?: 'UserSettingResponse';
-  status: Scalars['Boolean'];
-  message: Scalars['String'];
-  data?: Maybe<Array<UserSetting>>;
-};
-
-export type DeviceResponse = {
-  __typename?: 'DeviceResponse';
-  status: Scalars['Boolean'];
-  message: Scalars['String'];
-  data?: Maybe<Array<Device>>;
-};
-
-export type ProblemResponse = {
-  __typename?: 'ProblemResponse';
-  status: Scalars['Boolean'];
-  message: Scalars['String'];
-  data?: Maybe<Array<DeviceProblem>>;
-};
-
-export type ProblemStarResponse = {
-  __typename?: 'ProblemStarResponse';
-  status: Scalars['Boolean'];
-  message: Scalars['String'];
-  data?: Maybe<Array<DeviceProblemStar>>;
-};
-
-export type SolutionResponse = {
-  __typename?: 'SolutionResponse';
-  status: Scalars['Boolean'];
-  message: Scalars['String'];
-  data?: Maybe<Array<Solution>>;
-};
-
-export type SolutionStarResponse = {
-  __typename?: 'SolutionStarResponse';
-  status: Scalars['Boolean'];
-  message: Scalars['String'];
-  data?: Maybe<Array<SolutionStar>>;
-};
-
-export type ReviewResponse = {
-  __typename?: 'ReviewResponse';
-  status: Scalars['Boolean'];
-  message: Scalars['String'];
-  data?: Maybe<Array<Review>>;
-};
-
-export type ReviewRatingResponse = {
-  __typename?: 'ReviewRatingResponse';
-  status: Scalars['Boolean'];
-  message: Scalars['String'];
-  data?: Maybe<Array<ReviewRating>>;
 };
 
 export type ProblemImageResponse = {
@@ -409,13 +360,6 @@ export type ReviewImageResponse = {
   data?: Maybe<Array<ReviewImage>>;
 };
 
-export type ReportResponse = {
-  __typename?: 'ReportResponse';
-  status: Scalars['Boolean'];
-  message: Scalars['String'];
-  data?: Maybe<Array<Report>>;
-};
-
 export type NotificationResponse = {
   __typename?: 'NotificationResponse';
   status: Scalars['Boolean'];
@@ -423,13 +367,71 @@ export type NotificationResponse = {
   data?: Maybe<Array<Notification>>;
 };
 
+export type ProblemResponse = {
+  __typename?: 'ProblemResponse';
+  status: Scalars['Boolean'];
+  message: Scalars['String'];
+  data?: Maybe<Array<DeviceProblem>>;
+};
+
+export type ProblemStarResponse = {
+  __typename?: 'ProblemStarResponse';
+  status: Scalars['Boolean'];
+  message: Scalars['String'];
+  data?: Maybe<Array<DeviceProblemStar>>;
+};
+
+export type ReportResponse = {
+  __typename?: 'ReportResponse';
+  status: Scalars['Boolean'];
+  message: Scalars['String'];
+  data?: Maybe<Array<Report>>;
+};
+
+export type ReviewResponse = {
+  __typename?: 'ReviewResponse';
+  status: Scalars['Boolean'];
+  message: Scalars['String'];
+  data?: Maybe<Array<Review>>;
+};
+
+export type ReviewRatingResponse = {
+  __typename?: 'ReviewRatingResponse';
+  status: Scalars['Boolean'];
+  message: Scalars['String'];
+  data?: Maybe<Array<ReviewRating>>;
+};
+
+export type SolutionResponse = {
+  __typename?: 'SolutionResponse';
+  status: Scalars['Boolean'];
+  message: Scalars['String'];
+  data?: Maybe<Array<Solution>>;
+};
+
+export type SolutionStarResponse = {
+  __typename?: 'SolutionStarResponse';
+  status: Scalars['Boolean'];
+  message: Scalars['String'];
+  data?: Maybe<Array<SolutionStar>>;
+};
+
+export type UserResponse = {
+  __typename?: 'UserResponse';
+  status: Scalars['Boolean'];
+  message: Scalars['String'];
+  data?: Maybe<Array<User>>;
+};
+
+export type UserSettingResponse = {
+  __typename?: 'UserSettingResponse';
+  status: Scalars['Boolean'];
+  message: Scalars['String'];
+  data?: Maybe<Array<UserSetting>>;
+};
+
 export type Mutation = {
   __typename?: 'Mutation';
-  updateUser: UserResponse;
-  deleteUser: UserResponse;
-  logout: UserResponse;
-  createSetting: UserSettingResponse;
-  updateSetting: UserSettingResponse;
   createDevice?: Maybe<DeviceResponse>;
   updateDevice: DeviceResponse;
   deleteDevice: DeviceResponse;
@@ -437,46 +439,30 @@ export type Mutation = {
   createSpec?: Maybe<DeviceSpecResponse>;
   updateDeviceSpec: DeviceSpecResponse;
   deleteDeviceSpec: DeviceSpecResponse;
+  uploadImage: UploadImageResponse;
+  deleteImages: UploadImageResponse;
+  deleteNotification: NotificationResponse;
+  seenNotifications: NotificationResponse;
   createProblem?: Maybe<ProblemResponse>;
   deleteProblem: ProblemResponse;
   updateProblem: ProblemResponse;
   toggleProblemStar: ProblemResponse;
-  createSolution: SolutionResponse;
-  updateSolution: SolutionResponse;
-  deleteSolution: SolutionResponse;
-  toggleSolutionStar: SolutionResponse;
-  toggleSolutionPicked: SolutionResponse;
+  createReport: ReportResponse;
   createReview?: Maybe<ReviewResponse>;
   updateReview?: Maybe<ReviewResponse>;
   deleteReview: ReviewResponse;
   createRating?: Maybe<ReviewRatingResponse>;
   updateRating?: Maybe<ReviewRatingResponse>;
-  uploadImage: UploadImageResponse;
-  deleteImages: UploadImageResponse;
-  createReport: ReportResponse;
-  deleteNotification: NotificationResponse;
-};
-
-
-export type MutationUpdateUserArgs = {
-  input: UpdateUserInput;
-  id: Scalars['String'];
-};
-
-
-export type MutationDeleteUserArgs = {
-  id: Scalars['String'];
-};
-
-
-export type MutationCreateSettingArgs = {
-  userId: Scalars['String'];
-};
-
-
-export type MutationUpdateSettingArgs = {
-  input: UpdateSettingInput;
-  userId: Scalars['String'];
+  createSolution: SolutionResponse;
+  updateSolution: SolutionResponse;
+  deleteSolution: SolutionResponse;
+  toggleSolutionStar: SolutionResponse;
+  toggleSolutionPicked: SolutionResponse;
+  updateUser: UserResponse;
+  deleteUser: UserResponse;
+  logout: UserResponse;
+  createSetting: UserSettingResponse;
+  updateSetting: UserSettingResponse;
 };
 
 
@@ -553,6 +539,22 @@ export type MutationDeleteDeviceSpecArgs = {
 };
 
 
+export type MutationUploadImageArgs = {
+  imageId: Scalars['String'];
+  image: Scalars['String'];
+};
+
+
+export type MutationDeleteImagesArgs = {
+  imageIds: Array<Scalars['String']>;
+};
+
+
+export type MutationDeleteNotificationArgs = {
+  id: Scalars['String'];
+};
+
+
 export type MutationCreateProblemArgs = {
   images: Array<Scalars['String']>;
   deviceId: Scalars['String'];
@@ -580,36 +582,13 @@ export type MutationToggleProblemStarArgs = {
 };
 
 
-export type MutationCreateSolutionArgs = {
-  images: Array<Scalars['String']>;
-  problemId: Scalars['String'];
+export type MutationCreateReportArgs = {
+  solutionId?: Maybe<Scalars['String']>;
+  reviewId?: Maybe<Scalars['String']>;
+  problemId?: Maybe<Scalars['String']>;
   authorId: Scalars['String'];
   content: Scalars['String'];
-};
-
-
-export type MutationUpdateSolutionArgs = {
-  images: Array<Scalars['String']>;
-  input: UpdateSolutionInput;
-  id: Scalars['String'];
-};
-
-
-export type MutationDeleteSolutionArgs = {
-  id: Scalars['String'];
-};
-
-
-export type MutationToggleSolutionStarArgs = {
-  solutionId: Scalars['String'];
-  userId: Scalars['String'];
-};
-
-
-export type MutationToggleSolutionPickedArgs = {
-  solverId: Scalars['String'];
-  solutionId: Scalars['String'];
-  problemId: Scalars['String'];
+  title: Scalars['String'];
 };
 
 
@@ -659,38 +638,58 @@ export type MutationUpdateRatingArgs = {
 };
 
 
-export type MutationUploadImageArgs = {
-  imageId: Scalars['String'];
-  image: Scalars['String'];
-};
-
-
-export type MutationDeleteImagesArgs = {
-  imageIds: Array<Scalars['String']>;
-};
-
-
-export type MutationCreateReportArgs = {
-  solutionId?: Maybe<Scalars['String']>;
-  reviewId?: Maybe<Scalars['String']>;
-  problemId?: Maybe<Scalars['String']>;
+export type MutationCreateSolutionArgs = {
+  images: Array<Scalars['String']>;
+  problemId: Scalars['String'];
   authorId: Scalars['String'];
   content: Scalars['String'];
-  title: Scalars['String'];
 };
 
 
-export type MutationDeleteNotificationArgs = {
+export type MutationUpdateSolutionArgs = {
+  images: Array<Scalars['String']>;
+  input: UpdateSolutionInput;
   id: Scalars['String'];
 };
 
-export type UpdateUserInput = {
-  username?: Maybe<Scalars['String']>;
-  email?: Maybe<Scalars['String']>;
+
+export type MutationDeleteSolutionArgs = {
+  id: Scalars['String'];
 };
 
-export type UpdateSettingInput = {
-  isPrivate?: Maybe<Scalars['Boolean']>;
+
+export type MutationToggleSolutionStarArgs = {
+  solutionId: Scalars['String'];
+  userId: Scalars['String'];
+};
+
+
+export type MutationToggleSolutionPickedArgs = {
+  solverId: Scalars['String'];
+  solutionId: Scalars['String'];
+  problemId: Scalars['String'];
+};
+
+
+export type MutationUpdateUserArgs = {
+  input: UpdateUserInput;
+  id: Scalars['String'];
+};
+
+
+export type MutationDeleteUserArgs = {
+  id: Scalars['String'];
+};
+
+
+export type MutationCreateSettingArgs = {
+  userId: Scalars['String'];
+};
+
+
+export type MutationUpdateSettingArgs = {
+  input: UpdateSettingInput;
+  userId: Scalars['String'];
 };
 
 export type UpdateDeviceSpecInput = {
@@ -729,15 +728,17 @@ export type DeviceSpecResponse = {
   data?: Maybe<Array<DeviceSpec>>;
 };
 
+export type UploadImageResponse = {
+  __typename?: 'UploadImageResponse';
+  status: Scalars['Boolean'];
+  message: Scalars['String'];
+  data?: Maybe<Array<Scalars['String']>>;
+};
+
 export type UpdateProblemInput = {
   title?: Maybe<Scalars['String']>;
   content?: Maybe<Scalars['String']>;
   isSolve?: Maybe<Scalars['Boolean']>;
-};
-
-export type UpdateSolutionInput = {
-  content?: Maybe<Scalars['String']>;
-  isPicked?: Maybe<Scalars['Boolean']>;
 };
 
 export type UpdateRatingInput = {
@@ -754,11 +755,19 @@ export type UpdateReviewInput = {
   content?: Maybe<Scalars['String']>;
 };
 
-export type UploadImageResponse = {
-  __typename?: 'UploadImageResponse';
-  status: Scalars['Boolean'];
-  message: Scalars['String'];
-  data?: Maybe<Array<Scalars['String']>>;
+export type UpdateSolutionInput = {
+  content?: Maybe<Scalars['String']>;
+  isPicked?: Maybe<Scalars['Boolean']>;
+};
+
+export type UpdateUserInput = {
+  username?: Maybe<Scalars['String']>;
+  email?: Maybe<Scalars['String']>;
+};
+
+export type UpdateSettingInput = {
+  isPrivate?: Maybe<Scalars['Boolean']>;
+  notifications?: Maybe<Scalars['Boolean']>;
 };
 
 export type ToggleDeviceFollowMutationVariables = Exact<{
@@ -810,6 +819,17 @@ export type DeleteNotificationMutationVariables = Exact<{
 export type DeleteNotificationMutation = (
   { __typename?: 'Mutation' }
   & { deleteNotification: (
+    { __typename?: 'NotificationResponse' }
+    & Pick<NotificationResponse, 'status' | 'message'>
+  ) }
+);
+
+export type SeenNotificationsMutationVariables = Exact<{ [key: string]: never; }>;
+
+
+export type SeenNotificationsMutation = (
+  { __typename?: 'Mutation' }
+  & { seenNotifications: (
     { __typename?: 'NotificationResponse' }
     & Pick<NotificationResponse, 'status' | 'message'>
   ) }
@@ -1112,6 +1132,7 @@ export type LogoutMutation = (
 export type UpdateUserSettingMutationVariables = Exact<{
   userId: Scalars['String'];
   isPrivate?: Maybe<Scalars['Boolean']>;
+  notifications?: Maybe<Scalars['Boolean']>;
 }>;
 
 
@@ -1226,7 +1247,9 @@ export type DeviceRatingsQuery = (
   ) }
 );
 
-export type NotificationsQueryVariables = Exact<{ [key: string]: never; }>;
+export type NotificationsQueryVariables = Exact<{
+  unseen?: Maybe<Scalars['Boolean']>;
+}>;
 
 
 export type NotificationsQuery = (
@@ -1236,7 +1259,7 @@ export type NotificationsQuery = (
     & Pick<NotificationResponse, 'status' | 'message'>
     & { data?: Maybe<Array<(
       { __typename?: 'Notification' }
-      & Pick<Notification, 'id' | 'title' | 'content' | 'link' | 'category' | 'createdAt'>
+      & Pick<Notification, 'id' | 'title' | 'content' | 'link' | 'seen' | 'category' | 'createdAt'>
     )>> }
   ) }
 );
@@ -1387,7 +1410,10 @@ export type MeQuery = (
     & { data?: Maybe<Array<(
       { __typename?: 'User' }
       & Pick<User, 'id' | 'oauthId' | 'username' | 'email' | 'avatar'>
-      & { solutions?: Maybe<Array<(
+      & { setting?: Maybe<(
+        { __typename?: 'UserSetting' }
+        & Pick<UserSetting, 'notifications'>
+      )>, solutions?: Maybe<Array<(
         { __typename?: 'Solution' }
         & { stars?: Maybe<Array<(
           { __typename?: 'SolutionStar' }
@@ -1455,7 +1481,7 @@ export type SettingQuery = (
     & Pick<UserSettingResponse, 'status' | 'message'>
     & { data?: Maybe<Array<(
       { __typename?: 'UserSetting' }
-      & Pick<UserSetting, 'userId' | 'isPrivate'>
+      & Pick<UserSetting, 'userId' | 'isPrivate' | 'notifications'>
     )>> }
   )> }
 );
@@ -1596,6 +1622,38 @@ export function useDeleteNotificationMutation(baseOptions?: Apollo.MutationHookO
 export type DeleteNotificationMutationHookResult = ReturnType<typeof useDeleteNotificationMutation>;
 export type DeleteNotificationMutationResult = Apollo.MutationResult<DeleteNotificationMutation>;
 export type DeleteNotificationMutationOptions = Apollo.BaseMutationOptions<DeleteNotificationMutation, DeleteNotificationMutationVariables>;
+export const SeenNotificationsDocument = gql`
+    mutation seenNotifications {
+  seenNotifications {
+    status
+    message
+  }
+}
+    `;
+export type SeenNotificationsMutationFn = Apollo.MutationFunction<SeenNotificationsMutation, SeenNotificationsMutationVariables>;
+
+/**
+ * __useSeenNotificationsMutation__
+ *
+ * To run a mutation, you first call `useSeenNotificationsMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useSeenNotificationsMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [seenNotificationsMutation, { data, loading, error }] = useSeenNotificationsMutation({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useSeenNotificationsMutation(baseOptions?: Apollo.MutationHookOptions<SeenNotificationsMutation, SeenNotificationsMutationVariables>) {
+        return Apollo.useMutation<SeenNotificationsMutation, SeenNotificationsMutationVariables>(SeenNotificationsDocument, baseOptions);
+      }
+export type SeenNotificationsMutationHookResult = ReturnType<typeof useSeenNotificationsMutation>;
+export type SeenNotificationsMutationResult = Apollo.MutationResult<SeenNotificationsMutation>;
+export type SeenNotificationsMutationOptions = Apollo.BaseMutationOptions<SeenNotificationsMutation, SeenNotificationsMutationVariables>;
 export const ToggleProblemStarDocument = gql`
     mutation ToggleProblemStar($problemId: String!, $userId: String!) {
   toggleProblemStar(problemId: $problemId, userId: $userId) {
@@ -2259,8 +2317,11 @@ export type LogoutMutationHookResult = ReturnType<typeof useLogoutMutation>;
 export type LogoutMutationResult = Apollo.MutationResult<LogoutMutation>;
 export type LogoutMutationOptions = Apollo.BaseMutationOptions<LogoutMutation, LogoutMutationVariables>;
 export const UpdateUserSettingDocument = gql`
-    mutation updateUserSetting($userId: String!, $isPrivate: Boolean) {
-  updateSetting(userId: $userId, input: {isPrivate: $isPrivate}) {
+    mutation updateUserSetting($userId: String!, $isPrivate: Boolean, $notifications: Boolean) {
+  updateSetting(
+    userId: $userId
+    input: {isPrivate: $isPrivate, notifications: $notifications}
+  ) {
     status
     message
   }
@@ -2283,6 +2344,7 @@ export type UpdateUserSettingMutationFn = Apollo.MutationFunction<UpdateUserSett
  *   variables: {
  *      userId: // value for 'userId'
  *      isPrivate: // value for 'isPrivate'
+ *      notifications: // value for 'notifications'
  *   },
  * });
  */
@@ -2510,8 +2572,8 @@ export type DeviceRatingsQueryHookResult = ReturnType<typeof useDeviceRatingsQue
 export type DeviceRatingsLazyQueryHookResult = ReturnType<typeof useDeviceRatingsLazyQuery>;
 export type DeviceRatingsQueryResult = Apollo.QueryResult<DeviceRatingsQuery, DeviceRatingsQueryVariables>;
 export const NotificationsDocument = gql`
-    query notifications {
-  notifications {
+    query notifications($unseen: Boolean) {
+  notifications(unseen: $unseen) {
     status
     message
     data {
@@ -2519,6 +2581,7 @@ export const NotificationsDocument = gql`
       title
       content
       link
+      seen
       category
       createdAt
     }
@@ -2538,6 +2601,7 @@ export const NotificationsDocument = gql`
  * @example
  * const { data, loading, error } = useNotificationsQuery({
  *   variables: {
+ *      unseen: // value for 'unseen'
  *   },
  * });
  */
@@ -2823,6 +2887,9 @@ export const MeDocument = gql`
       username
       email
       avatar
+      setting {
+        notifications
+      }
       solutions {
         stars {
           userId
@@ -2929,6 +2996,7 @@ export const SettingDocument = gql`
     data {
       userId
       isPrivate
+      notifications
     }
   }
 }

@@ -4,12 +4,17 @@ import styles from "../styles/NavBar.module.css";
 import Link from "next/link";
 import { useAuth } from "../context/AuthContext";
 import { Avatar, Divider } from "@material-ui/core";
-import { useLogoutMutation } from "../generated/graphql";
+import {
+  Notification,
+  useLogoutMutation,
+  useNotificationsQuery,
+} from "../generated/graphql";
 import { client } from "../utils/withApollo";
 import { Router, useRouter } from "next/router";
 import { useDarkMode } from "next-dark-mode";
 import { useAlert } from "react-alert";
 import useWindowDimensions from "../utils/useWindowDimensions";
+import socketIOClient from "socket.io-client";
 
 interface NavBarProps {}
 
@@ -19,12 +24,42 @@ const NavBar: React.FC<NavBarProps> = ({}) => {
   const { error: alert } = useAlert();
   const [small, setSmall] = useState(false);
   const router = useRouter();
+  const [unseen, setUnseen] = useState<Notification[]>([]);
   const [logoutMutation, {}] = useLogoutMutation({
     client: client,
   });
+  const { data, refetch } = useNotificationsQuery({
+    variables: { unseen: true },
+    client,
+  });
   const { darkModeActive } = useDarkMode();
 
-  const { height, width } = useWindowDimensions();
+  useEffect(() => {
+    const socket = socketIOClient("http://localhost:4000");
+    if (user) {
+      socket.on(`notification:${user?.id}`, () => {
+        refetch({
+          unseen: true,
+        });
+      });
+
+      socket.on(`seenNotifications:${user?.id}`, () => {
+        refetch({
+          unseen: true,
+        });
+      });
+    }
+    const arr = data?.notifications.data as Notification[];
+    console.log("update unseen");
+    if (arr) {
+      console.log(arr, user?.setting?.notifications);
+      if (user?.setting?.notifications) {
+        setUnseen(arr);
+      } else {
+        setUnseen([]);
+      }
+    }
+  }, [data, user]);
 
   return (
     <div className={styles.container}>
@@ -121,11 +156,16 @@ const NavBar: React.FC<NavBarProps> = ({}) => {
           </Nav>
         </Navbar.Collapse>
         {user && innerWidth >= 992 ? (
-          <Avatar
-            className={styles.navbarAvatar}
-            src={user.avatar}
-            onClick={() => setDropDown(!dropdown)}
-          />
+          <div className={styles.avatarContainer}>
+            <Avatar
+              className={styles.navbarAvatar}
+              src={user.avatar}
+              onClick={() => setDropDown(!dropdown)}
+            />
+            {unseen && unseen.length ? (
+              <div className={styles.notificationIcon}>{unseen.length}</div>
+            ) : null}
+          </div>
         ) : null}
       </Navbar>
       {dropdown ? (

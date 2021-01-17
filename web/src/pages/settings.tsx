@@ -60,6 +60,26 @@ const Settings: React.FC<SettingsProps> = ({}) => {
                 });
               }}
             />
+            <SettingItem
+              image="/images/notification.png"
+              title="Notifications"
+              content="If enabled, you will receive notifications from activities related to your posts and your followed devices"
+              defaultValue={setting ? setting.notifications : false}
+              handleChange={(state) => {
+                {
+                  updateUserSettingMutation({
+                    variables: {
+                      userId: user?.id!,
+                      notifications: state,
+                    },
+                    update: (cache) => {
+                      cache.evict({ fieldName: "setting" });
+                      cache.evict({ fieldName: "me" });
+                    },
+                  });
+                }
+              }}
+            />
           </>
         ) : null}
         <br />

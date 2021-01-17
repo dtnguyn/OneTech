@@ -17,6 +17,7 @@ const DeviceItem: React.FC<DeviceItemProps> = ({ device }) => {
       }}
     >
       <img className={styles.deviceItemImage} src={device.coverImage} />
+
       <h6 className={styles.deviceItemTitle}>{device.name}</h6>
       <p className={styles.deviceItemSub}>
         {device.followers?.length} users followed
