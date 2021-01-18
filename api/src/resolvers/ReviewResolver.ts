@@ -54,7 +54,6 @@ export class ReviewResolver {
     @Ctx() { req }: MyContext,
     @Arg("title") title: string,
     @Arg("content") content: string,
-    @Arg("authorId") authorId: string,
     @Arg("deviceId") deviceId: string,
     @Arg("overall", () => Float, { nullable: true }) overall: number | null,
     @Arg("display", () => Float, { nullable: true }) display: number | null,
@@ -70,6 +69,8 @@ export class ReviewResolver {
         message: "You haven't logged in. Please Log in and try again.",
       };
     }
+
+    const authorId = (req.session as any).userId;
     const queryRunner = getConnection().createQueryRunner();
     await queryRunner.connect();
     await queryRunner.startTransaction();
@@ -156,12 +157,19 @@ export class ReviewResolver {
         message: "You haven't logged in. Please Log in and try again.",
       };
     }
+    const userId = (req.session as any).userId;
     const queryRunner = getConnection().createQueryRunner();
     await queryRunner.connect();
     await queryRunner.startTransaction();
 
     try {
       const manager = queryRunner.manager;
+
+      const review = await manager.findOne(Review, { id });
+      if (!review) throw new Error("The review does not exist.");
+      if (review.authorId !== userId)
+        throw new Error("You are not the author of this post.");
+
       await manager.update(Review, { id }, reviewInput);
       await manager.update(ReviewRating, { reviewId: id }, ratingInput);
 
@@ -214,23 +222,35 @@ export class ReviewResolver {
   }
 
   @Mutation(() => ReviewResponse)
-  async deleteReview(@Ctx() { req }: MyContext, @Arg("id") id: string) {
+  async deleteReview(
+    @Ctx() { req }: MyContext,
+    @Arg("id") id: string,
+    @Arg("adminId", { nullable: true }) adminId: string
+  ) {
     if (!(req.session as any).userId) {
       return {
         status: false,
         message: "You haven't logged in. Please Log in and try again.",
       };
     }
-    await this.reviewRepo.delete({ id }).catch((e) => {
+    const userId = (req.session as any).userId;
+
+    try {
+      const review = await this.reviewRepo.findOne({ id });
+      if (!review) throw new Error("The review does not exist");
+      if (review.authorId !== userId && adminId !== process.env.ADMIN_ID)
+        throw new Error("You are not the author of this");
+      await this.reviewRepo.delete({ id });
+      return {
+        status: true,
+        message: "Delete review successfully.",
+      };
+    } catch (error) {
       return {
         status: false,
-        message: e.message,
+        message: error.message,
       };
-    });
-    return {
-      status: true,
-      message: "Delete review successfully.",
-    };
+    }
   }
 
   @Query(() => ReviewResponse)

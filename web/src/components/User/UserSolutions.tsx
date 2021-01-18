@@ -209,7 +209,6 @@ const Solutions: React.FC<SolutionsProps> = ({
           variables: {
             title,
             content,
-            authorId: user?.id as string,
             solutionId: id,
           },
         })

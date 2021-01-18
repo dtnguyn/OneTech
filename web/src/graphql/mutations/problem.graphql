@@ -30,14 +30,12 @@ mutation ToggleProblemStar($problemId: String!, $userId: String!) {
 
 mutation CreateProblem(
   $deviceId: String!
-  $authorId: String!
   $title: String!
   $content: String!
   $images: [String!]!
 ) {
   createProblem(
     deviceId: $deviceId
-    authorId: $authorId
     title: $title
     content: $content
     images: $images

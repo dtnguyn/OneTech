@@ -34,7 +34,6 @@ export class SolutionResolver {
   async createSolution(
     @Ctx() { req, io }: MyContext,
     @Arg("content") content: string,
-    @Arg("authorId") authorId: string,
     @Arg("problemId") problemId: string,
     @Arg("images", () => [String]) images: string[]
   ) {
@@ -44,6 +43,8 @@ export class SolutionResolver {
         message: "You haven't logged in. Please Log in and try again.",
       };
     }
+
+    const authorId = (req.session as any).userId;
 
     const queryRunner = getConnection().createQueryRunner();
     await queryRunner.connect();
@@ -137,12 +138,20 @@ export class SolutionResolver {
       };
     }
 
+    const userId = (req.session as any).userId;
+
     const queryRunner = getConnection().createQueryRunner();
     await queryRunner.connect();
     await queryRunner.startTransaction();
 
     try {
       const manager = queryRunner.manager;
+
+      const solution = await manager.findOne(Solution, { id });
+
+      if (!solution) throw new Error("The solution does not exist");
+      if (solution?.authorId !== userId)
+        throw new Error("You are not the author of the solution");
       await manager.update(Solution, { id }, input);
 
       if (images.length) {
@@ -167,7 +176,7 @@ export class SolutionResolver {
         });
       }
 
-      const solution = await manager.findOne(Solution, { id });
+      const updatedSolution = await manager.findOne(Solution, { id });
 
       await queryRunner.commitTransaction();
       await queryRunner.release();
@@ -175,9 +184,10 @@ export class SolutionResolver {
       return {
         status: true,
         message: "Create solution successfully.",
-        data: [solution],
+        data: [updatedSolution],
       };
     } catch (error) {
+      await queryRunner.rollbackTransaction();
       return {
         status: false,
         message: error.message,
@@ -186,7 +196,11 @@ export class SolutionResolver {
   }
 
   @Mutation(() => SolutionResponse)
-  async deleteSolution(@Ctx() { req }: MyContext, @Arg("id") id: string) {
+  async deleteSolution(
+    @Ctx() { req }: MyContext,
+    @Arg("id") id: string,
+    @Arg("adminId", { nullable: true }) adminId: string
+  ) {
     if (!(req.session as any).userId) {
       return {
         status: false,
@@ -194,12 +208,20 @@ export class SolutionResolver {
       };
     }
 
+    const userId = (req.session as any).userId;
+
     try {
       const solution = await this.solutionRepo.findOne({ id });
-      if (solution?.isPicked) {
+
+      if (solution?.isPicked && adminId !== process.env.ADMIN_ID) {
         throw new Error(
           "You cannot delete this solution because it is the chosen solution for a problem!"
         );
+      } else if (
+        solution?.authorId !== userId &&
+        adminId !== process.env.ADMIN_ID
+      ) {
+        throw new Error("You are not the author of this post.");
       } else {
         await this.solutionRepo.delete({ id });
         console.log("Delete successfully");
@@ -347,17 +369,24 @@ export class SolutionResolver {
       };
     }
 
+    const userId = (req.session as any).userId;
+
     const queryRunner = getConnection().createQueryRunner();
     await queryRunner.connect();
     await queryRunner.startTransaction();
 
     try {
       const manager = queryRunner.manager;
-      const problem = await await manager
+      const problem = await manager
         .createQueryBuilder(DeviceProblem, "problem")
         .leftJoinAndSelect("problem.author", "author")
         .where("problem.id = :problemId", { problemId })
         .getOne();
+      if (!problem) throw new Error("The problem doesn't exist");
+      if (problem.authorId !== userId)
+        throw new Error(
+          "Only the author of the problem post can pick or unpick a solution"
+        );
       if (problem?.solvedBy) {
         //Unpicked
         if (problem.pickedSolutionId === solutionId) {

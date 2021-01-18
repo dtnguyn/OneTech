@@ -1,15 +1,9 @@
 mutation CreateSolution(
   $problemId: String!
-  $authorId: String!
   $content: String!
   $images: [String!]!
 ) {
-  createSolution(
-    problemId: $problemId
-    authorId: $authorId
-    content: $content
-    images: $images
-  ) {
+  createSolution(problemId: $problemId, content: $content, images: $images) {
     status
     message
   }

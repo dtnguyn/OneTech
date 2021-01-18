@@ -9,6 +9,7 @@ import SpecsTable from "./SpecsTable";
 
 interface ReviewItemProps {
   review: Review;
+  category: string;
   handleEdit: (review: Review) => void;
   handleDelete: (id: string, images: string[]) => void;
   handleReport: (id: string) => void;
@@ -16,6 +17,7 @@ interface ReviewItemProps {
 
 const ReviewItem: React.FC<ReviewItemProps> = ({
   review,
+  category,
   handleEdit,
   handleDelete,
   handleReport,
@@ -42,7 +44,7 @@ const ReviewItem: React.FC<ReviewItemProps> = ({
           <div className={`col-lg-7 col-md-12`}>
             <SpecsTable
               switchState="rating"
-              category="phone"
+              category={category}
               rating={review.rating}
             />
           </div>

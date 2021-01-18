@@ -3,7 +3,6 @@ mutation createReport(
   $content: String!
   $problemId: String
   $solutionId: String
-  $authorId: String!
   $reviewId: String
 ) {
   createReport(
@@ -12,7 +11,6 @@ mutation createReport(
     problemId: $problemId
     solutionId: $solutionId
     reviewId: $reviewId
-    authorId: $authorId
   ) {
     status
     message

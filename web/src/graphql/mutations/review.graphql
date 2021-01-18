@@ -1,6 +1,5 @@
 mutation CreateReview(
   $deviceId: String!
-  $authorId: String!
   $title: String!
   $content: String!
   $overall: Float
@@ -13,7 +12,6 @@ mutation CreateReview(
 ) {
   createReview(
     deviceId: $deviceId
-    authorId: $authorId
     content: $content
     title: $title
     overall: $overall

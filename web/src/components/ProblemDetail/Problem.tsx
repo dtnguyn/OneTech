@@ -213,7 +213,6 @@ const Problem: React.FC<ProblemProps> = ({ problem }) => {
           variables: {
             title,
             content,
-            authorId: user?.id as string,
             problemId: id,
           },
         })

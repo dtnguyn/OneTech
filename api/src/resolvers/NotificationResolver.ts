@@ -18,18 +18,22 @@ export class NotificationResolver {
         message: "You haven't logged in. Please Log in and try again.",
       };
     }
-
+    const userId = (req.session as any).userId;
     let notifications;
 
     if (unseen === undefined || unseen === null) {
-      notifications = await this.notificationRepo.find({
-        userId: (req.session as any).userId as string,
-      });
+      notifications = await this.notificationRepo
+        .createQueryBuilder("notification")
+        .where("notification.userId = :userId", { userId })
+        .orderBy("notification.createdAt", "DESC")
+        .getMany();
     } else {
-      notifications = await this.notificationRepo.find({
-        userId: (req.session as any).userId as string,
-        seen: !unseen,
-      });
+      notifications = await this.notificationRepo
+        .createQueryBuilder("notification")
+        .where("notification.userId = :userId", { userId })
+        .andWhere("notification.seen = :seen", { seen: !unseen })
+        .orderBy("notification.createdAt", "DESC")
+        .getMany();
     }
 
     console.log(notifications);
