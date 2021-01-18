@@ -19,6 +19,7 @@ import CustomSlider from "../CustomSlider";
 import { useAlert } from "react-alert";
 import FormDialog from "../FormDialog";
 import Empty from "../Empty";
+import { laptopSpec, mobileSpec, pcSpec } from "../../utils/specArr";
 
 interface ReviewsProps {
   deviceId: string;
@@ -123,7 +124,6 @@ const Reviews: React.FC<ReviewsProps> = ({
 
   const handleCreateReview = async (
     deviceId: string,
-    authorId: string,
     title: string,
     content: string,
     rating: any,
@@ -132,7 +132,6 @@ const Reviews: React.FC<ReviewsProps> = ({
     await createReviewMutation({
       variables: {
         deviceId,
-        authorId,
         title,
         content,
         overall: rating.overall,
@@ -268,7 +267,6 @@ const Reviews: React.FC<ReviewsProps> = ({
           variables: {
             title,
             content,
-            authorId: user?.id as string,
             reviewId: id,
           },
         })
@@ -292,13 +290,13 @@ const Reviews: React.FC<ReviewsProps> = ({
   useEffect(() => {
     switch (category) {
       case "phone":
-        setSpecsArr(["Display", "Processor", "Battery", "Software", "Camera"]);
+        setSpecsArr(mobileSpec);
         break;
       case "laptop":
-        setSpecsArr(["Display", "Processor", "Battery", "Software", "Camera"]);
+        setSpecsArr(laptopSpec);
         break;
       case "pc":
-        setSpecsArr(["Display", "Processor", "Battery", "Software", "Camera"]);
+        setSpecsArr(pcSpec);
         break;
     }
   }, []);
@@ -361,7 +359,6 @@ const Reviews: React.FC<ReviewsProps> = ({
                     }
                     handleCreateReview(
                       deviceId,
-                      user.id,
                       reviewValue.title,
                       reviewValue.content,
                       reviewValue.rating,
@@ -397,6 +394,7 @@ const Reviews: React.FC<ReviewsProps> = ({
             <ReviewItem
               key={review.id}
               review={review}
+              category={category}
               handleDelete={(id: string, images: string[]) => {
                 initialDeleteReviewDialog(id, images);
               }}

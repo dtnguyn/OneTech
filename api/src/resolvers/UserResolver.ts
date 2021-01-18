@@ -38,43 +38,24 @@ export class UserResolver {
   settingRepo = getRepository(UserSetting);
 
   @Mutation(() => UserResponse)
-  async updateUser(
-    @Arg("id") id: string,
-    @Arg("input") input: UpdateUserInput
-  ) {
-    await this.userRepo.update({ id }, input).catch((e) => {
+  async deleteUser(@Arg("id") id: string, @Arg("adminId") adminId: string) {
+    if (adminId === process.env.ADMIN_ID) {
+      await this.userRepo.delete({ id }).catch((e) => {
+        return {
+          status: false,
+          message: e.message,
+        };
+      });
+      return {
+        status: true,
+        message: "Delete user successfully.",
+      };
+    } else {
       return {
         status: false,
-        message: e.message,
+        message: "Invalid admin Id",
       };
-    });
-
-    const user = await this.userRepo.findOne({ id }).catch((e) => {
-      return {
-        status: false,
-        message: e.message,
-      };
-    });
-
-    return {
-      status: true,
-      message: "Update user successfully.",
-      data: [user],
-    };
-  }
-
-  @Mutation(() => UserResponse)
-  async deleteUser(@Arg("id") id: string) {
-    await this.userRepo.delete({ id }).catch((e) => {
-      return {
-        status: false,
-        message: e.message,
-      };
-    });
-    return {
-      status: true,
-      message: "Delete user successfully.",
-    };
+    }
   }
 
   @Mutation(() => UserResponse)

@@ -12,7 +12,6 @@ export class ReportResolver {
     @Ctx() { req }: MyContext,
     @Arg("title") title: string,
     @Arg("content") content: string,
-    @Arg("authorId") authorId: string,
     @Arg("problemId", { nullable: true }) problemId: string,
     @Arg("reviewId", { nullable: true }) reviewId: string,
     @Arg("solutionId", { nullable: true }) solutionId: string
@@ -23,6 +22,8 @@ export class ReportResolver {
         message: "You haven't logged in. Please Log in and try again.",
       };
     }
+
+    const authorId = (req.session as any).userId;
 
     const newReport = await this.reportRepo.create({
       title,

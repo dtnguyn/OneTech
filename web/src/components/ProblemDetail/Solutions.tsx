@@ -70,14 +70,12 @@ const Solutions: React.FC<SolutionsProps> = ({
 
   const handleCreateSolution = async (
     problemId: string,
-    authorId: string,
     content: string,
     images: string[]
   ) => {
     await createSolutionMutation({
       variables: {
         problemId,
-        authorId,
         content,
         images,
       },
@@ -253,7 +251,6 @@ const Solutions: React.FC<SolutionsProps> = ({
           variables: {
             title,
             content,
-            authorId: user?.id as string,
             solutionId: id,
           },
         })
@@ -312,12 +309,7 @@ const Solutions: React.FC<SolutionsProps> = ({
                   alert("Please login first.");
                   return;
                 }
-                handleCreateSolution(
-                  problemId,
-                  user!.id,
-                  solutionValue.content,
-                  images
-                );
+                handleCreateSolution(problemId, solutionValue.content, images);
               } else {
                 if (!user) {
                   alert("Please login first.");

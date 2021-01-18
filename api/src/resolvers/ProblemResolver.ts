@@ -45,7 +45,6 @@ export class ProblemResolver {
     @Ctx() { req, io }: MyContext,
     @Arg("title") title: string,
     @Arg("content") content: string,
-    @Arg("authorId") authorId: string,
     @Arg("deviceId") deviceId: string,
     @Arg("images", () => [String]) images: string[]
   ) {
@@ -55,7 +54,7 @@ export class ProblemResolver {
         message: "You haven't logged in. Please Log in and try again.",
       };
     }
-
+    const authorId = (req.session as any).userId;
     const queryRunner = getConnection().createQueryRunner();
     await queryRunner.connect();
     await queryRunner.startTransaction();
@@ -72,12 +71,18 @@ export class ProblemResolver {
 
       await manager.insert(DeviceProblem, newProblem);
 
+      console.log(
+        "Fix bugs",
+        await manager.findOne(DeviceProblem, { id: newProblem.id })
+      );
+
       if (images.length != 0) {
         await new Promise((resolve, reject) => {
           let counter = 0;
           for (const image of images) {
-            this.imageRepo
-              .insert({
+            console.log("Fix bugs image", image, newProblem.id);
+            manager
+              .insert(ProblemImage, {
                 path: image,
                 problemId: newProblem.id,
               })
@@ -152,24 +157,45 @@ export class ProblemResolver {
   }
 
   @Mutation(() => ProblemResponse)
-  async deleteProblem(@Ctx() { req }: MyContext, @Arg("id") id: string) {
+  async deleteProblem(
+    @Ctx() { req }: MyContext,
+    @Arg("id") id: string,
+    @Arg("adminId", { nullable: true }) adminId: string
+  ) {
     if (!(req.session as any).userId) {
       return {
         status: false,
         message: "You haven't logged in. Please Log in and try again.",
       };
     }
+    const userId = (req.session as any).userId;
 
-    await this.problemRepo.delete({ id }).catch((e) => {
+    try {
+      const problem = await this.problemRepo.findOne({ id });
+
+      if (problem) {
+        if (
+          problem.authorId === userId ||
+          (adminId && adminId === process.env.ADMIN_ID)
+        ) {
+          await this.problemRepo.delete({ id });
+
+          return {
+            status: true,
+            message: "Delete problem successfully.",
+          };
+        } else {
+          throw new Error("You are not the author of this post");
+        }
+      } else {
+        throw new Error("The problem does not exist");
+      }
+    } catch (error) {
       return {
         status: false,
-        message: e.message,
+        message: error.message,
       };
-    });
-    return {
-      status: true,
-      message: "Delete problem successfully.",
-    };
+    }
   }
 
   @Mutation(() => ProblemResponse)
@@ -186,12 +212,20 @@ export class ProblemResolver {
       };
     }
 
+    const userId = (req.session as any).userId;
+
     const queryRunner = getConnection().createQueryRunner();
     await queryRunner.connect();
     await queryRunner.startTransaction();
 
     try {
       const manager = queryRunner.manager;
+
+      const problem = await manager.findOne(DeviceProblem, { id });
+      if (!problem) throw new Error("The problem doesn't not exist");
+      if (problem?.authorId !== userId)
+        throw new Error("You are not the author of this post.");
+
       await manager.update(DeviceProblem, { id }, input);
 
       if (images && images.length != 0) {
@@ -380,7 +414,7 @@ export class ProblemResolver {
         message: "Toggle star problem successfully.",
       };
     } catch (error) {
-      queryRunner.rollbackTransaction();
+      await queryRunner.rollbackTransaction();
       return {
         status: false,
         message: error.message,

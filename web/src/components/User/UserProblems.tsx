@@ -110,6 +110,9 @@ const Problems: React.FC<ProblemsProps> = ({
         content,
         images,
       },
+      update: (cache) => {
+        cache.evict({ fieldName: "problems" });
+      },
     })
       .then((res) => {
         if (res.data?.updateProblem.status) {
@@ -224,7 +227,6 @@ const Problems: React.FC<ProblemsProps> = ({
           variables: {
             title,
             content,
-            authorId: user?.id as string,
             problemId: id,
           },
         })

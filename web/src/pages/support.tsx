@@ -16,7 +16,7 @@ const SupportPage: React.FC<SupportProps> = ({}) => {
         We will normally get back to you in one (sometimes 2) day.
       </p>
       <CopyMailTo
-        email="support@onetech.com"
+        email="support@onetech.guru"
         anchorStyles={{
           fontSize: "1.5rem",
         }}

@@ -99,7 +99,6 @@ const Problems: React.FC<ProblemsProps> = ({
 
   const handleCreateProblem = async (
     deviceId: string,
-    authorId: string,
     title: string,
     content: string,
     images: string[]
@@ -111,7 +110,6 @@ const Problems: React.FC<ProblemsProps> = ({
     await createProblemMutation({
       variables: {
         deviceId,
-        authorId,
         title,
         content,
         images,
@@ -145,6 +143,9 @@ const Problems: React.FC<ProblemsProps> = ({
         title,
         content,
         images,
+      },
+      update: (cache) => {
+        cache.evict({ fieldName: "problems" });
       },
     })
       .then((res) => {
@@ -254,7 +255,6 @@ const Problems: React.FC<ProblemsProps> = ({
           variables: {
             title,
             content,
-            authorId: user?.id as string,
             problemId: id,
           },
         })
@@ -303,7 +303,6 @@ const Problems: React.FC<ProblemsProps> = ({
                 }
                 handleCreateProblem(
                   deviceId,
-                  user.id,
                   problemValue.title,
                   problemValue.content,
                   images

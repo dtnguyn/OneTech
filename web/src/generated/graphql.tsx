@@ -458,7 +458,6 @@ export type Mutation = {
   deleteSolution: SolutionResponse;
   toggleSolutionStar: SolutionResponse;
   toggleSolutionPicked: SolutionResponse;
-  updateUser: UserResponse;
   deleteUser: UserResponse;
   logout: UserResponse;
   createSetting: UserSettingResponse;
@@ -558,13 +557,13 @@ export type MutationDeleteNotificationArgs = {
 export type MutationCreateProblemArgs = {
   images: Array<Scalars['String']>;
   deviceId: Scalars['String'];
-  authorId: Scalars['String'];
   content: Scalars['String'];
   title: Scalars['String'];
 };
 
 
 export type MutationDeleteProblemArgs = {
+  adminId?: Maybe<Scalars['String']>;
   id: Scalars['String'];
 };
 
@@ -586,7 +585,6 @@ export type MutationCreateReportArgs = {
   solutionId?: Maybe<Scalars['String']>;
   reviewId?: Maybe<Scalars['String']>;
   problemId?: Maybe<Scalars['String']>;
-  authorId: Scalars['String'];
   content: Scalars['String'];
   title: Scalars['String'];
 };
@@ -601,7 +599,6 @@ export type MutationCreateReviewArgs = {
   display?: Maybe<Scalars['Float']>;
   overall?: Maybe<Scalars['Float']>;
   deviceId: Scalars['String'];
-  authorId: Scalars['String'];
   content: Scalars['String'];
   title: Scalars['String'];
 };
@@ -616,6 +613,7 @@ export type MutationUpdateReviewArgs = {
 
 
 export type MutationDeleteReviewArgs = {
+  adminId?: Maybe<Scalars['String']>;
   id: Scalars['String'];
 };
 
@@ -641,7 +639,6 @@ export type MutationUpdateRatingArgs = {
 export type MutationCreateSolutionArgs = {
   images: Array<Scalars['String']>;
   problemId: Scalars['String'];
-  authorId: Scalars['String'];
   content: Scalars['String'];
 };
 
@@ -654,6 +651,7 @@ export type MutationUpdateSolutionArgs = {
 
 
 export type MutationDeleteSolutionArgs = {
+  adminId?: Maybe<Scalars['String']>;
   id: Scalars['String'];
 };
 
@@ -671,13 +669,8 @@ export type MutationToggleSolutionPickedArgs = {
 };
 
 
-export type MutationUpdateUserArgs = {
-  input: UpdateUserInput;
-  id: Scalars['String'];
-};
-
-
 export type MutationDeleteUserArgs = {
+  adminId: Scalars['String'];
   id: Scalars['String'];
 };
 
@@ -758,11 +751,6 @@ export type UpdateReviewInput = {
 export type UpdateSolutionInput = {
   content?: Maybe<Scalars['String']>;
   isPicked?: Maybe<Scalars['Boolean']>;
-};
-
-export type UpdateUserInput = {
-  username?: Maybe<Scalars['String']>;
-  email?: Maybe<Scalars['String']>;
 };
 
 export type UpdateSettingInput = {
@@ -868,7 +856,6 @@ export type ToggleProblemStarMutation = (
 
 export type CreateProblemMutationVariables = Exact<{
   deviceId: Scalars['String'];
-  authorId: Scalars['String'];
   title: Scalars['String'];
   content: Scalars['String'];
   images: Array<Scalars['String']>;
@@ -951,7 +938,6 @@ export type CreateReportMutationVariables = Exact<{
   content: Scalars['String'];
   problemId?: Maybe<Scalars['String']>;
   solutionId?: Maybe<Scalars['String']>;
-  authorId: Scalars['String'];
   reviewId?: Maybe<Scalars['String']>;
 }>;
 
@@ -966,7 +952,6 @@ export type CreateReportMutation = (
 
 export type CreateReviewMutationVariables = Exact<{
   deviceId: Scalars['String'];
-  authorId: Scalars['String'];
   title: Scalars['String'];
   content: Scalars['String'];
   overall?: Maybe<Scalars['Float']>;
@@ -1046,7 +1031,6 @@ export type DeleteReviewMutation = (
 
 export type CreateSolutionMutationVariables = Exact<{
   problemId: Scalars['String'];
-  authorId: Scalars['String'];
   content: Scalars['String'];
   images: Array<Scalars['String']>;
 }>;
@@ -1712,10 +1696,9 @@ export type ToggleProblemStarMutationHookResult = ReturnType<typeof useTogglePro
 export type ToggleProblemStarMutationResult = Apollo.MutationResult<ToggleProblemStarMutation>;
 export type ToggleProblemStarMutationOptions = Apollo.BaseMutationOptions<ToggleProblemStarMutation, ToggleProblemStarMutationVariables>;
 export const CreateProblemDocument = gql`
-    mutation CreateProblem($deviceId: String!, $authorId: String!, $title: String!, $content: String!, $images: [String!]!) {
+    mutation CreateProblem($deviceId: String!, $title: String!, $content: String!, $images: [String!]!) {
   createProblem(
     deviceId: $deviceId
-    authorId: $authorId
     title: $title
     content: $content
     images: $images
@@ -1764,7 +1747,6 @@ export type CreateProblemMutationFn = Apollo.MutationFunction<CreateProblemMutat
  * const [createProblemMutation, { data, loading, error }] = useCreateProblemMutation({
  *   variables: {
  *      deviceId: // value for 'deviceId'
- *      authorId: // value for 'authorId'
  *      title: // value for 'title'
  *      content: // value for 'content'
  *      images: // value for 'images'
@@ -1874,14 +1856,13 @@ export type UpdateProblemMutationHookResult = ReturnType<typeof useUpdateProblem
 export type UpdateProblemMutationResult = Apollo.MutationResult<UpdateProblemMutation>;
 export type UpdateProblemMutationOptions = Apollo.BaseMutationOptions<UpdateProblemMutation, UpdateProblemMutationVariables>;
 export const CreateReportDocument = gql`
-    mutation createReport($title: String!, $content: String!, $problemId: String, $solutionId: String, $authorId: String!, $reviewId: String) {
+    mutation createReport($title: String!, $content: String!, $problemId: String, $solutionId: String, $reviewId: String) {
   createReport(
     title: $title
     content: $content
     problemId: $problemId
     solutionId: $solutionId
     reviewId: $reviewId
-    authorId: $authorId
   ) {
     status
     message
@@ -1907,7 +1888,6 @@ export type CreateReportMutationFn = Apollo.MutationFunction<CreateReportMutatio
  *      content: // value for 'content'
  *      problemId: // value for 'problemId'
  *      solutionId: // value for 'solutionId'
- *      authorId: // value for 'authorId'
  *      reviewId: // value for 'reviewId'
  *   },
  * });
@@ -1919,10 +1899,9 @@ export type CreateReportMutationHookResult = ReturnType<typeof useCreateReportMu
 export type CreateReportMutationResult = Apollo.MutationResult<CreateReportMutation>;
 export type CreateReportMutationOptions = Apollo.BaseMutationOptions<CreateReportMutation, CreateReportMutationVariables>;
 export const CreateReviewDocument = gql`
-    mutation CreateReview($deviceId: String!, $authorId: String!, $title: String!, $content: String!, $overall: Float, $display: Float, $processor: Float, $battery: Float, $software: Float, $camera: Float, $images: [String!]!) {
+    mutation CreateReview($deviceId: String!, $title: String!, $content: String!, $overall: Float, $display: Float, $processor: Float, $battery: Float, $software: Float, $camera: Float, $images: [String!]!) {
   createReview(
     deviceId: $deviceId
-    authorId: $authorId
     content: $content
     title: $title
     overall: $overall
@@ -1976,7 +1955,6 @@ export type CreateReviewMutationFn = Apollo.MutationFunction<CreateReviewMutatio
  * const [createReviewMutation, { data, loading, error }] = useCreateReviewMutation({
  *   variables: {
  *      deviceId: // value for 'deviceId'
- *      authorId: // value for 'authorId'
  *      title: // value for 'title'
  *      content: // value for 'content'
  *      overall: // value for 'overall'
@@ -2098,13 +2076,8 @@ export type DeleteReviewMutationHookResult = ReturnType<typeof useDeleteReviewMu
 export type DeleteReviewMutationResult = Apollo.MutationResult<DeleteReviewMutation>;
 export type DeleteReviewMutationOptions = Apollo.BaseMutationOptions<DeleteReviewMutation, DeleteReviewMutationVariables>;
 export const CreateSolutionDocument = gql`
-    mutation CreateSolution($problemId: String!, $authorId: String!, $content: String!, $images: [String!]!) {
-  createSolution(
-    problemId: $problemId
-    authorId: $authorId
-    content: $content
-    images: $images
-  ) {
+    mutation CreateSolution($problemId: String!, $content: String!, $images: [String!]!) {
+  createSolution(problemId: $problemId, content: $content, images: $images) {
     status
     message
   }
@@ -2126,7 +2099,6 @@ export type CreateSolutionMutationFn = Apollo.MutationFunction<CreateSolutionMut
  * const [createSolutionMutation, { data, loading, error }] = useCreateSolutionMutation({
  *   variables: {
  *      problemId: // value for 'problemId'
- *      authorId: // value for 'authorId'
  *      content: // value for 'content'
  *      images: // value for 'images'
  *   },
