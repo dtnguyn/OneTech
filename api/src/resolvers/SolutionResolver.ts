@@ -194,16 +194,27 @@ export class SolutionResolver {
       };
     }
 
-    await this.solutionRepo.delete({ id }).catch((e) => {
+    try {
+      const solution = await this.solutionRepo.findOne({ id });
+      if (solution?.isPicked) {
+        throw new Error(
+          "You cannot delete this solution because it is the chosen solution for a problem!"
+        );
+      } else {
+        await this.solutionRepo.delete({ id });
+        console.log("Delete successfully");
+        return {
+          status: true,
+          message: "Delete solution successfully.",
+        };
+      }
+    } catch (error) {
+      console.log("Delete error");
       return {
         status: false,
-        message: e.message,
+        message: error.message,
       };
-    });
-    return {
-      status: true,
-      message: "Delete solution successfully.",
-    };
+    }
   }
 
   @Query(() => SolutionResponse)

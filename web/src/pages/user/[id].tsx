@@ -1,6 +1,6 @@
 import { useRouter } from "next/router";
 import React, { useEffect, useState } from "react";
-import Footer from "../../components/Footer";
+
 import Body from "../../components/User/UserBody";
 import Header from "../../components/User/UserHeader";
 import { useAuth } from "../../context/AuthContext";
@@ -54,7 +54,6 @@ const UserPage: React.FC<UserPageProps> = ({}) => {
       {user.setting?.isPrivate && currentUser?.id != user.id ? null : (
         <Body user={user} devices={followedDevices} />
       )}
-      <Footer />
     </div>
   );
 };

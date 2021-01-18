@@ -18,6 +18,7 @@ import { useAuth } from "../../context/AuthContext";
 import ConfirmationDialog from "../ConfirmationDialog";
 import { useAlert } from "react-alert";
 import FormDialog from "../FormDialog";
+import Empty from "../Empty";
 
 interface SolutionsProps {
   problemId: string;
@@ -382,44 +383,52 @@ const Solutions: React.FC<SolutionsProps> = ({
             {pickedSolution ? "Other solutions" : "Solutions"}
           </h4>
           <Button onClick={() => setAdding(true)}>Add a solution</Button>
-          {solutions.map((solution) => {
-            if (solution.isPicked) return null;
-            else
-              return (
-                <SolutionItem
-                  key={solution.id}
-                  problemAuthorId={problemAuthorId}
-                  solution={solution}
-                  starred={isStarred(solution.stars ? solution.stars : [])}
-                  handleDelete={(id, images) => {
-                    initialDeleteSolutionDialog(id, images);
-                  }}
-                  handleEdit={(id, content) => {
-                    setSolutionValue({
-                      ...solutionValue,
-                      id,
-                      content,
-                    });
-                    setEditing(true);
-                  }}
-                  handleToggleStar={(id) => {
-                    if (!user) {
-                      alert("Please login first.");
-                      return;
-                    }
-                    handleToggleSolutionStar(user.id, id);
-                  }}
-                  handleTogglePicked={(solutionId, solverId) => {
-                    if (!user) {
-                      alert("Please login first.");
-                      return;
-                    }
-                    handleToggleSolutionPicked(solverId, solutionId, problemId);
-                  }}
-                  handleReport={initialReportSolutionDialog}
-                />
-              );
-          })}
+          {solutions.length ? (
+            solutions.map((solution) => {
+              if (solution.isPicked) return null;
+              else
+                return (
+                  <SolutionItem
+                    key={solution.id}
+                    problemAuthorId={problemAuthorId}
+                    solution={solution}
+                    starred={isStarred(solution.stars ? solution.stars : [])}
+                    handleDelete={(id, images) => {
+                      initialDeleteSolutionDialog(id, images);
+                    }}
+                    handleEdit={(id, content) => {
+                      setSolutionValue({
+                        ...solutionValue,
+                        id,
+                        content,
+                      });
+                      setEditing(true);
+                    }}
+                    handleToggleStar={(id) => {
+                      if (!user) {
+                        alert("Please login first.");
+                        return;
+                      }
+                      handleToggleSolutionStar(user.id, id);
+                    }}
+                    handleTogglePicked={(solutionId, solverId) => {
+                      if (!user) {
+                        alert("Please login first.");
+                        return;
+                      }
+                      handleToggleSolutionPicked(
+                        solverId,
+                        solutionId,
+                        problemId
+                      );
+                    }}
+                    handleReport={initialReportSolutionDialog}
+                  />
+                );
+            })
+          ) : (
+            <Empty />
+          )}
         </>
       )}
       <ConfirmationDialog

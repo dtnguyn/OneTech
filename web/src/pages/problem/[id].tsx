@@ -9,8 +9,6 @@ import {
 import { withApollo } from "../../utils/withApollo";
 import styles from "../../styles/ProblemDetail.module.css";
 import Solutions from "../../components/ProblemDetail/Solutions";
-import Footer from "../../components/Footer";
-
 interface ProblemDetailProps {}
 
 const ProblemDetail: React.FC<ProblemDetailProps> = ({}) => {
@@ -47,7 +45,6 @@ const ProblemDetail: React.FC<ProblemDetailProps> = ({}) => {
         problemId={problem.id}
         problemAuthorId={problem.author!.id}
       />
-      <Footer />
     </div>
   );
 };

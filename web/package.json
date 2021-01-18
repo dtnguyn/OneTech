@@ -36,6 +36,7 @@
     "react-alert": "^7.0.2",
     "react-alert-template-basic": "^1.0.0",
     "react-bootstrap": "^1.4.0",
+    "react-copy-mailto": "^1.1.1",
     "react-dom": "17.0.1",
     "react-slick": "^0.27.13",
     "react-switch": "^6.0.0",

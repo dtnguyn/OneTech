@@ -18,6 +18,7 @@ import { client } from "../../utils/withApollo";
 import ConfirmationDialog from "../ConfirmationDialog";
 import CustomEditor from "../CustomEditor";
 import ProblemItem from "../DeviceDetail/ProblemItem";
+import Empty from "../Empty";
 import FormDialog from "../FormDialog";
 
 interface ProblemsProps {
@@ -279,7 +280,7 @@ const Problems: React.FC<ProblemsProps> = ({
             }}
           />
         </>
-      ) : (
+      ) : problems.length ? (
         problems.map((problem) => {
           const starred = isStarred(problem.stars ? problem.stars : []);
           return (
@@ -304,6 +305,8 @@ const Problems: React.FC<ProblemsProps> = ({
             />
           );
         })
+      ) : (
+        <Empty secondLine={false} />
       )}
       <ConfirmationDialog
         show={confirmationDialog.show}

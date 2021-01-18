@@ -21,6 +21,7 @@ import ConfirmationDialog from "../ConfirmationDialog";
 import SolutionItem from "../ProblemDetail/SolutionItem";
 import { useAlert } from "react-alert";
 import FormDialog from "../FormDialog";
+import Empty from "../Empty";
 
 interface SolutionsProps {
   user: User;
@@ -123,11 +124,13 @@ const Solutions: React.FC<SolutionsProps> = ({
           cache.evict({ fieldName: "solutions" });
         },
       }).then((res) => {
+        console.log(res);
         if (!res.data?.deleteSolution.status) {
           throw new Error(res.data?.deleteSolution.message);
         }
       });
     } catch (error) {
+      console.log("print error");
       alert(error.message);
     }
   };
@@ -264,32 +267,36 @@ const Solutions: React.FC<SolutionsProps> = ({
         </>
       ) : (
         <>
-          {solutions.map((solution) => {
-            return (
-              <SolutionItem
-                key={solution.id}
-                solution={solution}
-                accountPage={true}
-                handleReport={initialReportSolutionDialog}
-                starred={isStarred(solution.stars ? solution.stars : [])}
-                handleDelete={(id, images) => {
-                  initialDeleteSolutionDialog(id, images);
-                }}
-                handleEdit={(id, content) => {
-                  setSolutionValue({
-                    ...solutionValue,
-                    id,
-                    content,
-                  });
-                  setEditing(true);
-                }}
-                handleToggleStar={(id) => {
-                  if (!authUser) return;
-                  handleToggleSolutionStar(authUser.id, id);
-                }}
-              />
-            );
-          })}
+          {solutions.length ? (
+            solutions.map((solution) => {
+              return (
+                <SolutionItem
+                  key={solution.id}
+                  solution={solution}
+                  accountPage={true}
+                  handleReport={initialReportSolutionDialog}
+                  starred={isStarred(solution.stars ? solution.stars : [])}
+                  handleDelete={(id, images) => {
+                    initialDeleteSolutionDialog(id, images);
+                  }}
+                  handleEdit={(id, content) => {
+                    setSolutionValue({
+                      ...solutionValue,
+                      id,
+                      content,
+                    });
+                    setEditing(true);
+                  }}
+                  handleToggleStar={(id) => {
+                    if (!authUser) return;
+                    handleToggleSolutionStar(authUser.id, id);
+                  }}
+                />
+              );
+            })
+          ) : (
+            <Empty />
+          )}
         </>
       )}
       <ConfirmationDialog

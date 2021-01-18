@@ -85,12 +85,12 @@ const NavBar: React.FC<NavBarProps> = ({}) => {
                 Devices
               </a>
             </Link>
-            <Link href="/about">
+            <Link href="/support">
               <a
                 className={styles.navbarLink}
                 onClick={() => setDropDown(false)}
               >
-                About
+                Support
               </a>
             </Link>
             {user && innerWidth < 992 ? (
