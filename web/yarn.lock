@@ -6749,6 +6749,11 @@ react-bootstrap@^1.4.0:
     uncontrollable "^7.0.0"
     warning "^4.0.3"
 
+react-copy-mailto@^1.1.1:
+  version "1.1.1"
+  resolved "https://registry.yarnpkg.com/react-copy-mailto/-/react-copy-mailto-1.1.1.tgz#086b650fa4198eb99afb713f4d5a2fb4e5e6c1a0"
+  integrity sha512-jt0l/cVDAXgItdIxr+okjwVWz9jUQhalDjSJHFUd8MPSEpgkItmyZQ9zPHR4ooWMAO5hZYr7OwIt/bLqwkM3gA==
+
 react-dom@17.0.1:
   version "17.0.1"
   resolved "https://registry.yarnpkg.com/react-dom/-/react-dom-17.0.1.tgz#1de2560474ec9f0e334285662ede52dbc5426fc6"

@@ -70,7 +70,7 @@ export class ProblemResolver {
         deviceId,
       });
 
-      await this.problemRepo.insert(newProblem);
+      await manager.insert(DeviceProblem, newProblem);
 
       if (images.length != 0) {
         await new Promise((resolve, reject) => {
@@ -131,10 +131,10 @@ export class ProblemResolver {
               });
           }
         });
-      } else {
+      } else if (!followers) {
         throw new Error("Couldn't find device.");
       }
-
+      console.log("Weird");
       await queryRunner.commitTransaction();
       await queryRunner.release();
 

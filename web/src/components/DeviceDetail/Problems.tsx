@@ -23,6 +23,7 @@ import CustomEditor from "../CustomEditor";
 import ConfirmationDialog from "../ConfirmationDialog";
 import { useAlert } from "react-alert";
 import FormDialog from "../FormDialog";
+import Empty from "../Empty";
 
 interface ProblemsProps {
   deviceId: string;
@@ -328,7 +329,7 @@ const Problems: React.FC<ProblemsProps> = ({
             }}
           />
         </>
-      ) : (
+      ) : problems.length ? (
         problems.map((problem) => {
           const starred = isStarred(problem.stars ? problem.stars : []);
           return (
@@ -351,6 +352,8 @@ const Problems: React.FC<ProblemsProps> = ({
             />
           );
         })
+      ) : (
+        <Empty />
       )}
       <ConfirmationDialog
         show={confirmationDialog.show}

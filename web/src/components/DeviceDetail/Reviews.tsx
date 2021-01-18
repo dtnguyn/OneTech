@@ -18,6 +18,7 @@ import { useAuth } from "../../context/AuthContext";
 import CustomSlider from "../CustomSlider";
 import { useAlert } from "react-alert";
 import FormDialog from "../FormDialog";
+import Empty from "../Empty";
 
 interface ReviewsProps {
   deviceId: string;
@@ -390,7 +391,7 @@ const Reviews: React.FC<ReviewsProps> = ({
             </div>
           </div>
         </>
-      ) : (
+      ) : reviews.length ? (
         reviews.map((review) => {
           return (
             <ReviewItem
@@ -420,6 +421,8 @@ const Reviews: React.FC<ReviewsProps> = ({
             />
           );
         })
+      ) : (
+        <Empty />
       )}
       <ConfirmationDialog
         show={confirmationDialog.show}
