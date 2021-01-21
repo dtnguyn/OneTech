@@ -1,4 +1,5 @@
-require("dotenv").config();
+import { config } from "dotenv";
+config();
 import { ApolloServer } from "apollo-server-express";
 import connectRedis from "connect-redis";
 import cors from "cors";
@@ -20,18 +21,18 @@ import { ReviewResolver } from "./resolvers/ReviewResolver";
 import { SolutionResolver } from "./resolvers/SolutionResolver";
 import { UserResolver } from "./resolvers/UserResolver";
 import { MyContext } from "./types";
-import * as socketio from "socket.io";
 
 (async () => {
   await createConnection();
 
   const app = express();
+
   let http = require("http").Server(app);
   // set up socket.io and bind it to our
   // http server.
   let io = require("socket.io")(http, {
     cors: {
-      origin: "http://localhost:3000",
+      origin: process.env.CLIENT_URL,
       methods: ["GET", "POST"],
     },
   });
@@ -49,7 +50,7 @@ import * as socketio from "socket.io";
 
   app.use(
     cors({
-      origin: "http://localhost:3000",
+      origin: process.env.CLIENT_URL,
       credentials: true,
     })
   );
@@ -75,7 +76,7 @@ import * as socketio from "socket.io";
 
   app.use("/auth", auth);
 
-  io.on("connection", (socket) => {
+  io.on("connection", () => {
     console.log("New user connected");
   });
 
@@ -95,13 +96,13 @@ import * as socketio from "socket.io";
       validate: false,
     }),
     context: ({ req, res }): MyContext => {
-      return { req, res, io };
+      return { req, res, io, redis: redisClient };
     },
   });
 
   apolloServer.applyMiddleware({ app, cors: false });
 
-  http.listen(4000, () => {
-    console.log("One-tech server running on port 4000");
+  http.listen(process.env.PORT, () => {
+    console.log("One-tech server running");
   });
 })();

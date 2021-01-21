@@ -1,21 +1,15 @@
-import { stat } from "fs";
 import { useEffect, useState } from "react";
-
-import { useAuth } from "../../context/AuthContext";
+import { useAlert } from "react-alert";
 import {
   DeviceProblem,
   Solution,
   useProblemsQuery,
   User,
-  useReviewsQuery,
   useSolutionsQuery,
 } from "../../generated/graphql";
-import { client } from "../../utils/withApollo";
-
+import styles from "../../styles/User.module.css";
 import Switcher from "../Switcher";
 import Problems from "./UserProblems";
-
-import styles from "../../styles/User.module.css";
 import Solutions from "./UserSolutions";
 
 interface UserPostsProps {
@@ -25,17 +19,17 @@ interface UserPostsProps {
 const UserPosts: React.FC<UserPostsProps> = ({ user }) => {
   const [switchState, setSwitchState] = useState<string>("problems");
   const [editing, setEditing] = useState(false);
-
+  const { error: alert } = useAlert();
   const [problems, setProblems] = useState<DeviceProblem[]>([]);
   const [solutions, setSolutions] = useState<Solution[]>([]);
 
-  const { data: problemsData } = useProblemsQuery({
+  const { data: problemsData, error: problemsError } = useProblemsQuery({
     variables: {
       authorId: user?.id,
     },
   });
 
-  const { data: solutionsData } = useSolutionsQuery({
+  const { data: solutionsData, error: solutionsError } = useSolutionsQuery({
     variables: {
       userId: user?.id,
     },
@@ -54,6 +48,16 @@ const UserPosts: React.FC<UserPostsProps> = ({ user }) => {
       setSolutions(arr);
     }
   }, [solutionsData]);
+
+  useEffect(() => {
+    if (problemsError) {
+      alert(problemsError.message);
+    }
+
+    if (solutionsError) {
+      alert(solutionsError.message);
+    }
+  }, [problemsError, solutionsError]);
 
   return (
     <div className={styles.userPostsContainer}>

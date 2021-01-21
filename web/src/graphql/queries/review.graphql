@@ -33,6 +33,10 @@ query Reviews(
         display
         camera
         processor
+        gpu
+        memory
+        thermals
+        ports
       }
     }
   }

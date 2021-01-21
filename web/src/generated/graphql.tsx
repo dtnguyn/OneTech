@@ -324,6 +324,10 @@ export type ReviewRating = {
   software?: Maybe<Scalars['Float']>;
   camera?: Maybe<Scalars['Float']>;
   processor?: Maybe<Scalars['Float']>;
+  gpu?: Maybe<Scalars['Float']>;
+  memory?: Maybe<Scalars['Float']>;
+  thermals?: Maybe<Scalars['Float']>;
+  ports?: Maybe<Scalars['Float']>;
   createdAt: Scalars['String'];
   updatedAt: Scalars['DateTime'];
 };
@@ -592,6 +596,10 @@ export type MutationCreateReportArgs = {
 
 export type MutationCreateReviewArgs = {
   images: Array<Scalars['String']>;
+  ports?: Maybe<Scalars['Float']>;
+  thermals?: Maybe<Scalars['Float']>;
+  memory?: Maybe<Scalars['Float']>;
+  gpu?: Maybe<Scalars['Float']>;
   processor?: Maybe<Scalars['Float']>;
   camera?: Maybe<Scalars['Float']>;
   software?: Maybe<Scalars['Float']>;
@@ -741,6 +749,10 @@ export type UpdateRatingInput = {
   software?: Maybe<Scalars['Float']>;
   processor?: Maybe<Scalars['Float']>;
   battery?: Maybe<Scalars['Float']>;
+  gpu?: Maybe<Scalars['Float']>;
+  memory?: Maybe<Scalars['Float']>;
+  thermals?: Maybe<Scalars['Float']>;
+  ports?: Maybe<Scalars['Float']>;
 };
 
 export type UpdateReviewInput = {
@@ -960,6 +972,10 @@ export type CreateReviewMutationVariables = Exact<{
   battery?: Maybe<Scalars['Float']>;
   software?: Maybe<Scalars['Float']>;
   camera?: Maybe<Scalars['Float']>;
+  gpu?: Maybe<Scalars['Float']>;
+  memory?: Maybe<Scalars['Float']>;
+  thermals?: Maybe<Scalars['Float']>;
+  ports?: Maybe<Scalars['Float']>;
   images: Array<Scalars['String']>;
 }>;
 
@@ -977,7 +993,7 @@ export type CreateReviewMutation = (
         & Pick<User, 'id' | 'username' | 'avatar'>
       ), rating: (
         { __typename?: 'ReviewRating' }
-        & Pick<ReviewRating, 'reviewId' | 'deviceId' | 'overall' | 'battery' | 'software' | 'display' | 'camera' | 'processor'>
+        & Pick<ReviewRating, 'reviewId' | 'deviceId' | 'overall' | 'battery' | 'software' | 'display' | 'camera' | 'processor' | 'gpu' | 'memory' | 'thermals' | 'ports'>
       ) }
     )>> }
   )> }
@@ -993,6 +1009,10 @@ export type UpdateReviewMutationVariables = Exact<{
   battery?: Maybe<Scalars['Float']>;
   software?: Maybe<Scalars['Float']>;
   camera?: Maybe<Scalars['Float']>;
+  gpu?: Maybe<Scalars['Float']>;
+  memory?: Maybe<Scalars['Float']>;
+  thermals?: Maybe<Scalars['Float']>;
+  ports?: Maybe<Scalars['Float']>;
   images: Array<Scalars['String']>;
 }>;
 
@@ -1010,7 +1030,7 @@ export type UpdateReviewMutation = (
         & Pick<User, 'id' | 'username' | 'avatar'>
       ), rating: (
         { __typename?: 'ReviewRating' }
-        & Pick<ReviewRating, 'reviewId' | 'deviceId' | 'overall' | 'battery' | 'software' | 'display' | 'camera' | 'processor'>
+        & Pick<ReviewRating, 'reviewId' | 'deviceId' | 'overall' | 'battery' | 'software' | 'display' | 'camera' | 'processor' | 'gpu' | 'memory' | 'thermals' | 'ports'>
       ) }
     )>> }
   )> }
@@ -1170,7 +1190,7 @@ export type DeviceDetailQuery = (
     & Pick<DeviceResponse, 'status' | 'message'>
     & { data?: Maybe<Array<(
       { __typename?: 'Device' }
-      & Pick<Device, 'id' | 'brand' | 'name' | 'category' | 'coverImage'>
+      & Pick<Device, 'id' | 'brand' | 'name' | 'category' | 'price' | 'buyLink' | 'coverImage'>
       & { followers?: Maybe<Array<(
         { __typename?: 'DeviceFollower' }
         & Pick<DeviceFollower, 'userId'>
@@ -1226,7 +1246,7 @@ export type DeviceRatingsQuery = (
     & Pick<ReviewRatingResponse, 'status' | 'message'>
     & { data?: Maybe<Array<(
       { __typename?: 'ReviewRating' }
-      & Pick<ReviewRating, 'overall' | 'display' | 'camera' | 'software' | 'battery' | 'processor'>
+      & Pick<ReviewRating, 'overall' | 'display' | 'camera' | 'software' | 'battery' | 'processor' | 'ports' | 'gpu' | 'memory' | 'thermals'>
     )>> }
   ) }
 );
@@ -1346,7 +1366,7 @@ export type ReviewsQuery = (
         & Pick<ReviewImage, 'path'>
       )>, rating: (
         { __typename?: 'ReviewRating' }
-        & Pick<ReviewRating, 'reviewId' | 'deviceId' | 'overall' | 'battery' | 'software' | 'display' | 'camera' | 'processor'>
+        & Pick<ReviewRating, 'reviewId' | 'deviceId' | 'overall' | 'battery' | 'software' | 'display' | 'camera' | 'processor' | 'gpu' | 'memory' | 'thermals' | 'ports'>
       ) }
     )>> }
   ) }
@@ -1899,7 +1919,7 @@ export type CreateReportMutationHookResult = ReturnType<typeof useCreateReportMu
 export type CreateReportMutationResult = Apollo.MutationResult<CreateReportMutation>;
 export type CreateReportMutationOptions = Apollo.BaseMutationOptions<CreateReportMutation, CreateReportMutationVariables>;
 export const CreateReviewDocument = gql`
-    mutation CreateReview($deviceId: String!, $title: String!, $content: String!, $overall: Float, $display: Float, $processor: Float, $battery: Float, $software: Float, $camera: Float, $images: [String!]!) {
+    mutation CreateReview($deviceId: String!, $title: String!, $content: String!, $overall: Float, $display: Float, $processor: Float, $battery: Float, $software: Float, $camera: Float, $gpu: Float, $memory: Float, $thermals: Float, $ports: Float, $images: [String!]!) {
   createReview(
     deviceId: $deviceId
     content: $content
@@ -1911,6 +1931,10 @@ export const CreateReviewDocument = gql`
     processor: $processor
     camera: $camera
     images: $images
+    gpu: $gpu
+    memory: $memory
+    thermals: $thermals
+    ports: $ports
   ) {
     status
     message
@@ -1934,6 +1958,10 @@ export const CreateReviewDocument = gql`
         display
         camera
         processor
+        gpu
+        memory
+        thermals
+        ports
       }
     }
   }
@@ -1963,6 +1991,10 @@ export type CreateReviewMutationFn = Apollo.MutationFunction<CreateReviewMutatio
  *      battery: // value for 'battery'
  *      software: // value for 'software'
  *      camera: // value for 'camera'
+ *      gpu: // value for 'gpu'
+ *      memory: // value for 'memory'
+ *      thermals: // value for 'thermals'
+ *      ports: // value for 'ports'
  *      images: // value for 'images'
  *   },
  * });
@@ -1974,11 +2006,11 @@ export type CreateReviewMutationHookResult = ReturnType<typeof useCreateReviewMu
 export type CreateReviewMutationResult = Apollo.MutationResult<CreateReviewMutation>;
 export type CreateReviewMutationOptions = Apollo.BaseMutationOptions<CreateReviewMutation, CreateReviewMutationVariables>;
 export const UpdateReviewDocument = gql`
-    mutation UpdateReview($id: String!, $title: String, $content: String, $overall: Float, $display: Float, $processor: Float, $battery: Float, $software: Float, $camera: Float, $images: [String!]!) {
+    mutation UpdateReview($id: String!, $title: String, $content: String, $overall: Float, $display: Float, $processor: Float, $battery: Float, $software: Float, $camera: Float, $gpu: Float, $memory: Float, $thermals: Float, $ports: Float, $images: [String!]!) {
   updateReview(
     id: $id
     reviewInput: {title: $title, content: $content}
-    ratingInput: {overall: $overall, battery: $battery, software: $software, display: $display, processor: $processor, camera: $camera}
+    ratingInput: {overall: $overall, battery: $battery, software: $software, display: $display, processor: $processor, camera: $camera, gpu: $gpu, memory: $memory, thermals: $thermals, ports: $ports}
     images: $images
   ) {
     status
@@ -2003,6 +2035,10 @@ export const UpdateReviewDocument = gql`
         display
         camera
         processor
+        gpu
+        memory
+        thermals
+        ports
       }
     }
   }
@@ -2032,6 +2068,10 @@ export type UpdateReviewMutationFn = Apollo.MutationFunction<UpdateReviewMutatio
  *      battery: // value for 'battery'
  *      software: // value for 'software'
  *      camera: // value for 'camera'
+ *      gpu: // value for 'gpu'
+ *      memory: // value for 'memory'
+ *      thermals: // value for 'thermals'
+ *      ports: // value for 'ports'
  *      images: // value for 'images'
  *   },
  * });
@@ -2389,6 +2429,8 @@ export const DeviceDetailDocument = gql`
       brand
       name
       category
+      price
+      buyLink
       coverImage
       followers {
         userId
@@ -2513,6 +2555,10 @@ export const DeviceRatingsDocument = gql`
       software
       battery
       processor
+      ports
+      gpu
+      memory
+      thermals
     }
   }
 }
@@ -2757,6 +2803,10 @@ export const ReviewsDocument = gql`
         display
         camera
         processor
+        gpu
+        memory
+        thermals
+        ports
       }
     }
   }

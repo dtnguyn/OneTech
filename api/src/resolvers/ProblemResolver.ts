@@ -7,6 +7,7 @@ import {
   Mutation,
   Query,
   Resolver,
+  UseMiddleware,
 } from "type-graphql";
 import { getConnection, getRepository } from "typeorm";
 
@@ -19,6 +20,7 @@ import { MyContext } from "../types";
 import { Notification } from "../entities/Notification";
 import { Device } from "../entities/Device";
 import { User } from "../entities/User";
+import { checkRateLimit, rateLimit } from "../rateLimit";
 
 @InputType()
 class UpdateProblemInput {
@@ -32,7 +34,7 @@ class UpdateProblemInput {
   isSolve?: boolean;
 }
 
-const sleep = (ms: number) => new Promise((res) => setTimeout(res, ms));
+// const sleep = (ms: number) => new Promise((res) => setTimeout(res, ms));
 @Resolver()
 export class ProblemResolver {
   problemRepo = getRepository(DeviceProblem);
@@ -42,7 +44,7 @@ export class ProblemResolver {
 
   @Mutation(() => ProblemResponse, { nullable: true })
   async createProblem(
-    @Ctx() { req, io }: MyContext,
+    @Ctx() { req, io, redis }: MyContext,
     @Arg("title") title: string,
     @Arg("content") content: string,
     @Arg("deviceId") deviceId: string,
@@ -54,12 +56,15 @@ export class ProblemResolver {
         message: "You haven't logged in. Please Log in and try again.",
       };
     }
+
     const authorId = (req.session as any).userId;
     const queryRunner = getConnection().createQueryRunner();
     await queryRunner.connect();
     await queryRunner.startTransaction();
 
     try {
+      await checkRateLimit(30, redis, authorId, "createProblem");
+
       const manager = queryRunner.manager;
 
       const newProblem = await manager.create(DeviceProblem, {
@@ -71,16 +76,10 @@ export class ProblemResolver {
 
       await manager.insert(DeviceProblem, newProblem);
 
-      console.log(
-        "Fix bugs",
-        await manager.findOne(DeviceProblem, { id: newProblem.id })
-      );
-
       if (images.length != 0) {
         await new Promise((resolve, reject) => {
           let counter = 0;
           for (const image of images) {
-            console.log("Fix bugs image", image, newProblem.id);
             manager
               .insert(ProblemImage, {
                 path: image,
@@ -93,7 +92,6 @@ export class ProblemResolver {
                 }
               })
               .catch((e) => {
-                console.log(e.message);
                 reject(e);
               });
           }
@@ -139,7 +137,6 @@ export class ProblemResolver {
       } else if (!followers) {
         throw new Error("Couldn't find device.");
       }
-      console.log("Weird");
       await queryRunner.commitTransaction();
       await queryRunner.release();
 
@@ -244,7 +241,6 @@ export class ProblemResolver {
                 }
               })
               .catch((e) => {
-                console.log(e.message);
                 reject(e);
               });
           }

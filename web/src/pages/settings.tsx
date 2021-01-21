@@ -20,7 +20,7 @@ const Settings: React.FC<SettingsProps> = ({}) => {
 
   const [updateUserSettingMutation, {}] = useUpdateUserSettingMutation();
 
-  const { data } = useSettingQuery({
+  const { data, error } = useSettingQuery({
     variables: {
       userId: user?.id!,
     },
@@ -33,6 +33,12 @@ const Settings: React.FC<SettingsProps> = ({}) => {
       setSetting(arr[0]);
     }
   }, [data]);
+
+  useEffect(() => {
+    if (error) {
+      alert(error);
+    }
+  }, [error]);
 
   return (
     <div className={styles.settingsPageContainer}>

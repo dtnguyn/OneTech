@@ -7,6 +7,7 @@ import {
   Mutation,
   Query,
   Resolver,
+  UseMiddleware,
 } from "type-graphql";
 import { getConnection, getRepository } from "typeorm";
 import { SolutionStar, SolutionStarResponse } from "../entities/SolutionStar";
@@ -15,6 +16,7 @@ import { DeviceProblem } from "../entities/DeviceProblem";
 import { MyContext } from "../types";
 import { Notification } from "../entities/Notification";
 import { User } from "../entities/User";
+import { checkRateLimit } from "../rateLimit";
 
 @InputType()
 class UpdateSolutionInput {
@@ -32,7 +34,7 @@ export class SolutionResolver {
 
   @Mutation(() => SolutionResponse)
   async createSolution(
-    @Ctx() { req, io }: MyContext,
+    @Ctx() { req, io, redis }: MyContext,
     @Arg("content") content: string,
     @Arg("problemId") problemId: string,
     @Arg("images", () => [String]) images: string[]
@@ -51,6 +53,7 @@ export class SolutionResolver {
     await queryRunner.startTransaction();
 
     try {
+      await checkRateLimit(30, redis, authorId, "createSolution");
       const manager = queryRunner.manager;
       const solution = await manager.create(Solution, {
         content,
@@ -224,14 +227,13 @@ export class SolutionResolver {
         throw new Error("You are not the author of this post.");
       } else {
         await this.solutionRepo.delete({ id });
-        console.log("Delete successfully");
+
         return {
           status: true,
           message: "Delete solution successfully.",
         };
       }
     } catch (error) {
-      console.log("Delete error");
       return {
         status: false,
         message: error.message,

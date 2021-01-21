@@ -1,27 +1,22 @@
+import { useState } from "react";
+import { useAlert } from "react-alert";
+import { useAuth } from "../../context/AuthContext";
 import {
   Solution,
   SolutionStar,
   useCreateReportMutation,
-  useCreateSolutionMutation,
   useDeleteImagesMutation,
   useDeleteSolutionMutation,
   User,
-  useSolutionsQuery,
-  useToggleSolutionPickedMutation,
   useToggleSolutionStarMutation,
   useUpdateSolutionMutation,
 } from "../../generated/graphql";
-
 import styles from "../../styles/ProblemDetail.module.css";
-import { Button } from "react-bootstrap";
-import { useEffect, useState } from "react";
-import CustomEditor from "../CustomEditor";
-import { useAuth } from "../../context/AuthContext";
 import ConfirmationDialog from "../ConfirmationDialog";
-import SolutionItem from "../ProblemDetail/SolutionItem";
-import { useAlert } from "react-alert";
-import FormDialog from "../FormDialog";
+import CustomEditor from "../CustomEditor";
 import Empty from "../Empty";
+import FormDialog from "../FormDialog";
+import SolutionItem from "../ProblemDetail/SolutionItem";
 
 interface SolutionsProps {
   user: User;

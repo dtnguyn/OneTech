@@ -44,11 +44,10 @@ const Body: React.FC<BodyProps> = ({ deviceId, deviceCategory }) => {
   const [addingReview, setAddingReview] = useState<boolean>(false);
   const [editingReview, setEditingReview] = useState<boolean>(false);
 
-  const { user } = useAuth();
   const { error: alert } = useAlert();
   const [switchState, setSwitchState] = useState<string>("problems");
 
-  const { data: problemsData } = useProblemsQuery({
+  const { data: problemsData, error: problemsError } = useProblemsQuery({
     variables: {
       deviceId,
       title: searchValue,
@@ -57,7 +56,7 @@ const Body: React.FC<BodyProps> = ({ deviceId, deviceCategory }) => {
     client: client,
   });
 
-  const { data: reviewsData } = useReviewsQuery({
+  const { data: reviewsData, error: reviewsError } = useReviewsQuery({
     variables: {
       deviceId,
       title: searchValue,
@@ -102,6 +101,16 @@ const Body: React.FC<BodyProps> = ({ deviceId, deviceCategory }) => {
       setReviews([]);
     }
   }, [reviewsData]);
+
+  useEffect(() => {
+    if (problemsError) {
+      alert(problemsError.message);
+    }
+
+    if (reviewsError) {
+      alert(reviewsError.message);
+    }
+  }, [problemsError, reviewsError]);
 
   return (
     <div className={styles.deviceDetailBodyContainer}>

@@ -2,6 +2,7 @@ import { Divider } from "@material-ui/core";
 import { GetServerSideProps } from "next";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
+import { useAlert } from "react-alert";
 import Body from "../../components/DeviceDetail/DeviceDetailBody";
 import Header from "../../components/DeviceDetail/DeviceDetailHeader";
 import { ProblemContext } from "../../context/ProblemContext";
@@ -22,11 +23,12 @@ interface DeviceDetailProps {}
 const DeviceDetail: React.FC<DeviceDetailProps> = ({}) => {
   const router = useRouter();
   const { id } = router.query;
+  const { error: alert } = useAlert();
   const [device, setDevice] = useState<Device>();
   const [problems, setProblems] = useState<DeviceProblem[]>([]);
   const [reviews, setReviews] = useState<Review[]>([]);
   const [rating, setRating] = useState<ReviewRating>();
-  const { data, loading } = useDeviceDetailQuery({
+  const { data, error } = useDeviceDetailQuery({
     variables: {
       id: id as string,
     },
@@ -49,9 +51,16 @@ const DeviceDetail: React.FC<DeviceDetailProps> = ({}) => {
   useEffect(() => {
     const ratings = ratingData?.ratings?.data as ReviewRating[];
     if (ratings && ratings?.length === 1) {
+      console.log(ratings);
       setRating(ratings[0]);
     }
   }, [ratingData]);
+
+  useEffect(() => {
+    if (error) {
+      alert(error?.message);
+    }
+  }, [error]);
 
   if (!device) return null;
 

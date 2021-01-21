@@ -21,12 +21,15 @@ const UserPage: React.FC<UserPageProps> = ({}) => {
   const [user, setUser] = useState<User>();
   const [followedDevices, setFollowedDevices] = useState<Device[]>([]);
   const { id } = useRouter().query;
-  const { data: userData } = useSingleUserQuery({
+  const { data: userData, error: userError } = useSingleUserQuery({
     variables: {
       id: id as string,
     },
   });
-  const { data: followedDevicesData } = useDevicesQuery({
+  const {
+    data: followedDevicesData,
+    error: followedDevicesError,
+  } = useDevicesQuery({
     variables: {
       userId: id as string,
     },
@@ -46,6 +49,14 @@ const UserPage: React.FC<UserPageProps> = ({}) => {
       setUser(arr[0]);
     }
   }, [userData]);
+
+  useEffect(() => {
+    if (userError) {
+      alert(userError.message);
+    }
+
+    if (followedDevicesError) alert(followedDevicesError.message);
+  }, [userError, followedDevicesError]);
 
   if (!user) return null;
   return (

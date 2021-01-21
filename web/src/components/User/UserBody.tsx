@@ -12,10 +12,12 @@ interface BodyProps {
 const Body: React.FC<BodyProps> = ({ user, devices }) => {
   return (
     <div className={styles.userPageBodyContainer}>
-      <DeviceCarousel
-        title={`Followed devices (${devices.length})`}
-        devices={devices}
-      />
+      {devices.length ? (
+        <DeviceCarousel
+          title={`Followed devices (${devices.length})`}
+          devices={devices}
+        />
+      ) : null}
 
       <div className="divider" />
       <UserPosts user={user} />

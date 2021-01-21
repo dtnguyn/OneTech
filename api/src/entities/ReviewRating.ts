@@ -59,6 +59,22 @@ export class ReviewRating {
   @Column({ nullable: true, type: "decimal" })
   processor: number | null;
 
+  @Field(() => Float, { nullable: true })
+  @Column({ nullable: true, type: "decimal" })
+  gpu: number | null;
+
+  @Field(() => Float, { nullable: true })
+  @Column({ nullable: true, type: "decimal" })
+  memory: number | null;
+
+  @Field(() => Float, { nullable: true })
+  @Column({ nullable: true, type: "decimal" })
+  thermals: number | null;
+
+  @Field(() => Float, { nullable: true })
+  @Column({ nullable: true, type: "decimal" })
+  ports: number | null;
+
   @Field(() => String)
   @CreateDateColumn()
   createdAt: Date;

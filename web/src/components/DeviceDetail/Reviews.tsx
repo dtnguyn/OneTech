@@ -56,6 +56,10 @@ const Reviews: React.FC<ReviewsProps> = ({
       battery: 0,
       software: 0,
       camera: 0,
+      gpu: 0,
+      memory: 0,
+      thermals: 0,
+      ports: 0,
     } as any,
   });
 
@@ -140,6 +144,10 @@ const Reviews: React.FC<ReviewsProps> = ({
         processor: rating.processor,
         software: rating.software,
         camera: rating.camera,
+        gpu: rating.gpu,
+        memory: rating.memory,
+        thermals: rating.thermals,
+        ports: rating.ports,
         images,
       },
       update: (cache) => {
@@ -178,6 +186,10 @@ const Reviews: React.FC<ReviewsProps> = ({
         battery: rating.battery,
         software: rating.software,
         camera: rating.camera,
+        gpu: rating.gpu,
+        memory: rating.memory,
+        thermals: rating.thermals,
+        ports: rating.ports,
         images,
       },
       update: (cache) => {
