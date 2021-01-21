@@ -4,23 +4,26 @@ import { Device, useDevicesQuery } from "../../generated/graphql";
 import styles from "../../styles/Devices.module.css";
 import SearchBar from "../SearchBar";
 import { useDarkMode } from "next-dark-mode";
+import { useAlert } from "react-alert";
 
 interface HeaderProps {}
 
 const Header: React.FC<HeaderProps> = ({}) => {
-  const { devices, setDevices } = useDevice();
+  const { setDevices } = useDevice();
   const [autoComplete, setAutoComplete] = useState<string>();
   const [searchValue, setSearchValue] = useState<string>("");
   const [inputValue, setInputValue] = useState<string>("");
   const [initialState, setInitialState] = useState<boolean>(true);
   const { darkModeActive } = useDarkMode();
   const [category, setCategory] = useState<string>("phone");
-  const { data } = useDevicesQuery({
+  const { data, error } = useDevicesQuery({
     variables: {
       name: searchValue,
       category,
     },
   });
+
+  const { error: alert } = useAlert();
 
   let timeout: NodeJS.Timeout;
   const handleSearchDevice: (event: ChangeEvent<HTMLInputElement>) => void = (
@@ -65,6 +68,12 @@ const Header: React.FC<HeaderProps> = ({}) => {
     setInitialState(false);
   }, [data]);
 
+  useEffect(() => {
+    if (error) {
+      alert(error.message);
+    }
+  }, [error]);
+
   return (
     <div
       className={
@@ -77,7 +86,7 @@ const Header: React.FC<HeaderProps> = ({}) => {
       <SearchBar
         inputValue={inputValue}
         placeHolder="Enter your device..."
-        autoComplete={autoComplete}
+        autoComplete=""
         handleSearch={handleSearchDevice}
         handleKeyPress={handleKeyPress}
       />

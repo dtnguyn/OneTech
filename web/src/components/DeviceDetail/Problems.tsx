@@ -1,14 +1,10 @@
-import ProblemItem from "./ProblemItem";
-
-import styles from "../../styles/DeviceDetail.module.css";
+import React, { useState } from "react";
+import { useAlert } from "react-alert";
+import { useAuth } from "../../context/AuthContext";
+import { useProblem } from "../../context/ProblemContext";
 import {
-  DeviceDetailDocument,
-  DeviceDetailQuery,
   DeviceProblem,
   DeviceProblemStar,
-  DevicesQuery,
-  ProblemsDocument,
-  ProblemsQuery,
   useCreateProblemMutation,
   useCreateReportMutation,
   useDeleteImagesMutation,
@@ -16,14 +12,12 @@ import {
   useToggleProblemStarMutation,
   useUpdateProblemMutation,
 } from "../../generated/graphql";
-import { useProblem } from "../../context/ProblemContext";
-import { useAuth } from "../../context/AuthContext";
-import React, { useState } from "react";
-import CustomEditor from "../CustomEditor";
+import styles from "../../styles/DeviceDetail.module.css";
 import ConfirmationDialog from "../ConfirmationDialog";
-import { useAlert } from "react-alert";
-import FormDialog from "../FormDialog";
+import CustomEditor from "../CustomEditor";
 import Empty from "../Empty";
+import FormDialog from "../FormDialog";
+import ProblemItem from "./ProblemItem";
 
 interface ProblemsProps {
   deviceId: string;
@@ -119,6 +113,7 @@ const Problems: React.FC<ProblemsProps> = ({
       },
     })
       .then((res) => {
+        console.log(res);
         if (res.data?.createProblem?.status) {
           closeAdding();
           resetProblemValue();
@@ -127,6 +122,7 @@ const Problems: React.FC<ProblemsProps> = ({
         }
       })
       .catch((error) => {
+        console.log(error);
         alert(error.message);
       });
   };

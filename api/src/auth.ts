@@ -41,12 +41,17 @@ const handleRegister = async (
   username: string,
   avatar: string
 ) => {
+  const queryRunner = getConnection().createQueryRunner();
+  await queryRunner.connect();
+  await queryRunner.startTransaction();
   try {
-    const queryRunner = getConnection().createQueryRunner();
-    await queryRunner.connect();
-    await queryRunner.startTransaction();
-
     const manager = queryRunner.manager;
+
+    const checkUser = await manager.findOne(User, { email });
+    console.log("checkUser: ", checkUser);
+    if (checkUser) {
+      throw new Error("This email is already used.");
+    }
 
     const newUser = await manager.create(User, {
       oauthId,
@@ -59,18 +64,14 @@ const handleRegister = async (
 
     await manager.insert(UserSetting, { userId: newUser.id });
 
-    queryRunner.commitTransaction();
+    await queryRunner.commitTransaction();
 
     return newUser;
   } catch (error) {
+    await queryRunner.rollbackTransaction();
     console.log(error.message);
     return null;
   }
-};
-
-const updateUserEmail = (id: string, email: string) => {
-  const repo = getRepository(User);
-  repo.update({ id }, { email });
 };
 
 passport.use(
@@ -176,20 +177,21 @@ router.get(
             (req.user as any).username,
             (req.user as any).avatar
           );
+          if (!user) throw new Error("Cannot create this user.");
           (req.session as any).userId = user?.id;
           console.log("Successful register!");
         } catch (e) {
           console.log("Fail to register", e.message);
           (req.session as any).email = undefined;
-          return res.redirect(500, "http://localhost:3000/auth");
+          return res.redirect(500, `${process.env.CLIENT_URL}/auth`);
         }
       } else {
         console.log("Register must provide email");
-        return res.redirect(404, "http://localhost:3000/auth");
+        return res.redirect(404, `${process.env.CLIENT_URL}/auth`);
       }
     }
     if ((req.session as any).email) (req.session as any).email = undefined;
-    res.redirect(301, "http://localhost:3000/");
+    res.redirect(301, `${process.env.CLIENT_URL}`);
   }
 );
 
@@ -222,15 +224,15 @@ router.get(
         } catch (e) {
           console.log("Fail to register", e.message);
           (req.session as any).email = undefined;
-          return res.redirect(500, "http://localhost:3000/auth");
+          return res.redirect(500, `${process.env.CLIENT_URL}/auth`);
         }
       } else {
         console.log("Register must provide email");
-        return res.redirect(404, "http://localhost:3000/auth");
+        return res.redirect(404, `${process.env.CLIENT_URL}/auth`);
       }
     }
     if ((req.session as any).email) (req.session as any).email = undefined;
-    res.redirect(301, "http://localhost:3000/");
+    res.redirect(301, `${process.env.CLIENT_URL}`);
   }
 );
 
@@ -260,15 +262,15 @@ router.get(
         } catch (e) {
           console.log("Fail to register", e.message);
           (req.session as any).email = undefined;
-          return res.redirect(500, "http://localhost:3000/auth");
+          return res.redirect(500, `${process.env.CLIENT_URL}/auth`);
         }
       } else {
         console.log("Register must provide email");
-        return res.redirect(404, "http://localhost:3000/auth");
+        return res.redirect(404, `${process.env.CLIENT_URL}/auth`);
       }
     }
     if ((req.session as any).email) (req.session as any).email = undefined;
-    res.redirect(301, "http://localhost:3000/");
+    res.redirect(301, `${process.env.CLIENT_URL}`);
   }
 );
 

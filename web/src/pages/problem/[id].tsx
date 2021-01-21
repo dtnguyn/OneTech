@@ -9,6 +9,7 @@ import {
 import { withApollo } from "../../utils/withApollo";
 import styles from "../../styles/ProblemDetail.module.css";
 import Solutions from "../../components/ProblemDetail/Solutions";
+import { useAlert } from "react-alert";
 interface ProblemDetailProps {}
 
 const ProblemDetail: React.FC<ProblemDetailProps> = ({}) => {
@@ -16,7 +17,7 @@ const ProblemDetail: React.FC<ProblemDetailProps> = ({}) => {
   const { id } = router.query;
   const [problem, setProblem] = useState<DeviceProblem>();
   const [solutions, setSolutions] = useState<Solution[]>();
-
+  const { error: alert } = useAlert();
   const { data, loading, error } = useProblemDetailQuery({
     variables: {
       id: id as string,
@@ -34,6 +35,12 @@ const ProblemDetail: React.FC<ProblemDetailProps> = ({}) => {
       }
     }
   }, [data]);
+
+  useEffect(() => {
+    if (error) {
+      alert(error?.message);
+    }
+  }, [error]);
 
   if (!problem || !solutions) return null;
 

@@ -72,4 +72,4 @@ function MyApp({ Component, pageProps }: any) {
   );
 }
 
-export default withDarkMode(MyApp);
+export default withDarkMode(MyApp, {});

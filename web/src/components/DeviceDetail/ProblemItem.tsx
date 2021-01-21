@@ -8,6 +8,8 @@ import classes from "@material-ui/styles";
 import { useAuth } from "../../context/AuthContext";
 import { useRouter } from "next/router";
 import { clearInterval } from "timers";
+import React from "react";
+import { ReadMore } from "react-read-more";
 
 interface ProblemItemProps {
   problem: DeviceProblem;

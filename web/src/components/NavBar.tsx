@@ -1,40 +1,46 @@
-import React, { useEffect, useState } from "react";
-import { Dropdown, Nav, Navbar, NavDropdown } from "react-bootstrap";
-import styles from "../styles/NavBar.module.css";
+import { Avatar } from "@material-ui/core";
+import { useDarkMode } from "next-dark-mode";
 import Link from "next/link";
+import { useRouter } from "next/router";
+import React, { useEffect, useState } from "react";
+import { useAlert } from "react-alert";
+import { Nav, Navbar } from "react-bootstrap";
+import socketIOClient from "socket.io-client";
 import { useAuth } from "../context/AuthContext";
-import { Avatar, Divider } from "@material-ui/core";
 import {
   Notification,
   useLogoutMutation,
   useNotificationsQuery,
 } from "../generated/graphql";
-import { client } from "../utils/withApollo";
-import { Router, useRouter } from "next/router";
-import { useDarkMode } from "next-dark-mode";
-import { useAlert } from "react-alert";
+import styles from "../styles/NavBar.module.css";
 import useWindowDimensions from "../utils/useWindowDimensions";
-import socketIOClient from "socket.io-client";
+import { client } from "../utils/withApollo";
 
 interface NavBarProps {}
 
 const NavBar: React.FC<NavBarProps> = ({}) => {
-  const { user, setUser } = useAuth();
+  const { user } = useAuth();
   const [dropdown, setDropDown] = useState(false);
   const { error: alert } = useAlert();
-  const [small, setSmall] = useState(false);
+
   const router = useRouter();
   const [unseen, setUnseen] = useState<Notification[]>([]);
   const [logoutMutation, {}] = useLogoutMutation({
     client: client,
   });
-  const { data, refetch } = useNotificationsQuery({
+  const { data, error, refetch } = useNotificationsQuery({
     variables: { unseen: true },
     client,
   });
   const { darkModeActive } = useDarkMode();
 
   const {} = useWindowDimensions();
+
+  useEffect(() => {
+    if (error) {
+      alert(error.message);
+    }
+  }, [error]);
 
   useEffect(() => {
     const socket = socketIOClient("http://localhost:4000");
@@ -148,7 +154,19 @@ const NavBar: React.FC<NavBarProps> = ({}) => {
                 <Link href="/device">
                   <a
                     className={styles.navbarLink}
-                    onClick={() => setDropDown(false)}
+                    onClick={() => {
+                      setDropDown(false);
+                      logoutMutation({
+                        update: (cache) => cache.evict({ fieldName: "me" }),
+                      }).then((res) => {
+                        const response = res.data?.logout;
+                        if (response?.status) {
+                          router.push("/auth");
+                        } else {
+                          alert(response?.message);
+                        }
+                      });
+                    }}
                   >
                     Logout
                   </a>

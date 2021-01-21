@@ -19,7 +19,7 @@ const Notifications: React.FC<NotificationsProps> = ({}) => {
   const { user } = useAuth();
 
   const [notifications, setNotifications] = useState<Notification[]>();
-  const { data, refetch } = useNotificationsQuery({
+  const { data, error, refetch } = useNotificationsQuery({
     variables: {},
   });
   const [deleteNotificationMutation, {}] = useDeleteNotificationMutation();
@@ -75,6 +75,13 @@ const Notifications: React.FC<NotificationsProps> = ({}) => {
         alert(error.message);
       });
   }, [data]);
+
+  useEffect(() => {
+    if (error) {
+      alert(error);
+    }
+  }, [error]);
+
   return (
     <div className={styles.notificationsPageContainer}>
       <p className={styles.notificationsPageTitle}>Notifications</p>

@@ -35,6 +35,8 @@ query DeviceDetail($id: String!) {
       brand
       name
       category
+      price
+      buyLink
       coverImage
       followers {
         userId
@@ -132,6 +134,10 @@ query deviceRatings($deviceId: String!) {
       software
       battery
       processor
+      ports
+      gpu
+      memory
+      thermals
     }
   }
 }

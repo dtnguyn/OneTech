@@ -88,7 +88,7 @@ class UpdateDeviceSpecInput {
   portsSimplify?: string;
 }
 
-const sleep = (ms: number) => new Promise((res) => setTimeout(res, ms));
+// const sleep = (ms: number) => new Promise((res) => setTimeout(res, ms));
 @Resolver()
 export class DeviceResolver {
   deviceRepo = getRepository(Device);
@@ -148,6 +148,7 @@ export class DeviceResolver {
         name,
         category,
         brand,
+        price,
         buyLink,
         subCategory,
         coverImage,
@@ -255,10 +256,9 @@ export class DeviceResolver {
       };
     }
     const follow = await this.followRepo.findOne({ userId, deviceId });
-    console.log("follow: ", follow);
+
     if (follow) {
       await this.followRepo.delete({ userId, deviceId }).catch((err) => {
-        console.log("Error when un-follow device: ", err);
         return {
           status: false,
           message: err.message,
@@ -271,7 +271,6 @@ export class DeviceResolver {
     } else {
       const newFollow = this.followRepo.create({ userId, deviceId });
       await this.followRepo.save(newFollow).catch((err) => {
-        console.log("Error when follow device: ", err);
         return {
           status: false,
           message: err.message,
@@ -323,7 +322,6 @@ export class DeviceResolver {
 
   @Query(() => DeviceResponse, { nullable: true })
   async singleDevice(@Arg("id") id: string) {
-    console.log("Getting single device");
     try {
       const device = await this.deviceRepo
         .createQueryBuilder("device")
@@ -332,15 +330,12 @@ export class DeviceResolver {
         .where("device.id = :id", { id })
         .getOne();
 
-      console.log("Got device detail");
-
       return {
         status: true,
         message: "Get a device successfully.",
         data: [device],
       };
     } catch (e) {
-      console.log(e.message);
       return {
         status: false,
         message: e.message,

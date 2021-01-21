@@ -9,10 +9,12 @@ import {
   Mutation,
   Query,
   Resolver,
+  UseMiddleware,
 } from "type-graphql";
 import { getConnection, getRepository } from "typeorm";
 import { ReviewImage } from "../entities/ReviewImage";
 import { MyContext } from "../types";
+import { checkRateLimit } from "../rateLimit";
 
 @InputType()
 class UpdateReviewInput {
@@ -42,6 +44,18 @@ class UpdateRatingInput {
 
   @Field(() => Float, { nullable: true })
   battery?: number;
+
+  @Field(() => Float, { nullable: true })
+  gpu?: number;
+
+  @Field(() => Float, { nullable: true })
+  memory?: number;
+
+  @Field(() => Float, { nullable: true })
+  thermals?: number;
+
+  @Field(() => Float, { nullable: true })
+  ports?: number;
 }
 
 @Resolver()
@@ -51,7 +65,7 @@ export class ReviewResolver {
 
   @Mutation(() => ReviewResponse, { nullable: true })
   async createReview(
-    @Ctx() { req }: MyContext,
+    @Ctx() { req, redis }: MyContext,
     @Arg("title") title: string,
     @Arg("content") content: string,
     @Arg("deviceId") deviceId: string,
@@ -61,6 +75,10 @@ export class ReviewResolver {
     @Arg("software", () => Float, { nullable: true }) software: number | null,
     @Arg("camera", () => Float, { nullable: true }) camera: number | null,
     @Arg("processor", () => Float, { nullable: true }) processor: number | null,
+    @Arg("gpu", () => Float, { nullable: true }) gpu: number | null,
+    @Arg("memory", () => Float, { nullable: true }) memory: number | null,
+    @Arg("thermals", () => Float, { nullable: true }) thermals: number | null,
+    @Arg("ports", () => Float, { nullable: true }) ports: number | null,
     @Arg("images", () => [String]) images: string[]
   ) {
     if (!(req.session as any).userId) {
@@ -76,6 +94,7 @@ export class ReviewResolver {
     await queryRunner.startTransaction();
 
     try {
+      await checkRateLimit(30, redis, authorId, "createReview");
       const manager = queryRunner.manager;
       const review = await manager.create(Review, {
         title,
@@ -93,6 +112,10 @@ export class ReviewResolver {
         software,
         camera,
         processor,
+        gpu,
+        memory,
+        thermals,
+        ports,
       });
 
       if (images.length != 0) {
@@ -111,7 +134,6 @@ export class ReviewResolver {
                 }
               })
               .catch((e) => {
-                console.log(e.message);
                 reject(e);
               });
           }
@@ -189,7 +211,6 @@ export class ReviewResolver {
                 }
               })
               .catch((e) => {
-                console.log(e.message);
                 reject(e);
               });
           }
@@ -358,7 +379,6 @@ export class ReviewResolver {
         data: [newRating],
       };
     } catch (e) {
-      console.log("error");
       return {
         status: false,
         message: e.message,
@@ -415,6 +435,10 @@ export class ReviewResolver {
       .addSelect("AVG(rating.battery)", "battery")
       .addSelect("AVG(rating.software)", "software")
       .addSelect("AVG(rating.camera)", "camera")
+      .addSelect("AVG(rating.gpu)", "gpu")
+      .addSelect("AVG(rating.thermals)", "thermals")
+      .addSelect("AVG(rating.memory)", "memory")
+      .addSelect("AVG(rating.ports)", "ports")
       .where("rating.deviceId = :deviceId", { deviceId })
       .getRawOne();
 

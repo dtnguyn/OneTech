@@ -65,12 +65,13 @@
 }
 
 .deviceCarouselContainer {
-  margin: 50px 10px;
+  margin: 50px 10px 0;
+  height: fit-content !important;
   overflow: hidden !important;
 }
 
 .deviceCarouselTitle {
-  margin: 0 55px 15px;
+  margin: 0 55px;
   font-family: MSemiBold;
 }
 
@@ -82,7 +83,6 @@
   text-align: center;
   display: flex;
   height: fit-content;
-  background-color: red;
   flex-direction: column;
   align-items: center;
 }

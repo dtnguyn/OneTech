@@ -1,10 +1,9 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { useAlert } from "react-alert";
 import { useAuth } from "../../context/AuthContext";
 import {
   DeviceProblem,
   DeviceProblemStar,
-  useCreateProblemMutation,
   useCreateReportMutation,
   useDeleteImagesMutation,
   useDeleteProblemMutation,
@@ -68,13 +67,6 @@ const Problems: React.FC<ProblemsProps> = ({
   const [updateProblemMutation, {}] = useUpdateProblemMutation();
   const [deleteImagesMutation, {}] = useDeleteImagesMutation();
   const [createReportMutation] = useCreateReportMutation();
-
-  const { data: problemsData } = useProblemsQuery({
-    variables: {
-      authorId: user?.id,
-    },
-    client: client,
-  });
 
   const isStarred = (stars: DeviceProblemStar[]) => {
     for (const star of stars) {

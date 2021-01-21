@@ -10,9 +10,8 @@ interface AuthProps {}
 
 const Auth: React.FC<AuthProps> = ({}) => {
   const [isRegister, setIsRegister] = useState<boolean>(true);
-  const { user, setUser } = useAuth();
+  const { user } = useAuth();
   const router = useRouter();
-  const [switchState, setSwitchState] = useState("sign up");
   const { darkModeActive } = useDarkMode();
 
   if (user) {

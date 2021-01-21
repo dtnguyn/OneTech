@@ -6802,6 +6802,13 @@ react-property@1.0.1:
   resolved "https://registry.yarnpkg.com/react-property/-/react-property-1.0.1.tgz#4ae4211557d0a0ae050a71aa8ad288c074bea4e6"
   integrity sha512-1tKOwxFn3dXVomH6pM9IkLkq2Y8oh+fh/lYW3MJ/B03URswUTqttgckOlbxY2XHF3vPG6uanSc4dVsLW/wk3wQ==
 
+react-read-more@^1.0.0:
+  version "1.0.0"
+  resolved "https://registry.yarnpkg.com/react-read-more/-/react-read-more-1.0.0.tgz#86a9e8ac14fa37863d99187d8d500457ce32b840"
+  integrity sha1-hqnorBT6N4Y9mRh9jVAEV84yuEA=
+  dependencies:
+    rimraf "^2.5.4"
+
 react-refresh@0.8.3:
   version "0.8.3"
   resolved "https://registry.yarnpkg.com/react-refresh/-/react-refresh-0.8.3.tgz#721d4657672d400c5e3c75d063c4a85fb2d5d68f"
@@ -6842,6 +6849,11 @@ react@17.0.1:
   dependencies:
     loose-envify "^1.1.0"
     object-assign "^4.1.1"
+
+read-more-react@^1.0.10:
+  version "1.0.10"
+  resolved "https://registry.yarnpkg.com/read-more-react/-/read-more-react-1.0.10.tgz#d384d0d1403ab5705e309b44574af71810fded6f"
+  integrity sha512-8IRDU/tJX1hLbHjPxJHeUxAhm/wC8RHPSbAA+3mS7Dk13/PJf9ra7Z18apkqqPkENIoEaQI5NqhIMQIa1vOxfw==
 
 "readable-stream@1 || 2", readable-stream@^2.0.0, readable-stream@^2.0.1, readable-stream@^2.0.2, readable-stream@^2.0.6, readable-stream@^2.1.5, readable-stream@^2.2.2, readable-stream@^2.3.3, readable-stream@^2.3.6, readable-stream@~2.3.6:
   version "2.3.7"

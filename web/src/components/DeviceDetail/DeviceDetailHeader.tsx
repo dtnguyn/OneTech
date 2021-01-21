@@ -10,6 +10,7 @@ import SpecsTable from "./SpecsTable";
 import Switcher from "../Switcher";
 import { useAuth } from "../../context/AuthContext";
 import { useAlert } from "react-alert";
+import { useRouter } from "next/router";
 
 interface HeaderProps {
   device: Device;
@@ -22,6 +23,7 @@ const Header: React.FC<HeaderProps> = ({ device, rating }) => {
   const { user } = useAuth();
   const { error: alert } = useAlert();
   const [toggleDeviceFollowMutation, {}] = useToggleDeviceFollowMutation();
+  const router = useRouter();
 
   const handleToggleFollowDevice = async (
     deviceId: string,
@@ -50,6 +52,7 @@ const Header: React.FC<HeaderProps> = ({ device, rating }) => {
   };
 
   useEffect(() => {
+    console.log("Pleaseee", rating);
     if (!user) {
       setFollowed(false);
       return;
@@ -80,7 +83,10 @@ const Header: React.FC<HeaderProps> = ({ device, rating }) => {
         />
         <Button
           onClick={() => {
-            if (!user) return;
+            if (!user) {
+              alert("Please login first.");
+              return;
+            }
             handleToggleFollowDevice(device.id, user.id, followed);
           }}
           variant={followed ? "secondary" : "success"}
@@ -92,13 +98,24 @@ const Header: React.FC<HeaderProps> = ({ device, rating }) => {
 
       <div className={`col-lg-5 col-md-12 ${styles.deviceDetailHeaderSection}`}>
         <h4 className={styles.deviceDetailTitle}>{device.name}</h4>
-        <p className={styles.deviceDetailText}>$799</p>
+        <p className={styles.deviceDetailText}>
+          {device.price ? device.price : `Price not available`}
+        </p>
         <img
           className={styles.deviceDetailImage}
           alt="Device image"
           src={device.coverImage}
         />
-        <Button variant="primary" size="lg">
+        <Button
+          variant="primary"
+          disabled={!!!device.buyLink}
+          size="lg"
+          onClick={() => {
+            if (device.buyLink) {
+              router.push(device.buyLink);
+            }
+          }}
+        >
           Buy
         </Button>
       </div>

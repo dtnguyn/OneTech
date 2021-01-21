@@ -14,15 +14,6 @@ import { User, UserResponse } from "../entities/User";
 import { UserSetting, UserSettingResponse } from "../entities/UserSetting";
 
 @InputType()
-class UpdateUserInput {
-  @Field(() => String, { nullable: true })
-  username?: string;
-
-  @Field(() => String, { nullable: true })
-  email?: string;
-}
-
-@InputType()
 class UpdateSettingInput {
   @Field(() => Boolean, { nullable: true })
   isPrivate?: boolean;
@@ -63,7 +54,6 @@ export class UserResolver {
     return new Promise((resolve) => {
       req.session.destroy((err) => {
         if (err) {
-          console.log(err);
           resolve({
             status: false,
             message: err.message,
@@ -100,6 +90,11 @@ export class UserResolver {
       const user = await this.userRepo
         .createQueryBuilder("user")
         .leftJoinAndSelect("user.setting", "setting")
+        .leftJoinAndSelect("user.problems", "problems")
+        .leftJoinAndSelect("problems.stars", "problemStar")
+        .leftJoinAndSelect("user.solutions", "solutions")
+        .leftJoinAndSelect("solutions.stars", "solutionStar")
+        .leftJoinAndSelect("user.problemSolved", "solved")
         .where("user.id = :id", { id })
         .getOne();
 

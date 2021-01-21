@@ -8,6 +8,10 @@ mutation CreateReview(
   $battery: Float
   $software: Float
   $camera: Float
+  $gpu: Float
+  $memory: Float
+  $thermals: Float
+  $ports: Float
   $images: [String!]!
 ) {
   createReview(
@@ -21,6 +25,10 @@ mutation CreateReview(
     processor: $processor
     camera: $camera
     images: $images
+    gpu: $gpu
+    memory: $memory
+    thermals: $thermals
+    ports: $ports
   ) {
     status
     message
@@ -44,6 +52,10 @@ mutation CreateReview(
         display
         camera
         processor
+        gpu
+        memory
+        thermals
+        ports
       }
     }
   }
@@ -59,6 +71,10 @@ mutation UpdateReview(
   $battery: Float
   $software: Float
   $camera: Float
+  $gpu: Float
+  $memory: Float
+  $thermals: Float
+  $ports: Float
   $images: [String!]!
 ) {
   updateReview(
@@ -71,6 +87,10 @@ mutation UpdateReview(
       display: $display
       processor: $processor
       camera: $camera
+      gpu: $gpu
+      memory: $memory
+      thermals: $thermals
+      ports: $ports
     }
     images: $images
   ) {
@@ -96,6 +116,10 @@ mutation UpdateReview(
         display
         camera
         processor
+        gpu
+        memory
+        thermals
+        ports
       }
     }
   }

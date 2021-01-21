@@ -36,7 +36,7 @@ export class ImageResolver {
         message: "You haven't logged in. Please Log in and try again.",
       };
     }
-    console.log("upload images", imageId);
+
     const url: string = await new Promise((resolve, reject) => {
       var bufferStream = new stream.PassThrough();
       bufferStream.end(Buffer.from(image, "base64"));
@@ -55,13 +55,9 @@ export class ImageResolver {
           })
         )
         .on("error", function (err) {
-          console.log(err.message);
           reject(err.message);
         })
         .on("finish", function () {
-          console.log(
-            `https://storage.googleapis.com/${bucket.name}/${imageId}`
-          );
           resolve(`https://storage.googleapis.com/${bucket.name}/${imageId}`);
         });
     });
@@ -90,14 +86,13 @@ export class ImageResolver {
         message: "You haven't logged in. Please Log in and try again.",
       };
     }
-    console.log("delete images", imageIds);
+
     try {
       let counter = 0;
       await new Promise((resolve) => {
         for (const id of imageIds) {
           const file = bucket.file(id);
           file.delete((err, res) => {
-            console.log(err?.message, res?.statusCode);
             if (err) {
               rejects(err as any);
             } else {
