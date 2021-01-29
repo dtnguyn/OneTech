@@ -1,6 +1,7 @@
 .deviceDetailHeaderContainer {
-  width: 100vw;
+  width: 100% !important;
   height: fit-content;
+
   padding-bottom: 10px;
 }
 
@@ -13,11 +14,13 @@
 .deviceDetailImage {
   object-fit: contain;
   height: 500px;
+  max-width: 500px;
   margin-bottom: 10px;
 }
 
 .deviceDetailTitle {
   font-family: MSemiBold;
+  text-align: center;
   margin: 50px 0 0;
 }
 
@@ -33,8 +36,8 @@
   align-items: flex-start;
   margin-top: 50px;
   margin-bottom: 50px;
-  margin-left: 50px;
-  width: 90%;
+
+  width: 100%;
 }
 
 .specsTableRow {
@@ -43,9 +46,17 @@
   flex-direction: row;
 }
 
-.specsTableRowTitle {
+.specsTableRowTitleContainer {
   margin: 10px 0 10px 10px;
-  flex: 1;
+  flex: 2;
+  display: flex;
+  justify-content: center;
+}
+
+.specsTableRowTitle {
+  width: 100%;
+  text-align: center;
+  max-width: 100%;
 }
 
 .specsTableRowContent {

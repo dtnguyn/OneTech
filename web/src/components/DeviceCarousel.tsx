@@ -11,7 +11,7 @@ interface DeviceCarouselProps {
 
 const DeviceCarousel: React.FC<DeviceCarouselProps> = ({ devices, title }) => {
   const settings = {
-    dots: true,
+    dots: false,
     infinite: false,
     speed: 500,
     slidesToShow: 4,
@@ -25,7 +25,7 @@ const DeviceCarousel: React.FC<DeviceCarouselProps> = ({ devices, title }) => {
           slidesToShow: 3,
           slidesToScroll: 1,
           infinite: false,
-          dots: true,
+          dots: false,
         },
       },
       {
@@ -34,7 +34,7 @@ const DeviceCarousel: React.FC<DeviceCarouselProps> = ({ devices, title }) => {
           slidesToShow: 2,
           slidesToScroll: 1,
           infinite: false,
-          dots: true,
+          dots: false,
         },
       },
       {
@@ -44,6 +44,7 @@ const DeviceCarousel: React.FC<DeviceCarouselProps> = ({ devices, title }) => {
           slidesToScroll: 1,
           initialSlide: 1,
           infinite: false,
+          dots: false,
         },
       },
     ],

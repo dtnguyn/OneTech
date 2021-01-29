@@ -12,7 +12,7 @@ const Login: React.FC<LoginProps> = ({}) => {
       case "google": {
         router
           .push({
-            pathname: "http://localhost:4000/auth/login",
+            pathname: `${process.env.NEXT_PUBLIC_SERVER_URL}/auth/login`,
             query: { method: "google" },
           })
           .then((response) => {
@@ -23,7 +23,7 @@ const Login: React.FC<LoginProps> = ({}) => {
 
       case "facebook": {
         router.push({
-          pathname: "http://localhost:4000/auth/login",
+          pathname: `${process.env.NEXT_PUBLIC_SERVER_URL}/auth/login`,
           query: { method: "facebook" },
         });
         break;
@@ -31,7 +31,7 @@ const Login: React.FC<LoginProps> = ({}) => {
 
       case "twitter": {
         router.push({
-          pathname: "http://localhost:4000/auth/login",
+          pathname: `${process.env.NEXT_PUBLIC_SERVER_URL}/auth/login`,
           query: { method: "twitter" },
         });
         break;

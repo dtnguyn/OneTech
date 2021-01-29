@@ -43,7 +43,7 @@ const NavBar: React.FC<NavBarProps> = ({}) => {
   }, [error]);
 
   useEffect(() => {
-    const socket = socketIOClient("http://localhost:4000");
+    const socket = socketIOClient(process.env.NEXT_PUBLIC_SERVER_URL as string);
     if (user) {
       socket.on(`notification:${user?.id}`, () => {
         refetch({
@@ -71,7 +71,11 @@ const NavBar: React.FC<NavBarProps> = ({}) => {
 
   return (
     <div className={styles.container}>
-      <Navbar collapseOnSelect expand="lg">
+      <Navbar
+        collapseOnSelect
+        expand="lg"
+        variant={darkModeActive ? `dark` : "light"}
+      >
         <Link href="/">
           <a
             className={
@@ -113,18 +117,16 @@ const NavBar: React.FC<NavBarProps> = ({}) => {
                 </Link>
               </div>
             ) : null}
-            {!user ? (
-              <div className={styles.navbarLinkContainer}>
-                <Link href="/settings">
-                  <a
-                    className={styles.navbarLink}
-                    onClick={() => setDropDown(false)}
-                  >
-                    Settings
-                  </a>
-                </Link>
-              </div>
-            ) : null}
+            <div className={styles.navbarLinkContainer}>
+              <Link href="/settings">
+                <a
+                  className={styles.navbarLink}
+                  onClick={() => setDropDown(false)}
+                >
+                  Settings
+                </a>
+              </Link>
+            </div>
 
             {user && innerWidth < 992 ? (
               <div className={styles.navbarLinkContainer}>

@@ -62,7 +62,8 @@
 
 .landingHeaderIcon {
   width: 350px;
-  height: 350px;
+  max-width: 100%;
+  height: auto;
 }
 
 .landingBodyContainer {
@@ -90,7 +91,8 @@
 
 .landingBodyIcon {
   width: 100px;
-  height: 100px;
+  max-width: 100%;
+  height: auto;
   margin: 30px 40px;
 }
 
@@ -128,6 +130,7 @@
 .landingFooterText {
   font-family: MMedium;
   width: 400px;
+  max-width: 80%;
   text-align: center;
   font-size: 1.4rem;
 }

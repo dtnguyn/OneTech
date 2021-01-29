@@ -1,11 +1,12 @@
 .searchInputContainer {
+  width: 400px !important;
+  max-width: 80%;
   width: fit-content;
-
   position: relative;
 }
 
 .searchInput {
-  width: 400px;
+  width: 100%;
   padding-right: 40px;
   text-transform: lowercase;
 }

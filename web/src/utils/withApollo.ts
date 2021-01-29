@@ -3,7 +3,7 @@ import { withApollo as createWithApollo } from "next-apollo";
 import { ApolloClient, InMemoryCache, createHttpLink } from "@apollo/client";
 
 export const client = new ApolloClient({
-  uri: "http://localhost:4000/graphql",
+  uri: `${process.env.NEXT_PUBLIC_SERVER_URL}/graphql`,
   credentials: "include",
   cache: new InMemoryCache(),
   ssrMode: true,

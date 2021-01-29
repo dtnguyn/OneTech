@@ -5,6 +5,7 @@ import styles from "../styles/Auth.module.css";
 import { useAuth } from "../context/AuthContext";
 import { useRouter } from "next/router";
 import { useDarkMode } from "next-dark-mode";
+import Head from "next/head";
 
 interface AuthProps {}
 
@@ -20,6 +21,10 @@ const Auth: React.FC<AuthProps> = ({}) => {
   }
   return (
     <div className={styles.authPageContainer}>
+      <Head>
+        <title>Authentication</title>
+        <meta name="viewport" content="initial-scale=1.0, width=device-width" />
+      </Head>
       <div className={styles.container}>
         <div
           className={

@@ -40,7 +40,9 @@ const SpecsTable: React.FC<SpecsTableProps> = ({
     <div className={styles.specsTableContainer}>
       {specsArr.map((title) => (
         <div key={title} className={styles.specsTableRow}>
-          <div className={styles.specsTableRowTitle}>{title}</div>
+          <div className={styles.specsTableRowTitleContainer}>
+            <p className={styles.specsTableRowTitle}>{title}</p>
+          </div>
           <div className={styles.specsTableRowContent}>
             {switchState === "rating" ? (
               rating[title.toLowerCase()] ? (

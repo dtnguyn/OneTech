@@ -22,9 +22,12 @@ const Body: React.FC<BodyProps> = ({}) => {
       }
     });
     const arr: Array<Device[]> = [];
-    for (const [key, value] of brands.entries()) {
-      arr.push(value);
-    }
+
+    if (brands.get("Apple")) arr.push(brands.get("Apple")!);
+    if (brands.get("Samsung")) arr.push(brands.get("Samsung")!);
+    if (brands.get("Google")) arr.push(brands.get("Google")!);
+    if (brands.get("OnePlus")) arr.push(brands.get("OnePlus")!);
+
     setDevicesArr(arr);
   }, [devices]);
 

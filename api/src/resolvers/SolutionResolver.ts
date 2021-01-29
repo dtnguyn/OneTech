@@ -1,4 +1,3 @@
-import { Solution, SolutionResponse } from "../entities/Solution";
 import {
   Arg,
   Ctx,
@@ -7,16 +6,16 @@ import {
   Mutation,
   Query,
   Resolver,
-  UseMiddleware,
 } from "type-graphql";
 import { getConnection, getRepository } from "typeorm";
-import { SolutionStar, SolutionStarResponse } from "../entities/SolutionStar";
-import { SolutionImage } from "../entities/SolutionImage";
 import { DeviceProblem } from "../entities/DeviceProblem";
-import { MyContext } from "../types";
 import { Notification } from "../entities/Notification";
+import { Solution, SolutionResponse } from "../entities/Solution";
+import { SolutionImage } from "../entities/SolutionImage";
+import { SolutionStar, SolutionStarResponse } from "../entities/SolutionStar";
 import { User } from "../entities/User";
 import { checkRateLimit } from "../rateLimit";
+import { MyContext } from "../types";
 
 @InputType()
 class UpdateSolutionInput {

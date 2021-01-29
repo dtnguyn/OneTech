@@ -38,11 +38,11 @@ export class Device {
   subCategory?: string;
 
   @Field(() => String, { nullable: true })
-  @Column({ unique: true, nullable: true })
+  @Column({ nullable: true })
   buyLink?: string;
 
   @Field(() => String, { nullable: true })
-  @Column({ unique: true, nullable: true })
+  @Column({ nullable: true })
   price?: string;
 
   @Field(() => String)

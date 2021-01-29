@@ -88,7 +88,7 @@ class UpdateDeviceSpecInput {
   portsSimplify?: string;
 }
 
-// const sleep = (ms: number) => new Promise((res) => setTimeout(res, ms));
+const sleep = (ms: number) => new Promise((res) => setTimeout(res, ms));
 @Resolver()
 export class DeviceResolver {
   deviceRepo = getRepository(Device);
@@ -97,6 +97,7 @@ export class DeviceResolver {
 
   @Mutation(() => DeviceResponse, { nullable: true })
   async createDevice(
+    @Arg("adminId") adminId: string,
     @Arg("name") name: string,
     @Arg("brand") brand: string,
     @Arg("category") category: string,
@@ -137,6 +138,12 @@ export class DeviceResolver {
     @Arg("ports_simplify", () => String, { nullable: true })
     portsSimplify: string | null
   ) {
+    if (adminId !== process.env.ADMIN_ID) {
+      return {
+        status: false,
+        message: "Only admin can create device",
+      };
+    }
     const queryRunner = getConnection().createQueryRunner();
     await queryRunner.connect();
     await queryRunner.startTransaction();
@@ -197,10 +204,17 @@ export class DeviceResolver {
 
   @Mutation(() => DeviceResponse)
   async updateDevice(
+    @Arg("adminId") adminId: string,
     @Arg("id") id: string,
     @Arg("deviceInput") deviceInput: UpdateDeviceInput,
     @Arg("specInput") specInput: UpdateDeviceSpecInput
   ) {
+    if (adminId !== process.env.ADMIN_ID) {
+      return {
+        status: false,
+        message: "Only admin can create device",
+      };
+    }
     const queryRunner = getConnection().createQueryRunner();
     await queryRunner.connect();
     await queryRunner.startTransaction();
@@ -229,7 +243,13 @@ export class DeviceResolver {
   }
 
   @Mutation(() => DeviceResponse)
-  async deleteDevice(@Arg("id") id: string) {
+  async deleteDevice(@Arg("id") id: string, @Arg("adminId") adminId: string) {
+    if (adminId !== process.env.ADMIN_ID) {
+      return {
+        status: false,
+        message: "Only admin can create device",
+      };
+    }
     await this.deviceRepo.delete({ id }).catch((e) => {
       return {
         status: false,
@@ -295,7 +315,8 @@ export class DeviceResolver {
         .createQueryBuilder("device")
         .leftJoinAndSelect("device.followers", "followers")
         .leftJoinAndSelect("device.problems", "problems")
-        .leftJoinAndSelect("device.reviews", "reviews");
+        .leftJoinAndSelect("device.reviews", "reviews")
+        .orderBy("device.createdAt", "DESC");
       if (!all) {
         if (category)
           builder.where("device.category = :category", { category });
@@ -345,6 +366,7 @@ export class DeviceResolver {
 
   @Mutation(() => DeviceSpecResponse, { nullable: true })
   async createSpec(
+    @Arg("adminId") adminId: string,
     @Arg("deviceId") deviceId: string,
     @Arg("display", () => String, { nullable: true }) display: string | null,
     @Arg("display_simplify", () => String, { nullable: true })
@@ -363,6 +385,12 @@ export class DeviceResolver {
     @Arg("processor_simplify", () => String, { nullable: true })
     processorSimplify: string | null
   ) {
+    if (adminId !== process.env.ADMIN_ID) {
+      return {
+        status: false,
+        message: "Only admin can create device",
+      };
+    }
     const newSpec = this.specRepo.create({
       deviceId,
       display,
@@ -392,9 +420,16 @@ export class DeviceResolver {
 
   @Mutation(() => DeviceSpecResponse)
   async updateDeviceSpec(
+    @Arg("adminId") adminId: string,
     @Arg("deviceId") deviceId: string,
     @Arg("input") input: UpdateDeviceSpecInput
   ) {
+    if (adminId !== process.env.ADMIN_ID) {
+      return {
+        status: false,
+        message: "Only admin can create device",
+      };
+    }
     await this.specRepo.update({ deviceId }, input).catch((e) => {
       return {
         status: false,
@@ -416,7 +451,16 @@ export class DeviceResolver {
   }
 
   @Mutation(() => DeviceSpecResponse)
-  async deleteDeviceSpec(@Arg("deviceId") deviceId: string) {
+  async deleteDeviceSpec(
+    @Arg("deviceId") deviceId: string,
+    @Arg("adminId") adminId: string
+  ) {
+    if (adminId !== process.env.ADMIN_ID) {
+      return {
+        status: false,
+        message: "Only admin can create device",
+      };
+    }
     await this.specRepo.delete({ deviceId }).catch((e) => {
       return {
         status: false,

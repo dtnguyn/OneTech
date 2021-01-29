@@ -95,6 +95,8 @@ const Header: React.FC<HeaderProps> = ({}) => {
           className={
             category === "phone"
               ? styles.deviceCategoryIconContainerPicked
+              : darkModeActive
+              ? styles.deviceCategoryIconContainerDarkMode
               : styles.deviceCategoryIconContainer
           }
           onClick={() => setCategory("phone")}
@@ -109,6 +111,8 @@ const Header: React.FC<HeaderProps> = ({}) => {
           className={
             category === "laptop"
               ? styles.deviceCategoryIconContainerPicked
+              : darkModeActive
+              ? styles.deviceCategoryIconContainerDarkMode
               : styles.deviceCategoryIconContainer
           }
           onClick={() => setCategory("laptop")}
@@ -123,6 +127,8 @@ const Header: React.FC<HeaderProps> = ({}) => {
           className={
             category === "pc"
               ? styles.deviceCategoryIconContainerPicked
+              : darkModeActive
+              ? styles.deviceCategoryIconContainerDarkMode
               : styles.deviceCategoryIconContainer
           }
           onClick={() => setCategory("pc")}
