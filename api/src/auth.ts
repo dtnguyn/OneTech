@@ -19,6 +19,7 @@ const handleAuth = async (
   cb: VerifyCallback
 ) => {
   const { id, emails, displayName, photos } = profile;
+  console.log("handle auth", id, emails, displayName, photos);
   const repo = getRepository(User);
   const user = await repo.findOne({ oauthId: id });
 
@@ -26,6 +27,7 @@ const handleAuth = async (
     console.log("Already sign up: ", user);
     return cb("", { id: user.id });
   } else {
+    console.log("Not yet sign up!");
     return cb("", {
       oauthId: id as string,
       email: emails ? emails[0].value : null,
@@ -41,6 +43,7 @@ const handleRegister = async (
   username: string,
   avatar: string
 ) => {
+  console.log("handle register");
   const queryRunner = getConnection().createQueryRunner();
   await queryRunner.connect();
   await queryRunner.startTransaction();
@@ -113,7 +116,7 @@ router.use(passport.initialize());
 
 router.get("/register", (req, res) => {
   (req.session as any).email = req.query.email;
-
+  console.log("Register debug: ", req.query.email, req.session);
   switch (req.query.method) {
     case "google": {
       res.redirect("/auth/google");
@@ -168,6 +171,7 @@ router.get(
       (req.session as any).userId = (req.user as any).id;
     } else {
       //If user register
+
       if ((req.session as any).email) {
         try {
           console.log("user: ", req.user);
@@ -191,7 +195,7 @@ router.get(
       }
     }
     if ((req.session as any).email) (req.session as any).email = undefined;
-    res.redirect(301, `${process.env.CLIENT_URL}`);
+    res.redirect(301, `http://localhost:3000`);
   }
 );
 

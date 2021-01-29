@@ -10,6 +10,8 @@ import { withApollo } from "../../utils/withApollo";
 import styles from "../../styles/ProblemDetail.module.css";
 import Solutions from "../../components/ProblemDetail/Solutions";
 import { useAlert } from "react-alert";
+import Head from "next/head";
+
 interface ProblemDetailProps {}
 
 const ProblemDetail: React.FC<ProblemDetailProps> = ({}) => {
@@ -42,10 +44,15 @@ const ProblemDetail: React.FC<ProblemDetailProps> = ({}) => {
     }
   }, [error]);
 
-  if (!problem || !solutions) return null;
+  if (!problem || !solutions)
+    return <div className={styles.problemDetailPageContainer} />;
 
   return (
     <div className={styles.problemDetailPageContainer}>
+      <Head>
+        <title>{problem.title}</title>
+        <meta name="viewport" content="initial-scale=1.0, width=device-width" />
+      </Head>
       <Problem problem={problem} />
       <Solutions
         solutions={solutions}

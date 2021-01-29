@@ -36,7 +36,6 @@ export class NotificationResolver {
         .getMany();
     }
 
-    console.log(notifications);
     return {
       status: false,
       message: "Get notifications successfully",

@@ -10,6 +10,8 @@ import {
 } from "../generated/graphql";
 import { useAuth } from "../context/AuthContext";
 import { useEffect, useState } from "react";
+import { useAlert } from "react-alert";
+import Head from "next/head";
 
 interface SettingsProps {}
 
@@ -17,6 +19,7 @@ const Settings: React.FC<SettingsProps> = ({}) => {
   const { darkModeActive, switchToDarkMode, switchToLightMode } = useDarkMode();
   const { user } = useAuth();
   const [setting, setSetting] = useState<UserSetting>();
+  const { error: alert } = useAlert();
 
   const [updateUserSettingMutation, {}] = useUpdateUserSettingMutation();
 
@@ -35,13 +38,17 @@ const Settings: React.FC<SettingsProps> = ({}) => {
   }, [data]);
 
   useEffect(() => {
-    if (error) {
+    if (error && user) {
       alert(error);
     }
   }, [error]);
 
   return (
     <div className={styles.settingsPageContainer}>
+      <Head>
+        <title>Settings</title>
+        <meta name="viewport" content="initial-scale=1.0, width=device-width" />
+      </Head>
       <p className={styles.settingsPageTitle}>Settings</p>
 
       <div className={styles.settingsSectionContainer}>

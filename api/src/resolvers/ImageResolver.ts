@@ -92,7 +92,7 @@ export class ImageResolver {
       await new Promise((resolve) => {
         for (const id of imageIds) {
           const file = bucket.file(id);
-          file.delete((err, res) => {
+          file.delete((err) => {
             if (err) {
               rejects(err as any);
             } else {

@@ -4,12 +4,12 @@
   "port": 5432,
   "username": "postgres",
   "password": "postgres",
-  "database": "one_tech_db",
+  "database": "one_tech_prod",
   "logging": true,
-  "synchronize": true,
-  "entities": ["./dist/entities/*.js"],
-  "migrations": ["migrations/*.ts"],
+  "synchronize": false,
+  "entities": ["dist/entities/*.js"],
+  "migrations": ["dist/migrations/*.js"],
   "cli": {
-    "migrationsDir": "src/migrations"
+    "migrationsDir": "./src/migrations"
   }
 }

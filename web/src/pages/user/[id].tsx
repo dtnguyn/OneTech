@@ -13,6 +13,7 @@ import {
 
 import styles from "../../styles/User.module.css";
 import { client, withApollo } from "../../utils/withApollo";
+import Head from "next/head";
 
 interface UserPageProps {}
 
@@ -58,9 +59,13 @@ const UserPage: React.FC<UserPageProps> = ({}) => {
     if (followedDevicesError) alert(followedDevicesError.message);
   }, [userError, followedDevicesError]);
 
-  if (!user) return null;
+  if (!user) return <div className={styles.userPageContainer} />;
   return (
     <div className={styles.userPageContainer}>
+      <Head>
+        <title>{user.username}</title>
+        <meta name="viewport" content="initial-scale=1.0, width=device-width" />
+      </Head>
       <Header user={user} />
       {user.setting?.isPrivate && currentUser?.id != user.id ? null : (
         <Body user={user} devices={followedDevices} />

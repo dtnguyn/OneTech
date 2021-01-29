@@ -1,5 +1,3 @@
-import { Review, ReviewResponse } from "../entities/Review";
-import { ReviewRating, ReviewRatingResponse } from "../entities/ReviewRating";
 import {
   Arg,
   Ctx,
@@ -9,12 +7,13 @@ import {
   Mutation,
   Query,
   Resolver,
-  UseMiddleware,
 } from "type-graphql";
 import { getConnection, getRepository } from "typeorm";
+import { Review, ReviewResponse } from "../entities/Review";
 import { ReviewImage } from "../entities/ReviewImage";
-import { MyContext } from "../types";
+import { ReviewRating, ReviewRatingResponse } from "../entities/ReviewRating";
 import { checkRateLimit } from "../rateLimit";
+import { MyContext } from "../types";
 
 @InputType()
 class UpdateReviewInput {

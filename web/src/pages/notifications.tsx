@@ -46,7 +46,7 @@ const Notifications: React.FC<NotificationsProps> = ({}) => {
   };
 
   useEffect(() => {
-    const socket = socketIOClient("http://localhost:4000");
+    const socket = socketIOClient(process.env.NEXT_PUBLIC_SERVER_URL as string);
     const arr = data?.notifications.data as Notification[];
     console.log(`notification:${user?.id}`);
     if (user) {

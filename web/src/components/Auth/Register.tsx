@@ -29,7 +29,7 @@ const Register: React.FC<RegisterProps> = ({}) => {
       case "google": {
         router
           .push({
-            pathname: "http://localhost:4000/auth/register",
+            pathname: `${process.env.NEXT_PUBLIC_SERVER_URL}/auth/register`,
             query: { email, method: "google" },
           })
           .then((response) => {
@@ -40,7 +40,7 @@ const Register: React.FC<RegisterProps> = ({}) => {
 
       case "facebook": {
         router.push({
-          pathname: "http://localhost:4000/auth/register",
+          pathname: `${process.env.NEXT_PUBLIC_SERVER_URL}/auth/register`,
           query: { email, method: "facebook" },
         });
         break;
@@ -48,7 +48,7 @@ const Register: React.FC<RegisterProps> = ({}) => {
 
       case "twitter": {
         router.push({
-          pathname: "http://localhost:4000/auth/register",
+          pathname: `${process.env.NEXT_PUBLIC_SERVER_URL}/auth/register`,
           query: { email, method: "twitter" },
         });
         break;

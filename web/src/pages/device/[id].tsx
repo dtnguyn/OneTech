@@ -1,5 +1,6 @@
 import { Divider } from "@material-ui/core";
 import { GetServerSideProps } from "next";
+import Head from "next/head";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import { useAlert } from "react-alert";
@@ -62,11 +63,18 @@ const DeviceDetail: React.FC<DeviceDetailProps> = ({}) => {
     }
   }, [error]);
 
-  if (!device) return null;
+  if (!device) return <div className={styles.deviceDetailContainer} />;
 
   return (
     <ProblemContext.Provider value={{ problems, setProblems }}>
       <ReviewContext.Provider value={{ reviews, setReviews }}>
+        <Head>
+          <title>{device.name}</title>
+          <meta
+            name="viewport"
+            content="initial-scale=1.0, width=device-width"
+          />
+        </Head>
         <div className={styles.deviceDetailContainer}>
           <Header device={device} rating={rating} />
           <br />

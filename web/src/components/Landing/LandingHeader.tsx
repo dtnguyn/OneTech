@@ -20,8 +20,8 @@ const Header: React.FC<HeaderProps> = ({}) => {
         className={`col-lg-7 col-md-12 ${styles.landingHeaderSectionContainer}`}
       >
         <div className={styles.landingHeaderSlogan}>
-          <h1>Problem with your Tech</h1>
-          <h1>We got Solutions</h1>
+          <h1>Problems with your Tech</h1>
+          <h1>Our community got Solutions</h1>
         </div>
         <div
           className={styles.landingHeaderButton}

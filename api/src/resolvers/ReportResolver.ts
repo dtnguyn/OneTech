@@ -46,7 +46,6 @@ export class ReportResolver {
   async reports() {
     const reports = await this.reportRepo.find();
 
-    console.log(reports);
     return {
       status: true,
       message: "Get report successfully",
