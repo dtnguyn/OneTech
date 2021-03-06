@@ -104,7 +104,7 @@ const ProblemItem: React.FC<ProblemItemProps> = ({
                     const images = problem.images?.map((image) => {
                       return image.path;
                     });
-                    console.log("images: ", images);
+
                     handleDelete(problem.id, images ? images : []);
                   }}
                 />

@@ -119,13 +119,11 @@ const Solutions: React.FC<SolutionsProps> = ({
           cache.evict({ fieldName: "solutions" });
         },
       }).then((res) => {
-        console.log(res);
         if (!res.data?.deleteSolution.status) {
           throw new Error(res.data?.deleteSolution.message);
         }
       });
     } catch (error) {
-      console.log("print error");
       alert(error.message);
     }
   };

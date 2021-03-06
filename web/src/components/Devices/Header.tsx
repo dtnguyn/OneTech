@@ -48,11 +48,10 @@ const Header: React.FC<HeaderProps> = ({}) => {
 
   useEffect(() => {
     const arr = data?.devices.data as Device[];
-    if (arr) console.log("useEffect", arr, searchValue);
+
     if (arr && arr.length != 0) {
       //found devices
       if (!initialState) {
-        console.log("set devices");
         setDevices(arr);
       }
       if (searchValue) {
@@ -62,7 +61,7 @@ const Header: React.FC<HeaderProps> = ({}) => {
       }
     } else if (arr && arr.length == 0) {
       //not found
-      console.log("set devices empty array");
+
       setDevices([]);
     }
     setInitialState(false);

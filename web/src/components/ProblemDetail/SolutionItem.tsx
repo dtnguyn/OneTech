@@ -94,7 +94,7 @@ const SolutionItem: React.FC<SolutionItemProps> = ({
                     const images: string[] = solution.images?.map((image) => {
                       return image.path;
                     });
-                    console.log("images: ", images);
+
                     handleDelete(solution.id, images ? images : []);
                   }}
                 >

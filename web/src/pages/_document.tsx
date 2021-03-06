@@ -18,7 +18,7 @@ class MyDocument extends Document {
       <Html>
         <Head>
           <script
-            data-ad-client={process.env.AD_CLIENT}
+            data-ad-client={process.env.NEXT_PUBLIC_AD_CLIENT}
             async
             src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"
           ></script>

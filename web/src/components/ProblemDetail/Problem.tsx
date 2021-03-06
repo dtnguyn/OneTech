@@ -98,6 +98,9 @@ const Problem: React.FC<ProblemProps> = ({ problem }) => {
         content,
         images,
       },
+      update: (cache) => {
+        cache.evict({ fieldName: "singleProblem" });
+      },
     })
       .then((res) => {
         if (res.data?.updateProblem.status) {

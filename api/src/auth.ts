@@ -19,7 +19,7 @@ const handleAuth = async (
   cb: VerifyCallback
 ) => {
   const { id, emails, displayName, photos } = profile;
-  console.log("handle auth", id, emails, displayName, photos);
+
   const repo = getRepository(User);
   const user = await repo.findOne({ oauthId: id });
 
@@ -43,7 +43,6 @@ const handleRegister = async (
   username: string,
   avatar: string
 ) => {
-  console.log("handle register");
   const queryRunner = getConnection().createQueryRunner();
   await queryRunner.connect();
   await queryRunner.startTransaction();
@@ -51,7 +50,7 @@ const handleRegister = async (
     const manager = queryRunner.manager;
 
     const checkUser = await manager.findOne(User, { email });
-    console.log("checkUser: ", checkUser);
+
     if (checkUser) {
       throw new Error("This email is already used.");
     }
@@ -116,7 +115,7 @@ router.use(passport.initialize());
 
 router.get("/register", (req, res) => {
   (req.session as any).email = req.query.email;
-  console.log("Register debug: ", req.query.email, req.session);
+
   switch (req.query.method) {
     case "google": {
       res.redirect("/auth/google");
@@ -134,6 +133,8 @@ router.get("/register", (req, res) => {
 });
 
 router.get("/login", (req, res) => {
+  console.log(req.query);
+  (req.session as any).mobile = req.query.mobile;
   switch (req.query.method) {
     case "google": {
       res.redirect("/auth/google");
@@ -165,6 +166,7 @@ router.get(
   passport.authenticate("google", { session: false }),
   async (req, res) => {
     // Successful authentication, redirect home.
+    console.log("Here");
     if ((req.user as any).id) {
       //If user log in
       console.log("Successful Login!");
@@ -174,7 +176,6 @@ router.get(
 
       if ((req.session as any).email) {
         try {
-          console.log("user: ", req.user);
           const user = await handleRegister(
             (req.user as any).oauthId,
             (req.session as any).email,
@@ -195,7 +196,9 @@ router.get(
       }
     }
     if ((req.session as any).email) (req.session as any).email = undefined;
-    res.redirect(301, `http://localhost:3000`);
+    if ((req.session as any).mobile)
+      res.redirect(301, `exp://192.168.0.169:19000/--/`);
+    else res.redirect(301, `${process.env.CLIENT_URL}`);
   }
 );
 

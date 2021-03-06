@@ -12,7 +12,6 @@ const Header: React.FC<HeaderProps> = ({ user }) => {
 
   useEffect(() => {
     let count = 0;
-    console.log(user);
     if (user?.problems && user.solutions) {
       for (const problem of user?.problems!) {
         count += problem.stars?.length!;

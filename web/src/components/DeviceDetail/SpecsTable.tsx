@@ -22,7 +22,6 @@ const SpecsTable: React.FC<SpecsTableProps> = ({
   const [specsArr, setSpecsArr] = useState<Array<string>>([]);
 
   useEffect(() => {
-    console.log("rating", rating);
     switch (category) {
       case "phone":
         setSpecsArr(mobileSpec);

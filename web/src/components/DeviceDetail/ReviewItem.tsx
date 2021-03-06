@@ -72,7 +72,7 @@ const ReviewItem: React.FC<ReviewItemProps> = ({
                   const images = review.images?.map((image) => {
                     return image.path;
                   });
-                  console.log("images", images);
+
                   handleDelete(review.id, images ? images : []);
                 }}
               />

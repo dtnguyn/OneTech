@@ -48,10 +48,9 @@ const Notifications: React.FC<NotificationsProps> = ({}) => {
   useEffect(() => {
     const socket = socketIOClient(process.env.NEXT_PUBLIC_SERVER_URL as string);
     const arr = data?.notifications.data as Notification[];
-    console.log(`notification:${user?.id}`);
+
     if (user) {
       socket.on(`notification:${user?.id}`, () => {
-        console.log("Success with socket io");
         refetch();
       });
     }
