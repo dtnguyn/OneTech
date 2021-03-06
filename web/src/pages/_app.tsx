@@ -54,8 +54,6 @@ function MyApp({ Component, pageProps }: any) {
     }
   }, [data]);
 
-  console.log("darkmode", darkModeActive);
-
   return (
     <Provider
       template={AlertTemplate}

@@ -78,7 +78,7 @@ const Body: React.FC<BodyProps> = ({ deviceId, deviceCategory }) => {
 
   useEffect(() => {
     const problemArr = problemsData?.problems?.data as DeviceProblem[];
-    console.log("setttt", problemArr);
+
     if (problemArr && problemArr.length != 0) {
       //found problems
       setProblems(problemArr);
@@ -91,7 +91,7 @@ const Body: React.FC<BodyProps> = ({ deviceId, deviceCategory }) => {
 
   useEffect(() => {
     const reviewArr = reviewsData?.reviews?.data as Review[];
-    console.log("review Array", reviewArr);
+
     if (reviewArr && reviewArr.length != 0) {
       //found reviews
       setReviews(reviewArr);
@@ -149,7 +149,7 @@ const Body: React.FC<BodyProps> = ({ deviceId, deviceCategory }) => {
       ) : (
         <h4>
           {switchState === "problems"
-            ? "Tell use what's wrong"
+            ? "Tell us what's wrong"
             : "Give us a review!"}
         </h4>
       )}

@@ -42,7 +42,6 @@ const DeviceDetail: React.FC<DeviceDetailProps> = ({}) => {
   });
 
   useEffect(() => {
-    console.log("Call here", data?.singleDevice?.data);
     const devices = data?.singleDevice?.data as Device[];
     if (devices && devices.length != 0) {
       setDevice(devices[0]);
@@ -52,7 +51,6 @@ const DeviceDetail: React.FC<DeviceDetailProps> = ({}) => {
   useEffect(() => {
     const ratings = ratingData?.ratings?.data as ReviewRating[];
     if (ratings && ratings?.length === 1) {
-      console.log(ratings);
       setRating(ratings[0]);
     }
   }, [ratingData]);

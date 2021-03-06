@@ -50,7 +50,6 @@ const CustomEditor: React.FC<CustomEditorProps> = ({
   };
 
   const handleDeleteImages = (arr: Array<string>) => {
-    console.log(arr);
     deleteImagesMutation({
       variables: {
         imageIds: arr,

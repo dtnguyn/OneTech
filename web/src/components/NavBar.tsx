@@ -58,9 +58,8 @@ const NavBar: React.FC<NavBarProps> = ({}) => {
       });
     }
     const arr = data?.notifications.data as Notification[];
-    console.log("update unseen");
+
     if (arr) {
-      console.log(arr, user?.setting?.notifications);
       if (user?.setting?.notifications) {
         setUnseen(arr);
       } else {
@@ -77,13 +76,16 @@ const NavBar: React.FC<NavBarProps> = ({}) => {
         variant={darkModeActive ? `dark` : "light"}
       >
         <Link href="/">
-          <a
-            className={
-              darkModeActive ? styles.navbarBrandDarkMode : styles.navbarBrand
-            }
-          >
-            OneTech
-          </a>
+          <div className={styles.navbarBrandContainer}>
+            <img src="/images/logo.png" className={styles.navbarLogo} />
+            <a
+              className={
+                darkModeActive ? styles.navbarBrandDarkMode : styles.navbarBrand
+              }
+            >
+              OneTech
+            </a>
+          </div>
         </Link>
         <Navbar.Toggle aria-controls="responsive-navbar-nav" />
         <Navbar.Collapse id="responsive-navbar-nav">
@@ -117,16 +119,18 @@ const NavBar: React.FC<NavBarProps> = ({}) => {
                 </Link>
               </div>
             ) : null}
-            <div className={styles.navbarLinkContainer}>
-              <Link href="/settings">
-                <a
-                  className={styles.navbarLink}
-                  onClick={() => setDropDown(false)}
-                >
-                  Settings
-                </a>
-              </Link>
-            </div>
+            {!user || innerWidth < 992 ? (
+              <div className={styles.navbarLinkContainer}>
+                <Link href="/settings">
+                  <a
+                    className={styles.navbarLink}
+                    onClick={() => setDropDown(false)}
+                  >
+                    Settings
+                  </a>
+                </Link>
+              </div>
+            ) : null}
 
             {user && innerWidth < 992 ? (
               <div className={styles.navbarLinkContainer}>

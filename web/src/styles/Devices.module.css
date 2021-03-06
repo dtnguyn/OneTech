@@ -112,5 +112,6 @@
 .deviceItemImage {
   object-fit: contain;
   height: 300px;
+  max-width: 90%;
   padding: 10px;
 }

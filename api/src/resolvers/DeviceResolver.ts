@@ -88,7 +88,7 @@ class UpdateDeviceSpecInput {
   portsSimplify?: string;
 }
 
-const sleep = (ms: number) => new Promise((res) => setTimeout(res, ms));
+//const sleep = (ms: number) => new Promise((res) => setTimeout(res, ms));
 @Resolver()
 export class DeviceResolver {
   deviceRepo = getRepository(Device);

@@ -113,7 +113,6 @@ const Problems: React.FC<ProblemsProps> = ({
       },
     })
       .then((res) => {
-        console.log(res);
         if (res.data?.createProblem?.status) {
           closeAdding();
           resetProblemValue();
@@ -122,7 +121,6 @@ const Problems: React.FC<ProblemsProps> = ({
         }
       })
       .catch((error) => {
-        console.log(error);
         alert(error.message);
       });
   };

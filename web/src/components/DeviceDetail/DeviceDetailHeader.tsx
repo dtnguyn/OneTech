@@ -1,10 +1,6 @@
 import { useEffect, useState } from "react";
 import { Button } from "react-bootstrap";
-import {
-  Device,
-  ReviewRating,
-  useToggleDeviceFollowMutation,
-} from "../../generated/graphql";
+import { Device, useToggleDeviceFollowMutation } from "../../generated/graphql";
 import styles from "../../styles/DeviceDetail.module.css";
 import SpecsTable from "./SpecsTable";
 import Switcher from "../Switcher";
@@ -36,7 +32,6 @@ const Header: React.FC<HeaderProps> = ({ device, rating }) => {
         userId,
       },
       update: (cache) => {
-        console.log(cache);
         cache.evict({ fieldName: "singleDevice" });
         cache.evict({ fieldName: "devices" });
       },
@@ -52,13 +47,11 @@ const Header: React.FC<HeaderProps> = ({ device, rating }) => {
   };
 
   useEffect(() => {
-    console.log("Pleaseee", rating);
     if (!user) {
       setFollowed(false);
       return;
     }
     for (const follower of device.followers!) {
-      console.log(follower.userId, user.id);
       if (follower.userId === user.id) {
         setFollowed(true);
         return;

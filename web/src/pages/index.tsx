@@ -8,7 +8,7 @@ export default function Home() {
   return (
     <div className={styles.landingContainer}>
       <Head>
-        <title>One Tech</title>
+        <title>OneTech</title>
         <meta name="viewport" content="initial-scale=1.0, width=device-width" />
       </Head>
       <Header />

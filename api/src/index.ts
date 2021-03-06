@@ -138,6 +138,7 @@ import Redis from "ioredis";
       ],
       validate: false,
     }),
+    introspection: true,
     context: ({ req, res }): MyContext => {
       return { req, res, io, redis: redisClient };
     },

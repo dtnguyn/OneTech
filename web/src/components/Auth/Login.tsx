@@ -10,14 +10,11 @@ const Login: React.FC<LoginProps> = ({}) => {
   const onLoginClick = (method: string) => {
     switch (method) {
       case "google": {
-        router
-          .push({
-            pathname: `${process.env.NEXT_PUBLIC_SERVER_URL}/auth/login`,
-            query: { method: "google" },
-          })
-          .then((response) => {
-            console.log(response);
-          });
+        router.push({
+          pathname: `${process.env.NEXT_PUBLIC_SERVER_URL}/auth/login`,
+          query: { method: "google" },
+        });
+
         break;
       }
 

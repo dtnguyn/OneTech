@@ -16,7 +16,6 @@ const Register: React.FC<RegisterProps> = ({}) => {
   const handleEmailInputChange: (
     event: ChangeEvent<HTMLInputElement>
   ) => void = (event) => {
-    console.log(event.target.value);
     setEmail(event.target.value);
   };
 
@@ -27,14 +26,11 @@ const Register: React.FC<RegisterProps> = ({}) => {
     } else setError(false);
     switch (method) {
       case "google": {
-        router
-          .push({
-            pathname: `${process.env.NEXT_PUBLIC_SERVER_URL}/auth/register`,
-            query: { email, method: "google" },
-          })
-          .then((response) => {
-            console.log(response);
-          });
+        router.push({
+          pathname: `${process.env.NEXT_PUBLIC_SERVER_URL}/auth/register`,
+          query: { email, method: "google" },
+        });
+
         break;
       }
 

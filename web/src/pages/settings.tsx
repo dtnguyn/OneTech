@@ -31,7 +31,7 @@ const Settings: React.FC<SettingsProps> = ({}) => {
 
   useEffect(() => {
     const arr = data?.setting?.data as UserSetting[];
-    console.log(arr);
+
     if (arr && arr.length) {
       setSetting(arr[0]);
     }
@@ -61,7 +61,6 @@ const Settings: React.FC<SettingsProps> = ({}) => {
               content="If enabled, people cannot see your profile in detailed."
               defaultValue={setting ? setting.isPrivate : false}
               handleChange={(state) => {
-                console.log(setting);
                 updateUserSettingMutation({
                   variables: {
                     userId: user?.id!,
@@ -111,7 +110,6 @@ const Settings: React.FC<SettingsProps> = ({}) => {
           }
           defaultValue={darkModeActive}
           handleChange={(state) => {
-            console.log(state);
             if (state) switchToDarkMode();
             else switchToLightMode();
           }}

@@ -1,3 +1,7 @@
+.deviceDetailContainer {
+  min-height: 100vh;
+}
+
 .deviceDetailHeaderContainer {
   width: 100% !important;
   height: fit-content;
@@ -14,7 +18,7 @@
 .deviceDetailImage {
   object-fit: contain;
   height: 500px;
-  max-width: 500px;
+  max-width: 90%;
   margin-bottom: 10px;
 }
 

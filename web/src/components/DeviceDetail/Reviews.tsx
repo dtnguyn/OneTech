@@ -335,7 +335,6 @@ const Reviews: React.FC<ReviewsProps> = ({
                   <CustomSlider
                     defaultValue={reviewValue.rating[spec.toLowerCase()]}
                     onChangeCommitted={(_, value) => {
-                      console.log(reviewValue);
                       const rating = reviewValue.rating;
                       rating[spec.toLowerCase()] = value;
                       setReviewValue({ ...reviewValue, rating });
@@ -411,7 +410,6 @@ const Reviews: React.FC<ReviewsProps> = ({
                 initialDeleteReviewDialog(id, images);
               }}
               handleEdit={(review: Review) => {
-                console.log(review.rating);
                 const rating = reviewValue.rating;
                 const newRating = review.rating as any;
                 for (const spec of specsArr) {
