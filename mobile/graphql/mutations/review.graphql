@@ -1,0 +1,133 @@
+mutation CreateReview(
+  $deviceId: String!
+  $title: String!
+  $content: String!
+  $overall: Float
+  $display: Float
+  $processor: Float
+  $battery: Float
+  $software: Float
+  $camera: Float
+  $gpu: Float
+  $memory: Float
+  $thermals: Float
+  $ports: Float
+  $images: [String!]!
+) {
+  createReview(
+    deviceId: $deviceId
+    content: $content
+    title: $title
+    overall: $overall
+    battery: $battery
+    software: $software
+    display: $display
+    processor: $processor
+    camera: $camera
+    images: $images
+    gpu: $gpu
+    memory: $memory
+    thermals: $thermals
+    ports: $ports
+  ) {
+    status
+    message
+    data {
+      id
+      title
+      content
+      createdAt
+      author {
+        id
+        username
+        avatar
+      }
+      deviceId
+      rating {
+        reviewId
+        deviceId
+        overall
+        battery
+        software
+        display
+        camera
+        processor
+        gpu
+        memory
+        thermals
+        ports
+      }
+    }
+  }
+}
+
+mutation UpdateReview(
+  $id: String!
+  $title: String
+  $content: String
+  $overall: Float
+  $display: Float
+  $processor: Float
+  $battery: Float
+  $software: Float
+  $camera: Float
+  $gpu: Float
+  $memory: Float
+  $thermals: Float
+  $ports: Float
+  $images: [String!]!
+) {
+  updateReview(
+    id: $id
+    reviewInput: { title: $title, content: $content }
+    ratingInput: {
+      overall: $overall
+      battery: $battery
+      software: $software
+      display: $display
+      processor: $processor
+      camera: $camera
+      gpu: $gpu
+      memory: $memory
+      thermals: $thermals
+      ports: $ports
+    }
+    images: $images
+  ) {
+    status
+    message
+    data {
+      id
+      title
+      content
+      createdAt
+      author {
+        id
+        username
+        avatar
+      }
+      deviceId
+      rating {
+        reviewId
+        deviceId
+        overall
+        battery
+        software
+        display
+        camera
+        processor
+        gpu
+        memory
+        thermals
+        ports
+      }
+    }
+  }
+}
+
+mutation DeleteReview($id: String!) {
+  deleteReview(id: $id) {
+    status
+    message
+  }
+}

@@ -1,0 +1,143 @@
+query Devices(
+  $all: Boolean
+  $category: String
+  $userId: String
+  $name: String
+) {
+  devices(all: $all, category: $category, userId: $userId, name: $name) {
+    status
+    message
+    data {
+      id
+      brand
+      name
+      category
+      coverImage
+      followers {
+        userId
+      }
+      problems {
+        id
+      }
+      reviews {
+        id
+      }
+    }
+  }
+}
+
+query DeviceDetail($id: String!) {
+  singleDevice(id: $id) {
+    status
+    message
+    data {
+      id
+      brand
+      name
+      category
+      price
+      buyLink
+      coverImage
+      followers {
+        userId
+      }
+      ratings {
+        reviewId
+        deviceId
+        overall
+        battery
+        software
+        display
+        camera
+        processor
+      }
+      problems {
+        id
+        title
+        content
+        solvedBy
+        createdAt
+        updatedAt
+        author {
+          id
+          username
+          avatar
+        }
+        stars {
+          problemId
+          userId
+        }
+        solutions {
+          id
+        }
+        images {
+          path
+        }
+      }
+      reviews {
+        id
+        title
+        content
+        createdAt
+        deviceId
+        images {
+          path
+        }
+        author {
+          id
+          username
+          avatar
+        }
+        rating {
+          reviewId
+          deviceId
+          overall
+          battery
+          software
+          display
+          camera
+          processor
+        }
+      }
+      spec {
+        display
+        battery
+        software
+        camera
+        processor
+        gpu
+        memory
+        thermals
+        ports
+        displaySimplify
+        batterySimplify
+        softwareSimplify
+        cameraSimplify
+        processorSimplify
+        gpuSimplify
+        memorySimplify
+        thermalsSimplify
+        portsSimplify
+      }
+    }
+  }
+}
+
+query deviceRatings($deviceId: String!) {
+  ratings(deviceId: $deviceId) {
+    status
+    message
+    data {
+      overall
+      display
+      camera
+      software
+      battery
+      processor
+      ports
+      gpu
+      memory
+      thermals
+    }
+  }
+}

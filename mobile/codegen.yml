@@ -1,0 +1,10 @@
+overwrite: true
+schema: "https://api.onetech.guru/graphql"
+documents: "graphql/**/*.graphql"
+introspection: true
+generates:
+  generated/graphql.tsx:
+    plugins:
+      - "typescript"
+      - "typescript-operations"
+      - "typescript-react-apollo"

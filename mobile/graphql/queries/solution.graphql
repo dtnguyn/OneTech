@@ -1,0 +1,29 @@
+query Solutions($userId: String, $problemId: String) {
+  solutions(userId: $userId, problemId: $problemId) {
+    status
+    message
+    data {
+      id
+      author {
+        username
+        id
+        avatar
+      }
+      content
+      problem {
+        id
+        title
+        content
+      }
+      stars {
+        userId
+      }
+      isPicked
+      createdAt
+      updatedAt
+      images {
+        path
+      }
+    }
+  }
+}

@@ -1,0 +1,87 @@
+query Problems(
+  $deviceId: String
+  $authorId: String
+  $content: String
+  $title: String
+) {
+  problems(
+    deviceId: $deviceId
+    authorId: $authorId
+    content: $content
+    title: $title
+  ) {
+    data {
+      id
+      title
+      content
+      solvedBy
+      createdAt
+      updatedAt
+      device {
+        id
+        name
+      }
+      images {
+        path
+      }
+      author {
+        id
+        avatar
+        username
+      }
+      stars {
+        problemId
+        userId
+      }
+      solutions {
+        id
+      }
+    }
+  }
+}
+
+query ProblemDetail($id: String!) {
+  singleProblem(id: $id) {
+    status
+    message
+    data {
+      id
+      title
+      content
+      solvedBy
+      pickedSolutionId
+      createdAt
+      updatedAt
+      images {
+        path
+      }
+      author {
+        id
+        avatar
+        username
+      }
+      stars {
+        problemId
+        userId
+      }
+      solutions {
+        id
+        author {
+          username
+          id
+          avatar
+        }
+        content
+        stars {
+          userId
+        }
+        isPicked
+        createdAt
+        updatedAt
+        images {
+          path
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,15 @@
+query notifications($unseen: Boolean) {
+  notifications(unseen: $unseen) {
+    status
+    message
+    data {
+      id
+      title
+      content
+      link
+      seen
+      category
+      createdAt
+    }
+  }
+}
