@@ -134,7 +134,7 @@ router.get("/register", (req, res) => {
 
 router.get("/login", (req, res) => {
   console.log(req.query);
-  (req.session as any).mobile = req.query.mobile;
+  (req.session as any).from = req.query.from;
   switch (req.query.method) {
     case "google": {
       res.redirect("/auth/google");
@@ -196,8 +196,7 @@ router.get(
       }
     }
     if ((req.session as any).email) (req.session as any).email = undefined;
-    if ((req.session as any).mobile)
-      res.redirect(301, `exp://192.168.0.169:19000/--/`);
+    if ((req.session as any).from) res.redirect(301, (req.session as any).from);
     else res.redirect(301, `${process.env.CLIENT_URL}`);
   }
 );
