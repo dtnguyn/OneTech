@@ -34,7 +34,9 @@ const HomeScreen: React.FC<Props> = ({ navigation }) => {
   });
 
   const renderDevices: ListRenderItem<Device[]> = ({ item, index }) => {
-    return <DeviceCarousel devices={item} key={index} />;
+    return (
+      <DeviceCarousel devices={item} key={index} navigation={navigation} />
+    );
   };
 
   function renderHeader() {
