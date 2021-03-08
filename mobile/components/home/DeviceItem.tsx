@@ -8,16 +8,18 @@ import {
   TouchableOpacity,
   Dimensions,
 } from "react-native";
+import { TouchableWithoutFeedback } from "react-native-gesture-handler";
 import { Device } from "../../generated/graphql";
 import CustomText from "../util/CustomText";
 
 interface Props {
   device: Device;
+  moveToDetail: () => void;
 }
 
-const DeviceItem: React.FC<Props> = ({ device }) => {
+const DeviceItem: React.FC<Props> = ({ device, moveToDetail }) => {
   return (
-    <View style={styles.container}>
+    <TouchableOpacity style={styles.container} onPress={moveToDetail}>
       <Image
         source={{
           uri: device.coverImage,
@@ -25,7 +27,7 @@ const DeviceItem: React.FC<Props> = ({ device }) => {
         style={styles.deviceImage}
       />
       <CustomText>{device.name}</CustomText>
-    </View>
+    </TouchableOpacity>
   );
 };
 

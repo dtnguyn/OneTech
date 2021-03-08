@@ -12,6 +12,7 @@ import * as Linking from "expo-linking";
 import WebScreen from "./screens/WebScreen";
 import { AuthContext } from "./context/AuthContext";
 import { useMeQuery, User } from "./generated/graphql";
+import DetailScreen from "./screens/DetailScreen";
 
 const { manifest } = Constants;
 
@@ -69,6 +70,15 @@ export default function App() {
               name="Web"
               component={WebScreen}
               options={{ headerShown: false }}
+            />
+
+            <RootStack.Screen
+              name="Detail"
+              component={DetailScreen}
+              options={{
+                headerShown: true,
+                headerStyle: { backgroundColor: "#A8D8AD" },
+              }}
             />
           </RootStack.Navigator>
         </NavigationContainer>

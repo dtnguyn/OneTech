@@ -3,14 +3,16 @@ import React, { useState } from "react";
 import { Dimensions, ListRenderItem, StyleSheet, View } from "react-native";
 import Carousel, { AdditionalParallaxProps } from "react-native-snap-carousel";
 import { Device } from "../../generated/graphql";
+import { HomeScreenNavigationProp } from "../../utils/types";
 import CustomText from "../util/CustomText";
 import DeviceItem from "./DeviceItem";
 
 interface Props {
   devices: Array<Device>;
+  navigation: HomeScreenNavigationProp;
 }
 
-const DeviceCarousel: React.FC<Props> = ({ devices }) => {
+const DeviceCarousel: React.FC<Props> = ({ devices, navigation }) => {
   const SliderWidth = Dimensions.get("screen").width;
   const [activeIndex, setActivateIndex] = useState(0);
   const [carouselState, setCarouselState] = useState([
@@ -47,7 +49,14 @@ const DeviceCarousel: React.FC<Props> = ({ devices }) => {
       },
       parallaxProps?: AdditionalParallaxProps | undefined
     ) => React.ReactNode) = ({ item }: any) => {
-    return <DeviceItem device={item} />;
+    return (
+      <DeviceItem
+        device={item}
+        moveToDetail={() => {
+          navigation.push("Detail");
+        }}
+      />
+    );
   };
 
   return (

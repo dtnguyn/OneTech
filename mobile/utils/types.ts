@@ -5,6 +5,7 @@ export type RootStackParamList = {
   Search: undefined;
   Auth: undefined;
   Web: undefined;
+  Detail: undefined;
 };
 
 export type HomeScreenNavigationProp = StackNavigationProp<
