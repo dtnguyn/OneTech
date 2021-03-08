@@ -1,0 +1,55 @@
+mutation CreateSolution(
+  $problemId: String!
+  $content: String!
+  $images: [String!]!
+) {
+  createSolution(problemId: $problemId, content: $content, images: $images) {
+    status
+    message
+  }
+}
+
+mutation DeleteSolution($id: String!) {
+  deleteSolution(id: $id) {
+    status
+    message
+  }
+}
+
+mutation UpdateSolution(
+  $id: String!
+  $content: String
+  $isPicked: Boolean
+  $images: [String!]!
+) {
+  updateSolution(
+    id: $id
+    input: { isPicked: $isPicked, content: $content }
+    images: $images
+  ) {
+    status
+    message
+  }
+}
+
+mutation ToggleSolutionStar($userId: String!, $solutionId: String!) {
+  toggleSolutionStar(userId: $userId, solutionId: $solutionId) {
+    status
+    message
+  }
+}
+
+mutation ToggleSolutionPicked(
+  $solutionId: String!
+  $problemId: String!
+  $solverId: String!
+) {
+  toggleSolutionPicked(
+    solutionId: $solutionId
+    problemId: $problemId
+    solverId: $solverId
+  ) {
+    status
+    message
+  }
+}

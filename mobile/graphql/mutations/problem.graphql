@@ -1,0 +1,115 @@
+mutation ToggleProblemStar($problemId: String!, $userId: String!) {
+  toggleProblemStar(problemId: $problemId, userId: $userId) {
+    status
+    message
+    data {
+      id
+      title
+      content
+      solvedBy
+      createdAt
+      updatedAt
+      author {
+        id
+        username
+        avatar
+      }
+      stars {
+        problemId
+        userId
+      }
+      solutions {
+        id
+      }
+      images {
+        path
+      }
+    }
+  }
+}
+
+mutation CreateProblem(
+  $deviceId: String!
+  $title: String!
+  $content: String!
+  $images: [String!]!
+) {
+  createProblem(
+    deviceId: $deviceId
+    title: $title
+    content: $content
+    images: $images
+  ) {
+    status
+    message
+    data {
+      id
+      title
+      content
+      solvedBy
+      createdAt
+      updatedAt
+      author {
+        id
+        username
+        avatar
+      }
+      stars {
+        problemId
+        userId
+      }
+      solutions {
+        id
+      }
+      images {
+        path
+      }
+    }
+  }
+}
+
+mutation DeleteProblem($id: String!) {
+  deleteProblem(id: $id) {
+    status
+    message
+  }
+}
+
+mutation UpdateProblem(
+  $id: String!
+  $title: String!
+  $content: String!
+  $images: [String!]!
+) {
+  updateProblem(
+    id: $id
+    input: { title: $title, content: $content }
+    images: $images
+  ) {
+    status
+    message
+    data {
+      id
+      title
+      content
+      solvedBy
+      createdAt
+      updatedAt
+      author {
+        id
+        username
+        avatar
+      }
+      stars {
+        problemId
+        userId
+      }
+      solutions {
+        id
+      }
+      images {
+        path
+      }
+    }
+  }
+}

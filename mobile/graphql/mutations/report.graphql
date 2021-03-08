@@ -1,0 +1,18 @@
+mutation createReport(
+  $title: String!
+  $content: String!
+  $problemId: String
+  $solutionId: String
+  $reviewId: String
+) {
+  createReport(
+    title: $title
+    content: $content
+    problemId: $problemId
+    solutionId: $solutionId
+    reviewId: $reviewId
+  ) {
+    status
+    message
+  }
+}

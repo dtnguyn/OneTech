@@ -1,0 +1,6 @@
+mutation ToggleDeviceFollow($deviceId: String!, $userId: String!) {
+  toggleDeviceFollow(deviceId: $deviceId, userId: $userId) {
+    status
+    message
+  }
+}

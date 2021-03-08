@@ -1,0 +1,69 @@
+query Me {
+  me {
+    status
+    data {
+      id
+      oauthId
+      username
+      email
+      avatar
+      setting {
+        notifications
+      }
+      solutions {
+        stars {
+          userId
+        }
+      }
+      problems {
+        stars {
+          userId
+        }
+      }
+      problemSolved {
+        id
+      }
+    }
+  }
+}
+
+query SingleUser($id: String!) {
+  singleUser(id: $id) {
+    status
+    data {
+      id
+      oauthId
+      username
+      email
+      setting {
+        isPrivate
+      }
+      avatar
+      solutions {
+        stars {
+          userId
+        }
+      }
+      problems {
+        stars {
+          userId
+        }
+      }
+      problemSolved {
+        id
+      }
+    }
+  }
+}
+
+query Setting($userId: String!) {
+  setting(userId: $userId) {
+    status
+    message
+    data {
+      userId
+      isPrivate
+      notifications
+    }
+  }
+}

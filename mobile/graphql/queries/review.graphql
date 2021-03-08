@@ -1,0 +1,43 @@
+query Reviews(
+  $deviceId: String
+  $authorId: String
+  $content: String
+  $title: String
+) {
+  reviews(
+    deviceId: $deviceId
+    authorId: $authorId
+    content: $content
+    title: $title
+  ) {
+    data {
+      id
+      title
+      author {
+        id
+        username
+        avatar
+      }
+      content
+      createdAt
+      deviceId
+      images {
+        path
+      }
+      rating {
+        reviewId
+        deviceId
+        overall
+        battery
+        software
+        display
+        camera
+        processor
+        gpu
+        memory
+        thermals
+        ports
+      }
+    }
+  }
+}

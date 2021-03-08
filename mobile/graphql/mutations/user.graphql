@@ -1,0 +1,20 @@
+mutation Logout {
+  logout {
+    status
+    message
+  }
+}
+
+mutation updateUserSetting(
+  $userId: String!
+  $isPrivate: Boolean
+  $notifications: Boolean
+) {
+  updateSetting(
+    userId: $userId
+    input: { isPrivate: $isPrivate, notifications: $notifications }
+  ) {
+    status
+    message
+  }
+}
