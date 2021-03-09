@@ -13,7 +13,8 @@ import WebScreen from "./screens/WebScreen";
 import { AuthContext } from "./context/AuthContext";
 import { useMeQuery, User } from "./generated/graphql";
 import DetailScreen from "./screens/DetailScreen";
-
+import { useFonts } from "expo-font";
+import CustomText from "./components/util/CustomText";
 const { manifest } = Constants;
 
 const client = new ApolloClient({
@@ -26,6 +27,14 @@ const RootStack = createStackNavigator<RootStackParamList>();
 
 export default function App() {
   const [user, setUser] = useState<User | null>(null);
+
+  const [fontsLoaded] = useFonts({
+    MLight: require("./assets/fonts/Montserrat-Light.ttf"),
+    MRegular: require("./assets/fonts/Montserrat-Regular.ttf"),
+    MMedium: require("./assets/fonts/Montserrat-Medium.ttf"),
+    MSemiBold: require("./assets/fonts/Montserrat-SemiBold.ttf"),
+    MBold: require("./assets/fonts/Montserrat-Bold.ttf"),
+  });
 
   const { data } = useMeQuery({
     variables: {},
@@ -44,7 +53,11 @@ export default function App() {
     <ApolloProvider client={client}>
       <AuthContext.Provider value={{ user, setUser }}>
         <NavigationContainer>
-          <RootStack.Navigator initialRouteName="Home" mode="modal">
+          <RootStack.Navigator
+            initialRouteName="Home"
+            mode="modal"
+            screenOptions={{ headerTitleAlign: "center" }}
+          >
             <RootStack.Screen
               name="Home"
               component={HomeScreen}
@@ -76,9 +89,17 @@ export default function App() {
               //   headerStyle: { backgroundColor: "#A8D8AD" },
               // }}
               options={({ route }) => ({
-                title: (route?.params?.name as string)
-                  ? route.params.name
-                  : "Detail",
+                headerShown: true,
+                headerStyle: {
+                  backgroundColor: "#A8D8AD",
+                },
+                headerTitle: () => (
+                  <CustomText fontSize={20} fontFamily="MSemiBold">
+                    {(route?.params?.name as string)
+                      ? route.params.name
+                      : "Detail"}
+                  </CustomText>
+                ),
               })}
             />
           </RootStack.Navigator>
