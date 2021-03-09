@@ -21,11 +21,7 @@ const Header: React.FC<HeaderProps> = ({ device, rating }) => {
   const [toggleDeviceFollowMutation, {}] = useToggleDeviceFollowMutation();
   const router = useRouter();
 
-  const handleToggleFollowDevice = async (
-    deviceId: string,
-    userId: string,
-    followState: boolean
-  ) => {
+  const handleToggleFollowDevice = async (deviceId: string, userId: string) => {
     await toggleDeviceFollowMutation({
       variables: {
         deviceId,

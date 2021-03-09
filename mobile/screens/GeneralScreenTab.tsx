@@ -1,14 +1,54 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Image, StyleSheet, Text, View } from "react-native";
 import { TouchableOpacity } from "react-native-gesture-handler";
 import CustomText from "../components/util/CustomText";
-import { Device } from "../generated/graphql";
+import { useAuth } from "../context/AuthContext";
+import { Device, useToggleDeviceFollowMutation } from "../generated/graphql";
 
 interface Props {
   device: Device | undefined;
 }
 
 const GeneralScreenTab: React.FC<Props> = ({ device }) => {
+  const [followed, setFollowed] = useState(false);
+  const { user } = useAuth();
+  const [toggleDeviceFollowMutation, {}] = useToggleDeviceFollowMutation();
+
+  const handleToggleFollowDevice = async (deviceId: string, userId: string) => {
+    setFollowed(!followed);
+    await toggleDeviceFollowMutation({
+      variables: {
+        deviceId,
+        userId,
+      },
+    })
+      .then((res) => {
+        if (!res.data?.toggleDeviceFollow.status) {
+          throw Error(res.data?.toggleDeviceFollow.message);
+        }
+      })
+      .catch((error) => {
+        alert(error.message);
+      });
+  };
+
+  useEffect(() => {
+    if (!user) {
+      setFollowed(false);
+      return;
+    }
+    if (!device) return;
+    for (const follower of device?.followers!) {
+      if (follower.userId === user.id) {
+        setFollowed(true);
+        return;
+      }
+    }
+    setFollowed(false);
+  }, [user, device]);
+
+  if (!device) return null;
+
   return (
     <View style={styles.container}>
       <Image source={{ uri: device?.coverImage }} style={styles.deviceImage} />
@@ -20,8 +60,17 @@ const GeneralScreenTab: React.FC<Props> = ({ device }) => {
           style={styles.buttonIcon}
         />
       </TouchableOpacity>
-      <TouchableOpacity style={styles.followButton}>
-        <CustomText>Follow</CustomText>
+      <TouchableOpacity
+        style={{
+          ...styles.followButton,
+          backgroundColor: followed ? "#6C757D" : "#A8D8AD",
+        }}
+        onPress={() => {
+          if (!user) return;
+          handleToggleFollowDevice(device.id, user!.id);
+        }}
+      >
+        <CustomText>{followed ? `Unfollow` : "Follow"}</CustomText>
         <Image
           source={require("../assets/images/add.png")}
           style={styles.buttonIcon}
@@ -62,7 +111,6 @@ const styles = StyleSheet.create({
     width: 250,
     height: 60,
     borderRadius: 15,
-    backgroundColor: "#A8D8AD",
     display: "flex",
     alignItems: "center",
     justifyContent: "center",
