@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Image, StyleSheet, Text, View } from "react-native";
-import { TouchableOpacity } from "react-native-gesture-handler";
+import { ScrollView, TouchableOpacity } from "react-native-gesture-handler";
 import CustomText from "../components/util/CustomText";
 import { useAuth } from "../context/AuthContext";
 import { Device, useToggleDeviceFollowMutation } from "../generated/graphql";
@@ -50,33 +50,38 @@ const GeneralScreenTab: React.FC<Props> = ({ device }) => {
   if (!device) return null;
 
   return (
-    <View style={styles.container}>
-      <Image source={{ uri: device?.coverImage }} style={styles.deviceImage} />
-      <CustomText style={styles.priceText}>Org at: $1099</CustomText>
-      <TouchableOpacity style={styles.buyButton}>
-        <CustomText>Buy</CustomText>
+    <ScrollView>
+      <View style={styles.container}>
         <Image
-          source={require("../assets/images/cart.png")}
-          style={styles.buttonIcon}
+          source={{ uri: device?.coverImage }}
+          style={styles.deviceImage}
         />
-      </TouchableOpacity>
-      <TouchableOpacity
-        style={{
-          ...styles.followButton,
-          backgroundColor: followed ? "#6C757D" : "#A8D8AD",
-        }}
-        onPress={() => {
-          if (!user) return;
-          handleToggleFollowDevice(device.id, user!.id);
-        }}
-      >
-        <CustomText>{followed ? `Unfollow` : "Follow"}</CustomText>
-        <Image
-          source={require("../assets/images/add.png")}
-          style={styles.buttonIcon}
-        />
-      </TouchableOpacity>
-    </View>
+        <CustomText style={styles.priceText}>Org at: $1099</CustomText>
+        <TouchableOpacity style={styles.buyButton}>
+          <CustomText>Buy</CustomText>
+          <Image
+            source={require("../assets/images/cart.png")}
+            style={styles.buttonIcon}
+          />
+        </TouchableOpacity>
+        <TouchableOpacity
+          style={{
+            ...styles.followButton,
+            backgroundColor: followed ? "#6C757D" : "#A8D8AD",
+          }}
+          onPress={() => {
+            if (!user) return;
+            handleToggleFollowDevice(device.id, user!.id);
+          }}
+        >
+          <CustomText>{followed ? `Unfollow` : "Follow"}</CustomText>
+          <Image
+            source={require("../assets/images/add.png")}
+            style={styles.buttonIcon}
+          />
+        </TouchableOpacity>
+      </View>
+    </ScrollView>
   );
 };
 

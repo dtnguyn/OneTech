@@ -10,7 +10,12 @@ import {
   NavigationState,
 } from "react-native-tab-view";
 import CustomText from "../components/util/CustomText";
-import { Device, useDeviceDetailQuery } from "../generated/graphql";
+import {
+  Device,
+  ReviewRating,
+  useDeviceDetailQuery,
+  useDeviceRatingsQuery,
+} from "../generated/graphql";
 import { RootStackParamList } from "../utils/types";
 import GeneralScreenTab from "./GeneralScreenTab";
 import ProblemScreenTab from "./ProblemScreenTab";
@@ -27,10 +32,17 @@ type State = NavigationState<{
 
 const DetailScreen: React.FC<Props> = ({ route }) => {
   const [device, setDevice] = useState<Device>();
+  const [rating, setRating] = useState<ReviewRating>();
 
   const { data, error } = useDeviceDetailQuery({
     variables: {
       id: route.params.id as string,
+    },
+  });
+
+  const { data: ratingData } = useDeviceRatingsQuery({
+    variables: {
+      deviceId: route.params.id as string,
     },
   });
 
@@ -68,7 +80,7 @@ const DetailScreen: React.FC<Props> = ({ route }) => {
 
   const renderScene = SceneMap({
     general: () => <GeneralScreenTab device={device} />,
-    spec: SpecScreenTab,
+    spec: () => <SpecScreenTab device={device} rating={rating} />,
     problem: ProblemScreenTab,
     review: ReviewScreenTab,
   });
@@ -79,6 +91,13 @@ const DetailScreen: React.FC<Props> = ({ route }) => {
       setDevice(devices[0]);
     }
   }, [data]);
+
+  useEffect(() => {
+    const ratings = ratingData?.ratings?.data as ReviewRating[];
+    if (ratings && ratings?.length === 1) {
+      setRating(ratings[0]);
+    }
+  }, [ratingData]);
 
   return (
     <TabView
@@ -99,8 +118,6 @@ const styles = StyleSheet.create({
   tabView: {
     color: "#000",
     backgroundColor: "#A8D8AD",
-    borderBottomRightRadius: 10,
-    borderBottomLeftRadius: 10,
   },
 });
 
