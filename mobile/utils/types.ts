@@ -5,22 +5,7 @@ export type RootStackParamList = {
   Search: undefined;
   Auth: undefined;
   Web: undefined;
-  Detail: { name: string };
+  Detail: { name: string; id: string };
 };
 
 export type ScreenNavigationProp = StackNavigationProp<RootStackParamList>;
-
-// export type SearchScreenNavigationProp = StackNavigationProp<
-//   RootStackParamList,
-//   "Search"
-// >;
-
-// export type AuthScreenNavigationProp = StackNavigationProp<
-//   RootStackParamList,
-//   "Auth"
-// >;
-
-// export type WebScreenNavigationProp = StackNavigationProp<
-//   RootStackParamList,
-//   "Web"
-// >;
