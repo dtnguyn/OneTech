@@ -7,10 +7,10 @@ import * as Linking from "expo-linking";
 import * as AuthSession from "expo-auth-session";
 
 import * as WebBrowser from "expo-web-browser";
-import { AuthScreenNavigationProp } from "../../utils/types";
+import { ScreenNavigationProp } from "../../utils/types";
 
 interface Props {
-  navigation: AuthScreenNavigationProp;
+  navigation: ScreenNavigationProp;
 }
 
 const Login: React.FC<Props> = ({ navigation }) => {

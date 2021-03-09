@@ -13,11 +13,11 @@ import {
   useMeQuery,
   User,
 } from "../generated/graphql";
-import { HomeScreenNavigationProp } from "../utils/types";
+import { ScreenNavigationProp } from "../utils/types";
 import { useAuth } from "../context/AuthContext";
 
 interface Props {
-  navigation: HomeScreenNavigationProp;
+  navigation: ScreenNavigationProp;
 }
 
 const HomeScreen: React.FC<Props> = ({ navigation }) => {

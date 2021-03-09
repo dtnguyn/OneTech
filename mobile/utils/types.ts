@@ -5,25 +5,22 @@ export type RootStackParamList = {
   Search: undefined;
   Auth: undefined;
   Web: undefined;
-  Detail: undefined;
+  Detail: { name: string };
 };
 
-export type HomeScreenNavigationProp = StackNavigationProp<
-  RootStackParamList,
-  "Home"
->;
+export type ScreenNavigationProp = StackNavigationProp<RootStackParamList>;
 
-export type SearchScreenNavigationProp = StackNavigationProp<
-  RootStackParamList,
-  "Search"
->;
+// export type SearchScreenNavigationProp = StackNavigationProp<
+//   RootStackParamList,
+//   "Search"
+// >;
 
-export type AuthScreenNavigationProp = StackNavigationProp<
-  RootStackParamList,
-  "Auth"
->;
+// export type AuthScreenNavigationProp = StackNavigationProp<
+//   RootStackParamList,
+//   "Auth"
+// >;
 
-export type WebScreenNavigationProp = StackNavigationProp<
-  RootStackParamList,
-  "Web"
->;
+// export type WebScreenNavigationProp = StackNavigationProp<
+//   RootStackParamList,
+//   "Web"
+// >;

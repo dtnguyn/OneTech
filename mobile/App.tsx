@@ -44,11 +44,7 @@ export default function App() {
     <ApolloProvider client={client}>
       <AuthContext.Provider value={{ user, setUser }}>
         <NavigationContainer>
-          <RootStack.Navigator
-            initialRouteName="Home"
-            mode="modal"
-            screenOptions={{ animationEnabled: false }}
-          >
+          <RootStack.Navigator initialRouteName="Home" mode="modal">
             <RootStack.Screen
               name="Home"
               component={HomeScreen}
@@ -75,10 +71,15 @@ export default function App() {
             <RootStack.Screen
               name="Detail"
               component={DetailScreen}
-              options={{
-                headerShown: true,
-                headerStyle: { backgroundColor: "#A8D8AD" },
-              }}
+              // options={{
+              //   headerShown: true,
+              //   headerStyle: { backgroundColor: "#A8D8AD" },
+              // }}
+              options={({ route }) => ({
+                title: (route?.params?.name as string)
+                  ? route.params.name
+                  : "Detail",
+              })}
             />
           </RootStack.Navigator>
         </NavigationContainer>
