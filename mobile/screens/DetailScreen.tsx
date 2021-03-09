@@ -31,9 +31,7 @@ const DetailScreen: React.FC<Props> = ({}) => {
         scrollEnabled={true}
         activeColor="#000"
         inactiveColor="#000"
-        renderLabel={({ route, focused }) => (
-          <CustomText>{route.title}</CustomText>
-        )}
+        renderLabel={({ route }) => <CustomText>{route.title}</CustomText>}
         indicatorStyle={{
           backgroundColor: "white",
           height: 2,
