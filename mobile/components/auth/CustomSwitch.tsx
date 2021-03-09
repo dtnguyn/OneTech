@@ -6,7 +6,7 @@ import CustomText from "../util/CustomText";
 interface Props {
   options: string[];
   currentOption: string;
-  optionWidth: number;
+  optionWidth?: number;
   changeOption: (option: string) => void;
 }
 

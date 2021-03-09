@@ -1,5 +1,5 @@
 Arguments: 
-  /usr/local/bin/node /Users/adronnguyen/.yarn/bin/yarn.js add @types/react-native-cookies
+  /usr/local/bin/node /Users/adronnguyen/.yarn/bin/yarn.js add @types/react-native-animated-bar
 
 PATH: 
   /Users/adronnguyen/.yarn/bin:/Users/adronnguyen/.config/yarn/global/node_modules/.bin:/opt/homebrew/bin:/opt/homebrew/sbin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin:/Library/Apple/usr/bin:/Users/adronnguyen/.yarn/bin:/Users/adronnguyen/.config/yarn/global/node_modules/.bin:/opt/homebrew/bin:/opt/homebrew/sbin
@@ -14,7 +14,7 @@ Platform:
   darwin x64
 
 Trace: 
-  Error: https://registry.yarnpkg.com/@types%2freact-native-cookies: Not found
+  Error: https://registry.yarnpkg.com/@types%2freact-native-animated-bar: Not found
       at Request.params.callback [as _callback] (/Users/adronnguyen/.yarn/lib/cli.js:66988:18)
       at Request.self.callback (/Users/adronnguyen/.yarn/lib/cli.js:140749:22)
       at Request.emit (events.js:315:20)
@@ -41,14 +41,18 @@ npm manifest:
       "@apollo/client": "^3.3.11",
       "@expo-google-fonts/inter": "^0.1.0",
       "@expo-google-fonts/montserrat": "^0.1.0",
+      "@react-native-async-storage/async-storage": "^1.14.1",
       "@react-native-community/masked-view": "0.1.10",
+      "@react-native-cookies/cookies": "^6.0.4",
       "@react-navigation/native": "^5.9.3",
       "@react-navigation/stack": "^5.14.3",
       "@types/react-native-snap-carousel": "^3.8.2",
       "axios": "^0.21.1",
       "expo": "~40.0.0",
+      "expo-auth-session": "~3.0.0",
       "expo-font": "~8.4.0",
       "expo-linking": "~2.0.1",
+      "expo-random": "~10.0.0",
       "expo-status-bar": "~1.0.3",
       "expo-web-browser": "^9.0.0",
       "graphql": "^15.5.0",
@@ -57,6 +61,7 @@ npm manifest:
       "react-alert": "^7.0.2",
       "react-dom": "16.13.1",
       "react-native": "https://github.com/expo/react-native/archive/sdk-40.0.1.tar.gz",
+      "react-native-animated-bar": "^0.2.0",
       "react-native-animated-loader": "^0.0.9",
       "react-native-cookies": "^3.3.0",
       "react-native-gesture-handler": "~1.8.0",
@@ -65,8 +70,9 @@ npm manifest:
       "react-native-screens": "~2.15.2",
       "react-native-slick": "^1.6.0",
       "react-native-snap-carousel": "^3.9.1",
+      "react-native-tab-view": "^2.16.0",
       "react-native-web": "~0.13.12",
-      "react-native-webview": "^11.2.3",
+      "react-native-webview": "11.0.0",
       "react-navigation-fluid-transitions": "^0.3.2",
       "react-navigation-transitions": "^1.0.12"
     },
@@ -2183,6 +2189,13 @@ Lockfile:
       "@nodelib/fs.scandir" "2.1.4"
       fastq "^1.6.0"
   
+  "@react-native-async-storage/async-storage@^1.14.1":
+    version "1.14.1"
+    resolved "https://registry.yarnpkg.com/@react-native-async-storage/async-storage/-/async-storage-1.14.1.tgz#3c2ff2b1a312df3b1c809a60fa88665e50a095b8"
+    integrity sha512-UkLUox2q5DKNYB6IMUzsuwrTJeXGLySvtQlnrqd3fd+96JErCT4X3xD+W1cvQjes0nm0LbaELbwObKc+Tea7wA==
+    dependencies:
+      deep-assign "^3.0.0"
+  
   "@react-native-community/cli-debugger-ui@^4.13.1":
     version "4.13.1"
     resolved "https://registry.yarnpkg.com/@react-native-community/cli-debugger-ui/-/cli-debugger-ui-4.13.1.tgz#07de6d4dab80ec49231de1f1fbf658b4ad39b32c"
@@ -2307,6 +2320,13 @@ Lockfile:
     version "0.1.10"
     resolved "https://registry.yarnpkg.com/@react-native-community/masked-view/-/masked-view-0.1.10.tgz#5dda643e19e587793bc2034dd9bf7398ad43d401"
     integrity sha512-rk4sWFsmtOw8oyx8SD3KSvawwaK7gRBSEIy2TAwURyGt+3TizssXP1r8nx3zY+R7v2vYYHXZ+k2/GULAT/bcaQ==
+  
+  "@react-native-cookies/cookies@^6.0.4":
+    version "6.0.4"
+    resolved "https://registry.yarnpkg.com/@react-native-cookies/cookies/-/cookies-6.0.4.tgz#4914bfa1110361ec67281c6d7ce9fde6e3b1e7e8"
+    integrity sha512-VOZvNtxUsNmWV/H6/JqO/HPiNJQa5zvmPv3YnuK3uu9CcTEWsvTsq6VmvhJci4DTilI1e1/SF6z6yJwmscS+iw==
+    dependencies:
+      invariant "^2.2.4"
   
   "@react-navigation/core@^5.15.2":
     version "5.15.2"
@@ -2984,7 +3004,7 @@ Lockfile:
     resolved "https://registry.yarnpkg.com/balanced-match/-/balanced-match-1.0.0.tgz#89b4d199ab2bee49de164ea02b89ce462d71b767"
     integrity sha1-ibTRmasr7kneFk6gK4nORi1xt2c=
   
-  base64-js@^1.1.2, base64-js@^1.2.3, base64-js@^1.3.1:
+  base64-js@^1.1.2, base64-js@^1.2.3, base64-js@^1.3.0, base64-js@^1.3.1:
     version "1.5.1"
     resolved "https://registry.yarnpkg.com/base64-js/-/base64-js-1.5.1.tgz#1b1b440160a5bf7ad40b650f095963481903930a"
     integrity sha512-AKpaYlHn8t4SVbOHCy+b5+KKgvR4vrsD8vbvrbiQJps7fKDTkjkDry6ji0rUJjC0kzbNePLwzxq8iypo41qeWA==
@@ -4162,7 +4182,19 @@ Lockfile:
       path-browserify "^1.0.0"
       url-parse "^1.4.4"
   
-  expo-constants@~9.3.3:
+  expo-auth-session@~3.0.0:
+    version "3.0.0"
+    resolved "https://registry.yarnpkg.com/expo-auth-session/-/expo-auth-session-3.0.0.tgz#784471b9609cd81ef736c87ac65fe6783c32798d"
+    integrity sha512-7iSAMFQZnH6eTV3L0buRFpKaaBgqU1df23lw9uoVrgmmFbHImZioMpr0XEgAhOiY1+lVRYNvxb93fAH2iLoh+g==
+    dependencies:
+      expo-constants "^9.3.3"
+      expo-crypto "^8.4.0"
+      expo-linking "~2.0.0"
+      expo-web-browser "^8.6.0"
+      invariant "^2.2.4"
+      qs "6.9.1"
+  
+  expo-constants@^9.3.3, expo-constants@~9.3.3:
     version "9.3.5"
     resolved "https://registry.yarnpkg.com/expo-constants/-/expo-constants-9.3.5.tgz#78085763e8ed100a5f2df7c682fd99631aa03d5e"
     integrity sha512-qIlv2ffSjQl3wrvJwXYoNfQNfH/sK46EXcgyEQnQ1SAQO4ukwTEpG9j3fdW6aTiVEVrv/DsA1IaVRqKrUwSd3A==
@@ -4170,6 +4202,11 @@ Lockfile:
       "@expo/config" "^3.3.18"
       fbjs "1.0.0"
       uuid "^3.3.2"
+  
+  expo-crypto@^8.4.0:
+    version "8.4.0"
+    resolved "https://registry.yarnpkg.com/expo-crypto/-/expo-crypto-8.4.0.tgz#59a5b0640bb39db93e6857feafa2c9514b172cef"
+    integrity sha512-EHEFx5sHTDVIuQH8/juuecQWj1uQ7ClM98fKXPFcNYcBlYSCQvkik37hwfJC5WLcVnelFDpvZJmHxiTfB5GKCg==
   
   expo-error-recovery@~1.4.0:
     version "1.4.0"
@@ -4203,7 +4240,7 @@ Lockfile:
     resolved "https://registry.yarnpkg.com/expo-linear-gradient/-/expo-linear-gradient-8.4.0.tgz#34e6f960b1971c57dacf7211c747ba490a76bf63"
     integrity sha512-f9JOXaIl0MR8RBYRIud5UAsEi52oz81XhQs73VUpujemHjOyHmrZa6dqwf399YOwI/WBwbpcINcUIw/mCYE1mA==
   
-  expo-linking@~2.0.1:
+  expo-linking@~2.0.0, expo-linking@~2.0.1:
     version "2.0.1"
     resolved "https://registry.yarnpkg.com/expo-linking/-/expo-linking-2.0.1.tgz#0ac0298039b0f7f6c109d7efbbb661efc1c56760"
     integrity sha512-S+Bb5u1rlld6ZICKOQ4B/htHiIbtd9eJMpwXoWMcl68V+UNNxJisB5lUZePXWSoHlb0QbQfVOAf48u2WD588lQ==
@@ -4223,6 +4260,13 @@ Lockfile:
     resolved "https://registry.yarnpkg.com/expo-permissions/-/expo-permissions-10.0.0.tgz#5b31c54d561d00c7e46cd02321bc3704c51c584b"
     integrity sha512-b6oitd4JmFdQ7DxczZ2WRS9aDyqgVM7lEhy3JyKZ2dbU19C6NyHyLCcwssZgfzOfGnp2owoaWn3KU4zdrF5MIA==
   
+  expo-random@~10.0.0:
+    version "10.0.0"
+    resolved "https://registry.yarnpkg.com/expo-random/-/expo-random-10.0.0.tgz#68e9e46a7025918e13a80e655a9a0c2b60d0b9e7"
+    integrity sha512-7x0fDAZGDUUVhlfZ3lbYIfSYb6TIPq0VglbDRXvAZjvfHgefbCW2/+iZWTDYNA0ZOtzoM5dwWg4Z5fiXuAdsrQ==
+    dependencies:
+      base64-js "^1.3.0"
+  
   expo-secure-store@~9.3.0:
     version "9.3.0"
     resolved "https://registry.yarnpkg.com/expo-secure-store/-/expo-secure-store-9.3.0.tgz#b716d5d115cc50a34037d1afef84fe4b8ea0745c"
@@ -4240,6 +4284,13 @@ Lockfile:
     version "1.0.3"
     resolved "https://registry.yarnpkg.com/expo-status-bar/-/expo-status-bar-1.0.3.tgz#62b4d6145680abd43ba6ecfa465f835e88bf6263"
     integrity sha512-/Orgla1nkIrfswNHbuAOTbPVq0g3+GrhoQVk7MRafY2dwrFLgXhaPExS+eN2hpmzqPv2LG5cqAZDCQUAjmZYBQ==
+  
+  expo-web-browser@^8.6.0:
+    version "8.6.0"
+    resolved "https://registry.yarnpkg.com/expo-web-browser/-/expo-web-browser-8.6.0.tgz#121ad81b2597b8273739b630c278a6f6937b95ae"
+    integrity sha512-VHFuBl0im00yEVbEzOZUrQVvq8uGhyU/4WivJkfLF4GA3Pj7CaG6PMo0+6YNzkzB1JoVx5AfuKgBbSuOuETP9Q==
+    dependencies:
+      compare-urls "^2.0.0"
   
   expo-web-browser@^9.0.0:
     version "9.0.0"
@@ -7220,6 +7271,11 @@ Lockfile:
     resolved "https://registry.yarnpkg.com/punycode/-/punycode-2.1.1.tgz#b58b010ac40c22c5657616c8d2c2c02c7bf479ec"
     integrity sha512-XRsRjdf+j5ml+y/6GKHPZbrF/8p2Yga0JPtdqTIY2Xe5ohJPD9saDJJLPvp9+NSBprVvevdXZybnj2cv8OEd0A==
   
+  qs@6.9.1:
+    version "6.9.1"
+    resolved "https://registry.yarnpkg.com/qs/-/qs-6.9.1.tgz#20082c65cb78223635ab1a9eaca8875a29bf8ec9"
+    integrity sha512-Cxm7/SS/y/Z3MHWSxXb8lIFqgqBowP5JMlTUFyJN88y0SGQhVmZnqFK/PeuMX9LzUyWsqqhNxIyg0jlzq946yA==
+  
   qs@^6.5.0:
     version "6.9.6"
     resolved "https://registry.yarnpkg.com/qs/-/qs-6.9.6.tgz#26ed3c8243a431b2924aca84cc90471f35d5a0ee"
@@ -7313,6 +7369,11 @@ Lockfile:
     resolved "https://registry.yarnpkg.com/react-is/-/react-is-17.0.1.tgz#5b3531bd76a645a4c9fb6e693ed36419e3301339"
     integrity sha512-NAnt2iGDXohE5LI7uBnLnqvLQMtzhkiAOLXTmv+qnF9Ky7xAPcX8Up/xWIhxvLVGJvuLiNc4xQLtuqDRzb4fSA==
   
+  react-native-animated-bar@^0.2.0:
+    version "0.2.0"
+    resolved "https://registry.yarnpkg.com/react-native-animated-bar/-/react-native-animated-bar-0.2.0.tgz#98ffaaa58d5ac73d73a88b061141ef4f74a7dda1"
+    integrity sha512-eSg2X3vWdRPaArw1/0HsSeCoTtQTEmVkA8xGhNy2NkgM1sGQGXh8sF9DA0wYiRqQVTYAAZC+z9FPKaF1EVWOLg==
+  
   react-native-animated-loader@^0.0.9:
     version "0.0.9"
     resolved "https://registry.yarnpkg.com/react-native-animated-loader/-/react-native-animated-loader-0.0.9.tgz#8a55d5050c70d3577b5388bf257c1059b7135d19"
@@ -7381,6 +7442,11 @@ Lockfile:
       prop-types "^15.6.1"
       react-addons-shallow-compare "15.6.2"
   
+  react-native-tab-view@^2.16.0:
+    version "2.16.0"
+    resolved "https://registry.yarnpkg.com/react-native-tab-view/-/react-native-tab-view-2.16.0.tgz#cae72c7084394bd328fac5fefb86cd966df37a86"
+    integrity sha512-ac2DmT7+l13wzIFqtbfXn4wwfgtPoKzWjjZyrK1t+T8sdemuUvD4zIt+UImg03fu3s3VD8Wh/fBrIdcqQyZJWg==
+  
   react-native-web@~0.13.12:
     version "0.13.18"
     resolved "https://registry.yarnpkg.com/react-native-web/-/react-native-web-0.13.18.tgz#964f058a16521a3b9a31b091415edfef5b6ef305"
@@ -7396,10 +7462,10 @@ Lockfile:
       prop-types "^15.6.0"
       react-timer-mixin "^0.13.4"
   
-  react-native-webview@^11.2.3:
-    version "11.2.3"
-    resolved "https://registry.yarnpkg.com/react-native-webview/-/react-native-webview-11.2.3.tgz#1b82685ab60645d4161f2e25e98286493cdffa5d"
-    integrity sha512-r/K+Lf/O5aij72gRndMX2qsyQ/WLtDPiO75SS57y6JjqSKxedGASVL9Jwl1TM7fCXqUq8dgiwik/LuBHbJXAEg==
+  react-native-webview@11.0.0:
+    version "11.0.0"
+    resolved "https://registry.yarnpkg.com/react-native-webview/-/react-native-webview-11.0.0.tgz#d667cbcc772e963fe88a4156290d25fe47ed43b0"
+    integrity sha512-gzID5ebCFVNkxreuabClymo6QkJbXCLEtiIUY9QAhxY58HsDUp8x0YzDVEROYyEJ4ghL71koAOeQRDNAgNnh1w==
     dependencies:
       escape-string-regexp "2.0.0"
       invariant "2.2.4"
