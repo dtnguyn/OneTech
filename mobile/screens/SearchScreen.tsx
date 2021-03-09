@@ -16,10 +16,10 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import AutoComplete from "../components/search/AutoComplete";
 import CustomText from "../components/util/CustomText";
 import { Device, useDevicesQuery } from "../generated/graphql";
-import { SearchScreenNavigationProp } from "../utils/types";
+import { ScreenNavigationProp } from "../utils/types";
 
 interface Props {
-  navigation: SearchScreenNavigationProp;
+  navigation: ScreenNavigationProp;
 }
 
 const SearchScreen: React.FC<Props> = ({ navigation }) => {

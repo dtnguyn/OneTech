@@ -8,14 +8,11 @@ import Login from "../components/auth/Login";
 import Register from "../components/auth/Register";
 import CustomText from "../components/util/CustomText";
 import { useMeQuery } from "../generated/graphql";
-import {
-  AuthScreenNavigationProp,
-  HomeScreenNavigationProp,
-} from "../utils/types";
+import { ScreenNavigationProp } from "../utils/types";
 import * as Linking from "expo-linking";
 
 interface Props {
-  navigation: AuthScreenNavigationProp;
+  navigation: ScreenNavigationProp;
 }
 
 const AuthScreen: React.FC<Props> = ({ navigation }) => {

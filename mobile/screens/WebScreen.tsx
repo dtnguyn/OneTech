@@ -4,10 +4,10 @@ import { WebView } from "react-native-webview";
 import * as Linking from "expo-linking";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useMeQuery } from "../generated/graphql";
-import { WebScreenNavigationProp } from "../utils/types";
+import { ScreenNavigationProp } from "../utils/types";
 
 interface Props {
-  navigation: WebScreenNavigationProp;
+  navigation: ScreenNavigationProp;
 }
 
 const WebScreen: React.FC<Props> = ({ navigation }) => {

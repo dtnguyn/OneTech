@@ -3,40 +3,18 @@ import React, { useState } from "react";
 import { Dimensions, ListRenderItem, StyleSheet, View } from "react-native";
 import Carousel, { AdditionalParallaxProps } from "react-native-snap-carousel";
 import { Device } from "../../generated/graphql";
-import { HomeScreenNavigationProp } from "../../utils/types";
+import { ScreenNavigationProp } from "../../utils/types";
 import CustomText from "../util/CustomText";
 import DeviceItem from "./DeviceItem";
 
 interface Props {
   devices: Array<Device>;
-  navigation: HomeScreenNavigationProp;
+  navigation: ScreenNavigationProp;
 }
 
 const DeviceCarousel: React.FC<Props> = ({ devices, navigation }) => {
   const SliderWidth = Dimensions.get("screen").width;
   const [activeIndex, setActivateIndex] = useState(0);
-  const [carouselState, setCarouselState] = useState([
-    {
-      title: "Item 1",
-      text: "Text 1",
-    },
-    {
-      title: "Item 2",
-      text: "Text 2",
-    },
-    {
-      title: "Item 3",
-      text: "Text 3",
-    },
-    {
-      title: "Item 4",
-      text: "Text 4",
-    },
-    {
-      title: "Item 5",
-      text: "Text 5",
-    },
-  ]);
 
   const renderDevice: ListRenderItem<{
     title: string;
@@ -53,7 +31,7 @@ const DeviceCarousel: React.FC<Props> = ({ devices, navigation }) => {
       <DeviceItem
         device={item}
         moveToDetail={() => {
-          navigation.push("Detail");
+          navigation.push("Detail", { name: item.name });
         }}
       />
     );
