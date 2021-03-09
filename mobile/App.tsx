@@ -84,10 +84,6 @@ export default function App() {
             <RootStack.Screen
               name="Detail"
               component={DetailScreen}
-              // options={{
-              //   headerShown: true,
-              //   headerStyle: { backgroundColor: "#A8D8AD" },
-              // }}
               options={({ route }) => ({
                 headerShown: true,
                 headerStyle: {
