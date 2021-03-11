@@ -28,15 +28,20 @@ const RatingBar: React.FC<Props> = ({ rating }) => {
     <View
       style={{
         ...styles.container,
+        width: `${rating * 10}%`,
         backgroundColor: handleRatingBarColor(rating * 10),
       }}
-    ></View>
+    >
+      <CustomText fontSize={10}>{rating}</CustomText>
+    </View>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
     height: 15,
+    alignItems: "center",
+    justifyContent: "center",
     borderRadius: 40,
   },
 });
