@@ -42,7 +42,9 @@ const ProblemScreenTab: React.FC<Props> = ({ problems, submitSearchValue }) => {
         />
       </View>
       <FlatList
-        style={{ width: "95%", alignSelf: "center" }}
+        style={{
+          width: "95%",
+        }}
         data={problems}
         renderItem={renderProblemItem}
       />

@@ -1,10 +1,11 @@
 import React from "react";
-import { Image, StyleSheet, View } from "react-native";
+import { Image, StyleSheet, useWindowDimensions, View } from "react-native";
 import { TouchableOpacity } from "react-native-gesture-handler";
 import { DeviceProblem } from "../../generated/graphql";
 import CustomText from "../util/CustomText";
 import StatsBox from "./StatsBox";
 import moment from "moment";
+import HTML from "react-native-render-html";
 
 interface Props {
   problem: DeviceProblem;
@@ -14,15 +15,23 @@ const ProblemItem: React.FC<Props> = ({ problem }) => {
   console.log("problem: ", problem.title);
 
   return (
-    <View style={{ width: "90%" }}>
+    <View style={{ width: "100%" }}>
       <View style={styles.container}>
         <View style={styles.left}>
           <Image
             source={{ uri: problem.author?.avatar }}
             style={styles.userIcon}
           />
-          <StatsBox title="stars" value={32} color="yellow" />
-          <StatsBox title="solutions" value={32} color="green" />
+          <StatsBox
+            title="stars"
+            value={problem.stars?.length ? problem.stars.length : 0}
+            color="yellow"
+          />
+          <StatsBox
+            title="solutions"
+            value={problem.solutions?.length ? problem.solutions.length : 0}
+            color="green"
+          />
         </View>
         <View style={styles.right}>
           <CustomText
@@ -35,7 +44,18 @@ const ProblemItem: React.FC<Props> = ({ problem }) => {
           <CustomText fontFamily="MLight">
             {moment(problem.createdAt).format("LL")}
           </CustomText>
-          <CustomText style={{ marginTop: 8 }}>{problem.content}</CustomText>
+          <CustomText style={{ marginTop: 8 }}>
+            <HTML
+              source={{ html: problem.content }}
+              contentWidth={50}
+              computeEmbeddedMaxWidth={(width) => 300}
+              containerStyle={{
+                width: useWindowDimensions().width * 0.8,
+                paddingEnd: 20,
+                paddingBottom: 0,
+              }}
+            />
+          </CustomText>
           <View style={styles.buttonsContainer}>
             <TouchableOpacity style={styles.buttonIconContainer}>
               <Image
