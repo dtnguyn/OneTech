@@ -6,14 +6,16 @@ import CustomText from "../util/CustomText";
 import StatsBox from "./StatsBox";
 import moment from "moment";
 import HTML from "react-native-render-html";
+import { useFonts } from "expo-font";
 
 interface Props {
   problem: DeviceProblem;
 }
 
 const ProblemItem: React.FC<Props> = ({ problem }) => {
-  console.log("problem: ", problem.title);
-
+  const [fontsLoaded] = useFonts({
+    MMedium: require("../../assets/fonts/Montserrat-Medium.ttf"),
+  });
   return (
     <View style={{ width: "100%" }}>
       <View style={styles.container}>
@@ -48,6 +50,7 @@ const ProblemItem: React.FC<Props> = ({ problem }) => {
             <HTML
               source={{ html: problem.content }}
               contentWidth={50}
+              baseFontStyle={{ fontFamily: "MMedium" }}
               computeEmbeddedMaxWidth={(width) => 300}
               containerStyle={{
                 width: useWindowDimensions().width * 0.8,
