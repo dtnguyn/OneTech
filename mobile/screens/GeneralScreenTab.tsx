@@ -4,6 +4,8 @@ import { ScrollView, TouchableOpacity } from "react-native-gesture-handler";
 import CustomText from "../components/util/CustomText";
 import { useAuth } from "../context/AuthContext";
 import { Device, useToggleDeviceFollowMutation } from "../generated/graphql";
+import FastImage from "react-native-fast-image";
+import CustomImage from "../components/util/CustomImage";
 
 interface Props {
   device: Device | undefined;

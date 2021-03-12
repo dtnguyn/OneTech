@@ -8,7 +8,7 @@ import {
   TextInput,
   View,
 } from "react-native";
-import { FlatList } from "react-native-gesture-handler";
+import { FlatList, TouchableOpacity } from "react-native-gesture-handler";
 import ProblemItem from "../components/deviceDetail/ProblemItem";
 import { useAuth } from "../context/AuthContext";
 import {
@@ -16,6 +16,7 @@ import {
   DeviceProblemStar,
   useToggleProblemStarMutation,
 } from "../generated/graphql";
+import { FloatingAction } from "react-native-floating-action";
 
 interface Props {
   problems: Array<DeviceProblem>;
@@ -90,17 +91,27 @@ const ProblemScreenTab: React.FC<Props> = ({ problems, submitSearchValue }) => {
       <FlatList
         style={{
           width: "95%",
-          marginBottom: 90,
         }}
         data={problems}
         renderItem={renderProblemItem}
       />
+      <View style={styles.floatingButtonContainer}>
+        <TouchableOpacity style={styles.floatingButton}>
+          <Image
+            style={styles.floatingIcon}
+            source={require("../assets/images/add2.png")}
+          />
+        </TouchableOpacity>
+      </View>
     </View>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
+    position: "relative",
+    backgroundColor: "#fff",
+    height: "100%",
     display: "flex",
     alignItems: "center",
   },
@@ -124,6 +135,24 @@ const styles = StyleSheet.create({
     top: 8,
     width: 32,
     height: 32,
+  },
+  floatingButtonContainer: {
+    position: "absolute",
+    bottom: 20,
+    right: 20,
+  },
+  floatingButton: {
+    width: 64,
+    height: 64,
+    borderRadius: 64,
+    elevation: 4,
+    backgroundColor: "#017BFE",
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  floatingIcon: {
+    width: 28,
+    height: 28,
   },
 });
 

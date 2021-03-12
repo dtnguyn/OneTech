@@ -54,19 +54,18 @@ const ProblemItem: React.FC<Props> = ({ problem, starred, toggleStar }) => {
           <CustomText fontFamily="MLight">
             {moment(problem.createdAt).format("LL")}
           </CustomText>
-          <CustomText style={{ marginTop: 8 }}>
-            <HTML
-              source={{ html: problem.content }}
-              contentWidth={50}
-              baseFontStyle={{ fontFamily: "MMedium" }}
-              computeEmbeddedMaxWidth={(width) => 300}
-              containerStyle={{
-                width: useWindowDimensions().width * 0.8,
-                paddingEnd: 20,
-                paddingBottom: 0,
-              }}
-            />
-          </CustomText>
+          <HTML
+            source={{ html: problem.content }}
+            contentWidth={50}
+            baseFontStyle={{ fontFamily: "MMedium" }}
+            computeEmbeddedMaxWidth={(width) => 300}
+            containerStyle={{
+              width: useWindowDimensions().width * 0.8,
+              paddingEnd: 20,
+              paddingBottom: 0,
+              marginBottom: 30,
+            }}
+          />
           <View style={styles.buttonsContainer}>
             <TouchableOpacity
               style={styles.buttonIconContainer}
@@ -114,6 +113,7 @@ const styles = StyleSheet.create({
     display: "flex",
     flexDirection: "row",
     width: "100%",
+    marginBottom: 10,
   },
   left: {
     flex: 1,
@@ -128,11 +128,12 @@ const styles = StyleSheet.create({
     aspectRatio: 1,
     borderRadius: 300,
     marginBottom: 10,
-    resizeMode: "cover",
     backgroundColor: "#C4C4C4",
   },
 
   buttonsContainer: {
+    position: "absolute",
+    bottom: 0,
     display: "flex",
     flexDirection: "row",
   },
@@ -147,7 +148,6 @@ const styles = StyleSheet.create({
   divider: {
     width: "100%",
     height: 1,
-    marginTop: 20,
     backgroundColor: "#D1D1D1",
   },
 });
