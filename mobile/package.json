@@ -26,13 +26,9 @@
     "expo-random": "~10.0.0",
     "expo-status-bar": "~1.0.3",
     "expo-web-browser": "^9.0.0",
-<<<<<<< HEAD
     "fast-html-parser": "^1.0.1",
     "graphql": "^15.5.0",
     "html-react-parser": "^1.2.4",
-=======
-    "graphql": "^15.5.0",
->>>>>>> 111beae01c94b43123bd404120106d1595956af9
     "lottie-react-native": "^3.5.0",
     "mobile": "^0.0.1",
     "moment": "^2.29.1",
@@ -44,13 +40,9 @@
     "react-native-animated-loader": "^0.0.9",
     "react-native-cookies": "^3.3.0",
     "react-native-gesture-handler": "~1.8.0",
-<<<<<<< HEAD
     "react-native-html-parser": "^0.1.0",
     "react-native-reanimated": "~1.13.0",
     "react-native-render-html": "^5.1.0",
-=======
-    "react-native-reanimated": "~1.13.0",
->>>>>>> 111beae01c94b43123bd404120106d1595956af9
     "react-native-safe-area-context": "3.1.9",
     "react-native-screens": "~2.15.2",
     "react-native-slick": "^1.6.0",
