@@ -1,17 +1,26 @@
 import React from "react";
 import { Image, StyleSheet, View } from "react-native";
 import { TouchableOpacity } from "react-native-gesture-handler";
+import { DeviceProblem } from "../../generated/graphql";
 import CustomText from "../util/CustomText";
 import StatsBox from "./StatsBox";
+import moment from "moment";
 
-interface Props {}
+interface Props {
+  problem: DeviceProblem;
+}
 
-const ProblemItem: React.FC<Props> = ({}) => {
+const ProblemItem: React.FC<Props> = ({ problem }) => {
+  console.log("problem: ", problem.title);
+
   return (
     <View style={{ width: "90%" }}>
       <View style={styles.container}>
         <View style={styles.left}>
-          <View style={styles.userIcon} />
+          <Image
+            source={{ uri: problem.author?.avatar }}
+            style={styles.userIcon}
+          />
           <StatsBox title="stars" value={32} color="yellow" />
           <StatsBox title="solutions" value={32} color="green" />
         </View>
@@ -21,13 +30,12 @@ const ProblemItem: React.FC<Props> = ({}) => {
             style={{ color: "#E35427" }}
             fontSize={18}
           >
-            Why my iPhone 12 Pro Max doesn’t boot
+            {problem.title}
           </CustomText>
-          <CustomText fontFamily="MLight">May 25, 2020</CustomText>
-          <CustomText style={{ marginTop: 8 }}>
-            I dropped my phone the other day and I couldn’t turn on anymore. The
-            screen is still intact and show damage externally...
+          <CustomText fontFamily="MLight">
+            {moment(problem.createdAt).format("LL")}
           </CustomText>
+          <CustomText style={{ marginTop: 8 }}>{problem.content}</CustomText>
           <View style={styles.buttonsContainer}>
             <TouchableOpacity style={styles.buttonIconContainer}>
               <Image

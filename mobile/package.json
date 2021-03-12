@@ -28,6 +28,8 @@
     "expo-web-browser": "^9.0.0",
     "graphql": "^15.5.0",
     "lottie-react-native": "^3.5.0",
+    "mobile": "^0.0.1",
+    "moment": "^2.29.1",
     "react": "16.13.1",
     "react-alert": "^7.0.2",
     "react-dom": "16.13.1",
