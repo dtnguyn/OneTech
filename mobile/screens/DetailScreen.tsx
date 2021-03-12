@@ -12,9 +12,11 @@ import {
 import CustomText from "../components/util/CustomText";
 import {
   Device,
+  DeviceProblem,
   ReviewRating,
   useDeviceDetailQuery,
   useDeviceRatingsQuery,
+  useProblemsQuery,
 } from "../generated/graphql";
 import { RootStackParamList } from "../utils/types";
 import GeneralScreenTab from "./GeneralScreenTab";
@@ -33,6 +35,29 @@ type State = NavigationState<{
 const DetailScreen: React.FC<Props> = ({ route }) => {
   const [device, setDevice] = useState<Device>();
   const [rating, setRating] = useState<ReviewRating>();
+  const [problems, setProblems] = useState<DeviceProblem[]>([]);
+  const [problemSearchValue, setProblemSearchValue] = useState("");
+  const [reviewSearchValue, setReviewSearchValue] = useState("");
+
+  const [index, setIndex] = useState(0);
+  const [routes] = React.useState([
+    { key: "general", title: "General" },
+    { key: "spec", title: "Specifications" },
+    { key: "problem", title: "Problems" },
+    { key: "review", title: "Reviews" },
+  ]);
+
+  const renderScene = SceneMap({
+    general: () => <GeneralScreenTab device={device} />,
+    spec: () => <SpecScreenTab device={device} rating={rating} />,
+    problem: () => (
+      <ProblemScreenTab
+        problems={problems}
+        submitSearchValue={handleSearchProblem}
+      />
+    ),
+    review: ReviewScreenTab,
+  });
 
   const { data, error } = useDeviceDetailQuery({
     variables: {
@@ -43,6 +68,14 @@ const DetailScreen: React.FC<Props> = ({ route }) => {
   const { data: ratingData } = useDeviceRatingsQuery({
     variables: {
       deviceId: route.params.id as string,
+    },
+  });
+
+  const { data: problemsData, error: problemsError } = useProblemsQuery({
+    variables: {
+      deviceId: route.params.id as string,
+      title: problemSearchValue,
+      content: problemSearchValue,
     },
   });
 
@@ -70,20 +103,13 @@ const DetailScreen: React.FC<Props> = ({ route }) => {
     </View>
   );
 
-  const [index, setIndex] = React.useState(0);
-  const [routes] = React.useState([
-    { key: "general", title: "General" },
-    { key: "spec", title: "Specifications" },
-    { key: "problem", title: "Problems" },
-    { key: "review", title: "Reviews" },
-  ]);
-
-  const renderScene = SceneMap({
-    general: () => <GeneralScreenTab device={device} />,
-    spec: () => <SpecScreenTab device={device} rating={rating} />,
-    problem: ProblemScreenTab,
-    review: ReviewScreenTab,
-  });
+  let timeout: NodeJS.Timeout;
+  const handleSearchProblem = (text: string) => {
+    clearTimeout(timeout);
+    timeout = setTimeout(() => {
+      setProblemSearchValue(text);
+    }, 700);
+  };
 
   useEffect(() => {
     const devices = data?.singleDevice?.data as Device[];
@@ -98,6 +124,18 @@ const DetailScreen: React.FC<Props> = ({ route }) => {
       setRating(ratings[0]);
     }
   }, [ratingData]);
+
+  useEffect(() => {
+    const problemArr = problemsData?.problems?.data as DeviceProblem[];
+
+    if (problemArr && problemArr.length != 0) {
+      //found problems
+      setProblems(problemArr);
+    } else if (problemArr && problemArr.length == 0) {
+      //not found
+      setProblems([]);
+    }
+  }, [problemsData]);
 
   return (
     <TabView

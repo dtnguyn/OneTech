@@ -1,14 +1,30 @@
 import { useFonts } from "expo-font";
 import React from "react";
-import { Image, StyleSheet, Text, TextInput, View } from "react-native";
+import {
+  Image,
+  ListRenderItem,
+  StyleSheet,
+  Text,
+  TextInput,
+  View,
+} from "react-native";
+import { FlatList } from "react-native-gesture-handler";
 import ProblemItem from "../components/deviceDetail/ProblemItem";
+import { DeviceProblem } from "../generated/graphql";
 
-interface Props {}
+interface Props {
+  problems: Array<DeviceProblem>;
+  submitSearchValue: (text: string) => void;
+}
 
-const ProblemScreenTab: React.FC<Props> = ({}) => {
+const ProblemScreenTab: React.FC<Props> = ({ problems, submitSearchValue }) => {
   const [fontsLoaded] = useFonts({
     MMedium: require("../assets/fonts/Montserrat-Medium.ttf"),
   });
+
+  const renderProblemItem: ListRenderItem<DeviceProblem> = ({ item }) => {
+    return <ProblemItem problem={item} />;
+  };
 
   return (
     <View style={styles.container}>
@@ -16,14 +32,20 @@ const ProblemScreenTab: React.FC<Props> = ({}) => {
         <TextInput
           style={styles.textInput}
           placeholder="Find problems..."
-          onChangeText={(text) => {}}
+          onChangeText={(text) => {
+            submitSearchValue(text);
+          }}
         />
         <Image
           source={require("../assets/images/search.png")}
           style={styles.searchIcon}
         />
       </View>
-      <ProblemItem />
+      <FlatList
+        style={{ width: "95%", alignSelf: "center" }}
+        data={problems}
+        renderItem={renderProblemItem}
+      />
     </View>
   );
 };
