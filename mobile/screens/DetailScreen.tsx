@@ -63,12 +63,14 @@ const DetailScreen: React.FC<Props> = ({ route }) => {
     variables: {
       id: route.params.id as string,
     },
+    fetchPolicy: "network-only",
   });
 
   const { data: ratingData } = useDeviceRatingsQuery({
     variables: {
       deviceId: route.params.id as string,
     },
+    fetchPolicy: "network-only",
   });
 
   const { data: problemsData, error: problemsError } = useProblemsQuery({
@@ -77,6 +79,7 @@ const DetailScreen: React.FC<Props> = ({ route }) => {
       title: problemSearchValue,
       content: problemSearchValue,
     },
+    fetchPolicy: "network-only",
   });
 
   const initialLayout = { width: Dimensions.get("window").width };

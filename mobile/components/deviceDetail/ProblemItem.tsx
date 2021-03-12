@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { Image, StyleSheet, useWindowDimensions, View } from "react-native";
 import { TouchableOpacity } from "react-native-gesture-handler";
 import { DeviceProblem } from "../../generated/graphql";
@@ -10,9 +10,17 @@ import { useFonts } from "expo-font";
 
 interface Props {
   problem: DeviceProblem;
+  starred: boolean;
+  toggleStar: (problem: DeviceProblem) => void;
 }
 
-const ProblemItem: React.FC<Props> = ({ problem }) => {
+const ProblemItem: React.FC<Props> = ({ problem, starred, toggleStar }) => {
+  const [starState, setStarState] = useState(starred);
+  const [statsState, setStatsState] = useState({
+    starsCount: problem.stars?.length ? problem.stars.length : 0,
+    solutionsCount: problem.solutions?.length ? problem.solutions.length : 0,
+  });
+
   const [fontsLoaded] = useFonts({
     MMedium: require("../../assets/fonts/Montserrat-Medium.ttf"),
   });
@@ -26,12 +34,12 @@ const ProblemItem: React.FC<Props> = ({ problem }) => {
           />
           <StatsBox
             title="stars"
-            value={problem.stars?.length ? problem.stars.length : 0}
+            value={statsState.starsCount}
             color="yellow"
           />
           <StatsBox
             title="solutions"
-            value={problem.solutions?.length ? problem.solutions.length : 0}
+            value={statsState.solutionsCount}
             color="green"
           />
         </View>
@@ -60,9 +68,29 @@ const ProblemItem: React.FC<Props> = ({ problem }) => {
             />
           </CustomText>
           <View style={styles.buttonsContainer}>
-            <TouchableOpacity style={styles.buttonIconContainer}>
+            <TouchableOpacity
+              style={styles.buttonIconContainer}
+              onPress={() => {
+                if (starState)
+                  setStatsState({
+                    ...statsState,
+                    starsCount: statsState.starsCount - 1,
+                  });
+                else
+                  setStatsState({
+                    ...statsState,
+                    starsCount: statsState.starsCount + 1,
+                  });
+                setStarState(!starState);
+                toggleStar(problem);
+              }}
+            >
               <Image
-                source={require("../../assets/images/star.png")}
+                source={
+                  starState
+                    ? require("../../assets/images/starred.png")
+                    : require("../../assets/images/star.png")
+                }
                 style={styles.buttonIcon}
               />
             </TouchableOpacity>

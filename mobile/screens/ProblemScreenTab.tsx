@@ -10,7 +10,12 @@ import {
 } from "react-native";
 import { FlatList } from "react-native-gesture-handler";
 import ProblemItem from "../components/deviceDetail/ProblemItem";
-import { DeviceProblem } from "../generated/graphql";
+import { useAuth } from "../context/AuthContext";
+import {
+  DeviceProblem,
+  DeviceProblemStar,
+  useToggleProblemStarMutation,
+} from "../generated/graphql";
 
 interface Props {
   problems: Array<DeviceProblem>;
@@ -22,8 +27,49 @@ const ProblemScreenTab: React.FC<Props> = ({ problems, submitSearchValue }) => {
     MMedium: require("../assets/fonts/Montserrat-Medium.ttf"),
   });
 
+  const { user } = useAuth();
+
   const renderProblemItem: ListRenderItem<DeviceProblem> = ({ item }) => {
-    return <ProblemItem problem={item} />;
+    return (
+      <ProblemItem
+        problem={item}
+        starred={isStarred(item.stars!)}
+        toggleStar={handleToggleProblemStar}
+      />
+    );
+  };
+
+  const [toggleProblemStarMutation, {}] = useToggleProblemStarMutation();
+
+  const isStarred = (stars: DeviceProblemStar[] | undefined) => {
+    if (!stars) return false;
+    for (const star of stars) {
+      if (star.userId === user?.id) {
+        return true;
+      }
+    }
+    return false;
+  };
+
+  const handleToggleProblemStar = async (problem: DeviceProblem) => {
+    if (!user) {
+      alert("Please login first.");
+      return;
+    }
+    await toggleProblemStarMutation({
+      variables: {
+        problemId: problem.id,
+        userId: user!.id,
+      },
+    })
+      .then((res) => {
+        if (!res.data?.toggleProblemStar.status) {
+          throw new Error(res.data?.toggleProblemStar.message);
+        }
+      })
+      .catch((error) => {
+        alert(error.message);
+      });
   };
 
   return (
@@ -44,6 +90,7 @@ const ProblemScreenTab: React.FC<Props> = ({ problems, submitSearchValue }) => {
       <FlatList
         style={{
           width: "95%",
+          marginBottom: 90,
         }}
         data={problems}
         renderItem={renderProblemItem}
