@@ -6,24 +6,28 @@ import CustomText from "../util/CustomText";
 import StatsBox from "./StatsBox";
 import moment from "moment";
 import HTML from "react-native-render-html";
-import { useFonts } from "expo-font";
 
 interface Props {
   problem: DeviceProblem;
   starred: boolean;
   toggleStar: (problem: DeviceProblem) => void;
+  updatePost: (problem: DeviceProblem) => void;
+  deletePost: (problem: DeviceProblem) => void;
 }
 
-const ProblemItem: React.FC<Props> = ({ problem, starred, toggleStar }) => {
+const ProblemItem: React.FC<Props> = ({
+  problem,
+  starred,
+  toggleStar,
+  updatePost,
+  deletePost,
+}) => {
   const [starState, setStarState] = useState(starred);
   const [statsState, setStatsState] = useState({
     starsCount: problem.stars?.length ? problem.stars.length : 0,
     solutionsCount: problem.solutions?.length ? problem.solutions.length : 0,
   });
 
-  const [fontsLoaded] = useFonts({
-    MMedium: require("../../assets/fonts/Montserrat-Medium.ttf"),
-  });
   return (
     <View style={{ width: "100%" }}>
       <View style={styles.container}>
@@ -99,6 +103,24 @@ const ProblemItem: React.FC<Props> = ({ problem, starred, toggleStar }) => {
                 style={styles.buttonIcon}
               />
             </TouchableOpacity>
+            <TouchableOpacity
+              style={styles.buttonIconContainer}
+              onPress={() => updatePost(problem)}
+            >
+              <Image
+                source={require("../../assets/images/pencil.png")}
+                style={styles.buttonIcon}
+              />
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={styles.buttonIconContainer}
+              onPress={() => deletePost(problem)}
+            >
+              <Image
+                source={require("../../assets/images/trash.png")}
+                style={styles.buttonIcon}
+              />
+            </TouchableOpacity>
           </View>
         </View>
       </View>
@@ -142,8 +164,8 @@ const styles = StyleSheet.create({
     marginEnd: 15,
   },
   buttonIcon: {
-    width: 32,
-    height: 32,
+    width: 28,
+    height: 28,
   },
   divider: {
     width: "100%",

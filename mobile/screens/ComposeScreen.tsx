@@ -18,8 +18,8 @@ interface Props {
 
 const ComposeScreen: React.FC<Props> = ({ navigation, route }) => {
   const [compose, setCompose] = useState({
-    title: "",
-    content: "",
+    title: route.params.title,
+    content: route.params.content,
   });
 
   return (
@@ -47,7 +47,7 @@ const ComposeScreen: React.FC<Props> = ({ navigation, route }) => {
             navigation.pop();
           }}
         >
-          <CustomText style={{ color: "#fff" }}>Add</CustomText>
+          <CustomText style={{ color: "#fff" }}>Submit</CustomText>
         </TouchableOpacity>
       </View>
     </ScrollView>

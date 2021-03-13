@@ -1,5 +1,6 @@
 import React from "react";
 import {
+  Alert,
   Image,
   ListRenderItem,
   StyleSheet,
@@ -14,7 +15,10 @@ import {
   DeviceProblem,
   DeviceProblemStar,
   useCreateProblemMutation,
+  useDeleteImagesMutation,
+  useDeleteProblemMutation,
   useToggleProblemStarMutation,
+  useUpdateProblemMutation,
 } from "../generated/graphql";
 import { ScreenNavigationProp } from "../utils/types";
 
@@ -32,18 +36,56 @@ const ProblemScreenTab: React.FC<Props> = ({
   const { user } = useAuth();
   const { problems, setProblems } = useProblems();
 
+  const [toggleProblemStarMutation, {}] = useToggleProblemStarMutation();
+  const [createProblemMutation, {}] = useCreateProblemMutation();
+  const [updateProblemMutation, {}] = useUpdateProblemMutation();
+  const [deleteImagesMutation, {}] = useDeleteImagesMutation();
+  const [deleteProblemMutation, {}] = useDeleteProblemMutation();
+
   const renderProblemItem: ListRenderItem<DeviceProblem> = ({ item }) => {
     return (
       <ProblemItem
         problem={item}
         starred={isStarred(item.stars!)}
         toggleStar={handleToggleProblemStar}
+        updatePost={(problem) => {
+          navigation.push("Compose", {
+            header: "Update problem",
+            title: problem.title,
+            content: problem.content,
+            onCompose: (title, content, images) => {
+              handleEditProblem(problem.id, title, content, images);
+            },
+          });
+        }}
+        deletePost={(problem) => {
+          createAlert("Delete post", "Do you want to delete this post?", () => {
+            handleDeleteProblem(problem.id, []);
+          });
+        }}
       />
     );
   };
 
-  const [toggleProblemStarMutation, {}] = useToggleProblemStarMutation();
-  const [createProblemMutation, {}] = useCreateProblemMutation();
+  const createAlert = (
+    title: string,
+    content: string,
+    callback: () => void
+  ) => {
+    Alert.alert(
+      title,
+      content,
+      [
+        {
+          text: "Nope",
+          onPress: () => console.log("Cancel Pressed"),
+          style: "cancel",
+        },
+        { text: "Yes", onPress: () => callback() },
+      ],
+      { cancelable: false }
+    );
+  };
 
   const isStarred = (stars: DeviceProblemStar[] | undefined) => {
     if (!stars) return false;
@@ -83,6 +125,61 @@ const ProblemScreenTab: React.FC<Props> = ({
       .catch((error) => {
         console.log(error.message);
       });
+  };
+
+  const handleEditProblem = async (
+    id: string,
+    title: string,
+    content: string,
+    images: string[]
+  ) => {
+    await updateProblemMutation({
+      variables: {
+        id,
+        title,
+        content,
+        images,
+      },
+      update: (cache) => {
+        cache.evict({ fieldName: "problems" });
+      },
+    })
+      .then((res) => {
+        if (res.data?.updateProblem.status) {
+        } else {
+          throw new Error(res.data?.updateProblem.message);
+        }
+      })
+      .catch((error) => {
+        alert(error.message);
+      });
+  };
+
+  const handleDeleteProblem = async (id: string, images: string[]) => {
+    try {
+      if (images.length != 0) {
+        await deleteImagesMutation({
+          variables: {
+            imageIds: images,
+          },
+        });
+      }
+
+      await deleteProblemMutation({
+        variables: {
+          id,
+        },
+        update: (cache) => {
+          cache.evict({ fieldName: "problems" });
+        },
+      }).then((res) => {
+        if (!res.data?.deleteProblem.status) {
+          throw new Error(res.data?.deleteProblem.message);
+        }
+      });
+    } catch (error) {
+      alert(error.message);
+    }
   };
 
   const handleToggleProblemStar = async (problem: DeviceProblem) => {
