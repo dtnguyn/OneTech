@@ -1,4 +1,3 @@
-import { useFonts } from "expo-font";
 import React from "react";
 import {
   Image,
@@ -30,10 +29,6 @@ const ProblemScreenTab: React.FC<Props> = ({
   navigation,
   submitSearchValue,
 }) => {
-  useFonts({
-    MMedium: require("../assets/fonts/Montserrat-Medium.ttf"),
-  });
-
   const { user } = useAuth();
   const { problems, setProblems } = useProblems();
 

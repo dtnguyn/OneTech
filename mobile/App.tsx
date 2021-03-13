@@ -62,6 +62,9 @@ export default function App() {
       setUser(null);
     }
   }, [data]);
+
+  if (!fontsLoaded) return null;
+
   return (
     <ApolloProvider client={client}>
       <AuthContext.Provider value={{ user, setUser }}>

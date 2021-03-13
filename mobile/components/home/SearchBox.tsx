@@ -18,6 +18,12 @@ const SearchBox: React.FC<Props> = ({
   currentCategory,
   setCurrentCategory,
 }) => {
+  // return <View style={styles.searchBoxContainer}>
+  //   <View style={styles.searchBox}>
+
+  //   </View>
+  // </View>;
+
   return (
     <View style={styles.searchBoxContainer}>
       <View style={styles.searchBox}>

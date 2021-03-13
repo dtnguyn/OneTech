@@ -22,10 +22,6 @@ const ComposeScreen: React.FC<Props> = ({ navigation, route }) => {
     content: "",
   });
 
-  const [fontsLoaded] = useFonts({
-    MMedium: require("../assets/fonts/Montserrat-Medium.ttf"),
-  });
-
   return (
     <ScrollView>
       <View style={styles.container}>

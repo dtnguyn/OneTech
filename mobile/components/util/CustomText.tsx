@@ -14,16 +14,6 @@ const CustomText: React.FC<Props> = ({
   style,
   children,
 }) => {
-  const [fontsLoaded] = useFonts({
-    MLight: require("../../assets/fonts/Montserrat-Light.ttf"),
-    MRegular: require("../../assets/fonts/Montserrat-Regular.ttf"),
-    MMedium: require("../../assets/fonts/Montserrat-Medium.ttf"),
-    MSemiBold: require("../../assets/fonts/Montserrat-SemiBold.ttf"),
-    MBold: require("../../assets/fonts/Montserrat-Bold.ttf"),
-  });
-
-  if (!fontsLoaded) return null;
-
   return (
     <Text
       style={{

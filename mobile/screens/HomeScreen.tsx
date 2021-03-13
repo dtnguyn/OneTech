@@ -21,7 +21,7 @@ interface Props {
 }
 
 const HomeScreen: React.FC<Props> = ({ navigation }) => {
-  const [devices, setDevices] = useState<Array<Device>>([]);
+  const [devices, setDevices] = useState<Array<Device>>();
   const [brands, setBrands] = useState<Map<String, Device[]>>(new Map());
   const [devicesArr, setDevicesArr] = useState<Array<Device[]>>();
   const [searchBoxExpand, setSearchBoxExpand] = useState(false);
@@ -40,15 +40,17 @@ const HomeScreen: React.FC<Props> = ({ navigation }) => {
   };
 
   function renderHeader() {
-    return (
-      <SearchBox
-        searchBoxExpand={searchBoxExpand}
-        setSearchBoxExpand={setSearchBoxExpand}
-        currentCategory={currentCategory}
-        setCurrentCategory={setCurrentCategory}
-        searchPress={() => navigation.push("Search")}
-      />
-    );
+    if (!devices) return null;
+    else
+      return (
+        <SearchBox
+          searchBoxExpand={searchBoxExpand}
+          setSearchBoxExpand={setSearchBoxExpand}
+          currentCategory={currentCategory}
+          setCurrentCategory={setCurrentCategory}
+          searchPress={() => navigation.push("Search")}
+        />
+      );
   }
 
   useEffect(() => {
