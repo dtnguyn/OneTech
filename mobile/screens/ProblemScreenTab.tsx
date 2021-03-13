@@ -220,7 +220,8 @@ const ProblemScreenTab: React.FC<Props> = ({
       </View>
       <FlatList
         style={{
-          width: "95%",
+          width: "100%",
+          paddingHorizontal: 10,
         }}
         data={problems}
         renderItem={renderProblemItem}
