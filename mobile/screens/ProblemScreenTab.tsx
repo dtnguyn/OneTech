@@ -4,31 +4,38 @@ import {
   Image,
   ListRenderItem,
   StyleSheet,
-  Text,
   TextInput,
   View,
 } from "react-native";
 import { FlatList, TouchableOpacity } from "react-native-gesture-handler";
 import ProblemItem from "../components/deviceDetail/ProblemItem";
 import { useAuth } from "../context/AuthContext";
+import { useProblems } from "../context/ProblemContext";
 import {
   DeviceProblem,
   DeviceProblemStar,
+  useCreateProblemMutation,
   useToggleProblemStarMutation,
 } from "../generated/graphql";
-import { FloatingAction } from "react-native-floating-action";
+import { ScreenNavigationProp } from "../utils/types";
 
 interface Props {
-  problems: Array<DeviceProblem>;
+  deviceId: string;
+  navigation: ScreenNavigationProp;
   submitSearchValue: (text: string) => void;
 }
 
-const ProblemScreenTab: React.FC<Props> = ({ problems, submitSearchValue }) => {
-  const [fontsLoaded] = useFonts({
+const ProblemScreenTab: React.FC<Props> = ({
+  deviceId,
+  navigation,
+  submitSearchValue,
+}) => {
+  useFonts({
     MMedium: require("../assets/fonts/Montserrat-Medium.ttf"),
   });
 
   const { user } = useAuth();
+  const { problems, setProblems } = useProblems();
 
   const renderProblemItem: ListRenderItem<DeviceProblem> = ({ item }) => {
     return (
@@ -41,6 +48,7 @@ const ProblemScreenTab: React.FC<Props> = ({ problems, submitSearchValue }) => {
   };
 
   const [toggleProblemStarMutation, {}] = useToggleProblemStarMutation();
+  const [createProblemMutation, {}] = useCreateProblemMutation();
 
   const isStarred = (stars: DeviceProblemStar[] | undefined) => {
     if (!stars) return false;
@@ -50,6 +58,36 @@ const ProblemScreenTab: React.FC<Props> = ({ problems, submitSearchValue }) => {
       }
     }
     return false;
+  };
+
+  const handleCreateProblem = async (
+    title: string,
+    content: string,
+    images: string[]
+  ) => {
+    if (!user) {
+      return;
+    }
+    await createProblemMutation({
+      variables: {
+        deviceId,
+        title,
+        content,
+        images,
+      },
+      update: (cache) => {
+        cache.evict({ fieldName: "problems" });
+      },
+    })
+      .then((res) => {
+        if (res.data?.createProblem?.status) {
+        } else {
+          throw new Error(res.data?.createProblem?.message);
+        }
+      })
+      .catch((error) => {
+        console.log(error.message);
+      });
   };
 
   const handleToggleProblemStar = async (problem: DeviceProblem) => {
@@ -96,7 +134,19 @@ const ProblemScreenTab: React.FC<Props> = ({ problems, submitSearchValue }) => {
         renderItem={renderProblemItem}
       />
       <View style={styles.floatingButtonContainer}>
-        <TouchableOpacity style={styles.floatingButton}>
+        <TouchableOpacity
+          style={styles.floatingButton}
+          onPress={() =>
+            navigation.push("Compose", {
+              header: "Add a problem",
+              title: "",
+              content: "",
+              onCompose: (title, content, images) => {
+                handleCreateProblem(title, content, images);
+              },
+            })
+          }
+        >
           <Image
             style={styles.floatingIcon}
             source={require("../assets/images/add2.png")}
@@ -110,7 +160,6 @@ const ProblemScreenTab: React.FC<Props> = ({ problems, submitSearchValue }) => {
 const styles = StyleSheet.create({
   container: {
     position: "relative",
-    backgroundColor: "#fff",
     height: "100%",
     display: "flex",
     alignItems: "center",

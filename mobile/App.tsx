@@ -1,5 +1,13 @@
 import React, { useEffect, useState } from "react";
-import { StatusBar, StyleSheet, Text, View } from "react-native";
+import {
+  Button,
+  LogBox,
+  StatusBar,
+  StyleSheet,
+  Text,
+  View,
+  YellowBox,
+} from "react-native";
 import { NavigationContainer } from "@react-navigation/native";
 import { createStackNavigator } from "@react-navigation/stack";
 import HomeScreen from "./screens/HomeScreen";
@@ -15,6 +23,7 @@ import { useMeQuery, User } from "./generated/graphql";
 import DetailScreen from "./screens/DetailScreen";
 import { useFonts } from "expo-font";
 import CustomText from "./components/util/CustomText";
+import ComposeScreen from "./screens/ComposeScreen";
 const { manifest } = Constants;
 
 const client = new ApolloClient({
@@ -24,6 +33,10 @@ const client = new ApolloClient({
 });
 const RootStack = createStackNavigator<RootStackParamList>();
 // const prefix = Linking.createURL("/");
+
+LogBox.ignoreLogs([
+  "Non-serializable values were found in the navigation state",
+]);
 
 export default function App() {
   const [user, setUser] = useState<User | null>(null);
@@ -89,11 +102,28 @@ export default function App() {
                 headerStyle: {
                   backgroundColor: "#A8D8AD",
                 },
+
                 headerTitle: () => (
                   <CustomText fontSize={20} fontFamily="MSemiBold">
                     {(route?.params?.name as string)
                       ? route.params.name
                       : "Detail"}
+                  </CustomText>
+                ),
+              })}
+            />
+
+            <RootStack.Screen
+              name="Compose"
+              component={ComposeScreen}
+              options={({ route }) => ({
+                headerShown: true,
+
+                headerTitle: () => (
+                  <CustomText fontSize={20} fontFamily="MSemiBold">
+                    {(route?.params?.header as string)
+                      ? route.params.header
+                      : "Compose"}
                   </CustomText>
                 ),
               })}

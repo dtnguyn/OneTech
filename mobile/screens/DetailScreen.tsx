@@ -10,6 +10,8 @@ import {
   NavigationState,
 } from "react-native-tab-view";
 import CustomText from "../components/util/CustomText";
+import { ComposeContext } from "../context/ComposeContext";
+import { ProblemContext } from "../context/ProblemContext";
 import {
   Device,
   DeviceProblem,
@@ -18,7 +20,7 @@ import {
   useDeviceRatingsQuery,
   useProblemsQuery,
 } from "../generated/graphql";
-import { RootStackParamList } from "../utils/types";
+import { Compose, RootStackParamList } from "../utils/types";
 import GeneralScreenTab from "./GeneralScreenTab";
 import ProblemScreenTab from "./ProblemScreenTab";
 import ReviewScreenTab from "./ReviewScreenTab";
@@ -32,10 +34,11 @@ type State = NavigationState<{
   title: string;
 }>;
 
-const DetailScreen: React.FC<Props> = ({ route }) => {
+const DetailScreen: React.FC<Props> = ({ route, navigation }: any) => {
   const [device, setDevice] = useState<Device>();
   const [rating, setRating] = useState<ReviewRating>();
   const [problems, setProblems] = useState<DeviceProblem[]>([]);
+
   const [problemSearchValue, setProblemSearchValue] = useState("");
   const [reviewSearchValue, setReviewSearchValue] = useState("");
 
@@ -51,10 +54,13 @@ const DetailScreen: React.FC<Props> = ({ route }) => {
     general: () => <GeneralScreenTab device={device} />,
     spec: () => <SpecScreenTab device={device} rating={rating} />,
     problem: () => (
-      <ProblemScreenTab
-        problems={problems}
-        submitSearchValue={handleSearchProblem}
-      />
+      <ProblemContext.Provider value={{ problems, setProblems }}>
+        <ProblemScreenTab
+          deviceId={device ? device.id : ""}
+          navigation={navigation}
+          submitSearchValue={handleSearchProblem}
+        />
+      </ProblemContext.Provider>
     ),
     review: ReviewScreenTab,
   });
