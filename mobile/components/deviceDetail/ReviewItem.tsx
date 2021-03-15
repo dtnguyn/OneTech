@@ -3,6 +3,7 @@ import React, { useState } from "react";
 import { Image, StyleSheet, useWindowDimensions, View } from "react-native";
 import { TouchableOpacity } from "react-native-gesture-handler";
 import HTML from "react-native-render-html";
+import { useAuth } from "../../context/AuthContext";
 import { Review } from "../../generated/graphql";
 import CustomText from "../util/CustomText";
 import SpecTable from "./SpecTable";
@@ -14,6 +15,7 @@ interface Props {
 
 const ReviewItem: React.FC<Props> = ({ review, category }) => {
   const [currentView, setCurrentView] = useState("review");
+  const { user } = useAuth();
 
   return (
     <View style={styles.container}>
@@ -54,9 +56,7 @@ const ReviewItem: React.FC<Props> = ({ review, category }) => {
       {currentView === "review" ? (
         <HTML
           source={{ html: review.content }}
-          contentWidth={50}
           baseFontStyle={{ fontFamily: "MMedium" }}
-          computeEmbeddedMaxWidth={(width) => 300}
         />
       ) : (
         <SpecTable
@@ -66,6 +66,38 @@ const ReviewItem: React.FC<Props> = ({ review, category }) => {
           category={category}
         />
       )}
+      <View style={styles.buttonsContainer}>
+        <TouchableOpacity style={styles.buttonIconContainer}>
+          <Image
+            source={require("../../assets/images/flag.png")}
+            style={styles.buttonIcon}
+          />
+        </TouchableOpacity>
+        {(user && user.id === review.author?.id) || true ? (
+          <TouchableOpacity
+            style={styles.buttonIconContainer}
+            onPress={() => {}}
+          >
+            <Image
+              source={require("../../assets/images/pencil.png")}
+              style={styles.buttonIcon}
+            />
+          </TouchableOpacity>
+        ) : null}
+
+        {(user && user.id === review.author?.id) || true ? (
+          <TouchableOpacity
+            style={styles.buttonIconContainer}
+            onPress={() => {}}
+          >
+            <Image
+              source={require("../../assets/images/trash.png")}
+              style={styles.buttonIcon}
+            />
+          </TouchableOpacity>
+        ) : null}
+      </View>
+      <View style={styles.divider} />
     </View>
   );
 };
@@ -75,6 +107,7 @@ const styles = StyleSheet.create({
     width: "100%",
     display: "flex",
     flexDirection: "column",
+    marginVertical: 20,
   },
   header: {
     width: "100%",
@@ -123,6 +156,24 @@ const styles = StyleSheet.create({
   reviewIcon: {
     width: 28,
     height: 28,
+  },
+  buttonsContainer: {
+    marginBottom: 10,
+    display: "flex",
+    flexDirection: "row",
+  },
+  buttonIconContainer: {
+    marginTop: 10,
+    marginEnd: 15,
+  },
+  buttonIcon: {
+    width: 28,
+    height: 28,
+  },
+  divider: {
+    width: "100%",
+    height: 1,
+    backgroundColor: "#D1D1D1",
   },
 });
 

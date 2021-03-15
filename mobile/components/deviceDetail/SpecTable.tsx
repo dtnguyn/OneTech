@@ -43,8 +43,8 @@ const SpecTable: React.FC<Props> = ({
           key={title}
           title={title}
           content={
-            currentOption === "Rating" ? (
-              <RatingBar rating={rating[title.toLowerCase()].toFixed(1)} />
+            currentOption === "Rating" && rating ? (
+              <RatingBar rating={rating[title.toLowerCase()]} />
             ) : currentOption === "Technical" ? (
               <CustomText>{spec ? spec[title.toLowerCase()] : null}</CustomText>
             ) : (
@@ -61,7 +61,8 @@ const SpecTable: React.FC<Props> = ({
 
 const styles = StyleSheet.create({
   container: {
-    marginVertical: 30,
+    marginTop: 30,
+    marginBottom: 50,
   },
 });
 

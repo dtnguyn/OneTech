@@ -6,22 +6,77 @@ import {
   StyleSheet,
   Text,
   TextInput,
+  TouchableOpacity,
   View,
 } from "react-native";
 import ReviewItem from "../components/deviceDetail/ReviewItem";
 import { useReviews } from "../context/ReviewContext";
-import { Review } from "../generated/graphql";
+import {
+  Review,
+  ReviewRating,
+  useCreateReviewMutation,
+} from "../generated/graphql";
+import { ScreenNavigationProp } from "../utils/types";
 
 interface Props {
+  deviceId: string;
+  navigation: ScreenNavigationProp;
   category: string;
   submitSearchValue: (text: string) => void;
 }
 
-const ReviewScreenTab: React.FC<Props> = ({ category, submitSearchValue }) => {
+const ReviewScreenTab: React.FC<Props> = ({
+  deviceId,
+  category,
+  navigation,
+  submitSearchValue,
+}) => {
   const { reviews } = useReviews();
+
+  const [createReviewMutation, {}] = useCreateReviewMutation();
 
   const renderReviewItem: ListRenderItem<Review> = ({ item }) => {
     return <ReviewItem review={item} category={category} />;
+  };
+
+  const handleCreateReview = async (
+    deviceId: string,
+    title: string,
+    content: string,
+    rating: any,
+    images: string[]
+  ) => {
+    await createReviewMutation({
+      variables: {
+        deviceId,
+        title,
+        content,
+        overall: rating.overall,
+        display: rating.display,
+        battery: rating.battery,
+        processor: rating.processor,
+        software: rating.software,
+        camera: rating.camera,
+        gpu: rating.gpu,
+        memory: rating.memory,
+        thermals: rating.thermals,
+        ports: rating.ports,
+        images,
+      },
+      update: (cache) => {
+        cache.evict({ fieldName: "reviews" });
+        cache.evict({ fieldName: "ratings" });
+      },
+    })
+      .then((res) => {
+        if (res.data?.createReview?.status) {
+        } else {
+          throw new Error(res.data?.createReview?.message);
+        }
+      })
+      .catch((e) => {
+        alert(e.message);
+      });
   };
 
   return (
@@ -46,6 +101,39 @@ const ReviewScreenTab: React.FC<Props> = ({ category, submitSearchValue }) => {
         data={reviews}
         renderItem={renderReviewItem}
       />
+      <View style={styles.floatingButtonContainer}>
+        <TouchableOpacity
+          style={styles.floatingButton}
+          onPress={() => {
+            navigation.push("Compose", {
+              header: "Add a review",
+              title: "",
+              content: "",
+              rating: {
+                overall: 0,
+                display: 0,
+                processor: 0,
+                battery: 0,
+                software: 0,
+                camera: 0,
+                gpu: 0,
+                memory: 0,
+                thermals: 0,
+                ports: 0,
+              } as ReviewRating,
+              category: category,
+              onCompose: (title, content, rating, images) => {
+                handleCreateReview(deviceId, title, content, rating, images);
+              },
+            });
+          }}
+        >
+          <Image
+            style={styles.floatingIcon}
+            source={require("../assets/images/add2.png")}
+          />
+        </TouchableOpacity>
+      </View>
     </View>
   );
 };
@@ -83,6 +171,20 @@ const styles = StyleSheet.create({
     position: "absolute",
     bottom: 20,
     right: 20,
+  },
+
+  floatingButton: {
+    width: 64,
+    height: 64,
+    borderRadius: 64,
+    elevation: 4,
+    backgroundColor: "#017BFE",
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  floatingIcon: {
+    width: 28,
+    height: 28,
   },
 });
 

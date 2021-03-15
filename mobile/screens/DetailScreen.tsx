@@ -94,6 +94,7 @@ const DetailScreen: React.FC<Props> = ({ route, navigation }: any) => {
       <ProblemContext.Provider value={{ problems, setProblems }}>
         <ProblemScreenTab
           deviceId={device ? device.id : ""}
+          category={device ? device.category : "phone"}
           navigation={navigation}
           submitSearchValue={handleSearchProblem}
         />
@@ -102,8 +103,10 @@ const DetailScreen: React.FC<Props> = ({ route, navigation }: any) => {
     review: () => (
       <ReviewContext.Provider value={{ reviews, setReviews }}>
         <ReviewScreenTab
-          submitSearchValue={handleSearchReview}
+          deviceId={device ? device.id : ""}
+          navigation={navigation}
           category={device ? device.category : "phone"}
+          submitSearchValue={handleSearchReview}
         />
       </ReviewContext.Provider>
     ),

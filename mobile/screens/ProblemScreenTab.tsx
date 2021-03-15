@@ -24,12 +24,14 @@ import { ScreenNavigationProp } from "../utils/types";
 
 interface Props {
   deviceId: string;
+  category: string;
   navigation: ScreenNavigationProp;
   submitSearchValue: (text: string) => void;
 }
 
 const ProblemScreenTab: React.FC<Props> = ({
   deviceId,
+  category,
   navigation,
   submitSearchValue,
 }) => {
@@ -53,7 +55,8 @@ const ProblemScreenTab: React.FC<Props> = ({
             header: "Update problem",
             title: problem.title,
             content: problem.content,
-            onCompose: (title, content, images) => {
+            category: category,
+            onCompose: (title, content, rating, images) => {
               handleEditProblem(problem.id, title, content, images);
             },
           });

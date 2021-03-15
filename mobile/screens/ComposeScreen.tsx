@@ -1,5 +1,5 @@
 import { useFonts } from "expo-font";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Platform, StyleSheet, useWindowDimensions, View } from "react-native";
 import {
   ScrollView,
@@ -9,7 +9,14 @@ import {
 import WebView from "react-native-webview";
 import CustomText from "../components/util/CustomText";
 import * as Linking from "expo-linking";
-import { ComposeRouteProp, ScreenNavigationProp } from "../utils/types";
+import {
+  ComposeRouteProp,
+  RatingValue,
+  ScreenNavigationProp,
+} from "../utils/types";
+import Slider from "@react-native-community/slider";
+import { ReviewRating } from "../generated/graphql";
+import { laptopSpec, mobileSpec, pcSpec } from "../utils/specArr";
 
 interface Props {
   navigation: ScreenNavigationProp;
@@ -22,6 +29,40 @@ const ComposeScreen: React.FC<Props> = ({ navigation, route }) => {
     content: route.params.content,
   });
 
+  const [rating, setRating] = useState(route.params.rating);
+  const [specsArr, setSpecsArr] = useState<Array<string>>([]);
+  const [overallRating, setOverallRating] = useState(0);
+
+  const calculateOverall = () => {};
+
+  useEffect(() => {
+    if (!rating) return;
+    switch (route.params.category) {
+      case "phone":
+        setSpecsArr(mobileSpec);
+        break;
+      case "laptop":
+        setSpecsArr(laptopSpec);
+        break;
+      case "pc":
+        setSpecsArr(pcSpec);
+        break;
+    }
+  }, []);
+
+  useEffect(() => {
+    let sum = 0;
+    for (const spec of specsArr) {
+      if ((rating as any)[spec.toLowerCase()] === 0) {
+        sum = 0;
+        break;
+      } else {
+        sum += (rating as any)[spec.toLowerCase()];
+      }
+    }
+    setOverallRating(sum === 0 ? sum : sum / specsArr.length);
+  }, [rating]);
+
   return (
     <ScrollView>
       <View style={styles.container}>
@@ -31,6 +72,34 @@ const ComposeScreen: React.FC<Props> = ({ navigation, route }) => {
           value={compose?.title}
           onChangeText={(text) => setCompose({ ...compose, title: text })}
         />
+
+        {rating ? (
+          <View style={styles.ratingContainer}>
+            <CustomText style={styles.label}>{`Rating (${overallRating.toFixed(
+              1
+            )})`}</CustomText>
+            {specsArr.map((spec) => (
+              <View style={{ width: "90%", alignItems: "center" }} key={spec}>
+                <CustomText fontFamily="MRegular">{`${spec} (${(rating as any)[
+                  spec.toLowerCase()
+                ].toFixed(1)})`}</CustomText>
+                <Slider
+                  style={{ width: "100%", height: 40 }}
+                  minimumValue={0}
+                  maximumValue={10}
+                  step={0.1}
+                  value={(route.params.rating as any)[spec.toLowerCase()]}
+                  onValueChange={(value) => {
+                    setRating({ ...rating, [spec.toLowerCase()]: value });
+                  }}
+                  minimumTrackTintColor="#52AF77"
+                  maximumTrackTintColor="#2E563F"
+                />
+              </View>
+            ))}
+          </View>
+        ) : null}
+
         <CustomText style={styles.label}>Content</CustomText>
         <TextInput
           style={styles.contentInput}
@@ -42,8 +111,15 @@ const ComposeScreen: React.FC<Props> = ({ navigation, route }) => {
 
         <TouchableOpacity
           containerStyle={styles.submitButton}
+          disabled={
+            (rating && overallRating === 0) ||
+            !compose.title ||
+            !compose.content
+          }
           onPress={() => {
-            route.params.onCompose(compose.title, compose.content, []);
+            const finalRating = rating;
+            (finalRating as any).overall = overallRating;
+            route.params.onCompose(compose.title, compose.content, rating, []);
             navigation.pop();
           }}
         >
@@ -58,6 +134,7 @@ const styles = StyleSheet.create({
   container: {
     display: "flex",
     alignItems: "center",
+    paddingBottom: 10,
   },
   label: {
     marginTop: 20,
@@ -75,6 +152,11 @@ const styles = StyleSheet.create({
     borderWidth: 0.2,
     borderRadius: 5,
     padding: 5,
+  },
+  ratingContainer: {
+    width: "100%",
+    display: "flex",
+    alignItems: "center",
   },
   contentInput: {
     marginBottom: 20,

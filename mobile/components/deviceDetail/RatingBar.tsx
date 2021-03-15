@@ -31,7 +31,7 @@ const RatingBar: React.FC<Props> = ({ rating }) => {
         backgroundColor: handleRatingBarColor(rating * 10),
       }}
     >
-      <CustomText fontSize={10}>{rating}</CustomText>
+      <CustomText fontSize={10}>{rating.toFixed(1)}</CustomText>
     </View>
   );
 };
