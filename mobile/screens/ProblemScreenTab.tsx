@@ -56,7 +56,7 @@ const ProblemScreenTab: React.FC<Props> = ({
             title: problem.title,
             content: problem.content,
             category: category,
-            onCompose: (title, content, rating, images) => {
+            onCompose: (title, content, _rating, images) => {
               handleEditProblem(problem.id, title, content, images);
             },
           });
@@ -237,7 +237,8 @@ const ProblemScreenTab: React.FC<Props> = ({
               header: "Add a problem",
               title: "",
               content: "",
-              onCompose: (title, content, images) => {
+              category: category,
+              onCompose: (title, content, _rating, images) => {
                 handleCreateProblem(title, content, images);
               },
             })

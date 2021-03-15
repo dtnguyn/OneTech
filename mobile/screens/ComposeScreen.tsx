@@ -31,9 +31,7 @@ const ComposeScreen: React.FC<Props> = ({ navigation, route }) => {
 
   const [rating, setRating] = useState(route.params.rating);
   const [specsArr, setSpecsArr] = useState<Array<string>>([]);
-  const [overallRating, setOverallRating] = useState(0);
-
-  const calculateOverall = () => {};
+  const [overallRating, setOverallRating] = useState<number>(0);
 
   useEffect(() => {
     if (!rating) return;
@@ -62,6 +60,11 @@ const ComposeScreen: React.FC<Props> = ({ navigation, route }) => {
     }
     setOverallRating(sum === 0 ? sum : sum / specsArr.length);
   }, [rating]);
+
+  useEffect(() => {
+    if (!route.params.rating?.overall) return;
+    setOverallRating(route.params.rating?.overall!);
+  }, []);
 
   return (
     <ScrollView>

@@ -11,9 +11,16 @@ import SpecTable from "./SpecTable";
 interface Props {
   category: string;
   review: Review;
+  deletePost: (review: Review) => void;
+  updatePost: (review: Review) => void;
 }
 
-const ReviewItem: React.FC<Props> = ({ review, category }) => {
+const ReviewItem: React.FC<Props> = ({
+  review,
+  category,
+  deletePost,
+  updatePost,
+}) => {
   const [currentView, setCurrentView] = useState("review");
   const { user } = useAuth();
 
@@ -54,10 +61,13 @@ const ReviewItem: React.FC<Props> = ({ review, category }) => {
         )}
       </View>
       {currentView === "review" ? (
-        <HTML
-          source={{ html: review.content }}
-          baseFontStyle={{ fontFamily: "MMedium" }}
-        />
+        <View style={{ marginVertical: 10 }}>
+          <CustomText>{review.title}</CustomText>
+          <HTML
+            source={{ html: review.content }}
+            baseFontStyle={{ fontFamily: "MMedium" }}
+          />
+        </View>
       ) : (
         <SpecTable
           currentOption="Rating"
@@ -76,7 +86,9 @@ const ReviewItem: React.FC<Props> = ({ review, category }) => {
         {(user && user.id === review.author?.id) || true ? (
           <TouchableOpacity
             style={styles.buttonIconContainer}
-            onPress={() => {}}
+            onPress={() => {
+              updatePost(review);
+            }}
           >
             <Image
               source={require("../../assets/images/pencil.png")}
@@ -88,7 +100,9 @@ const ReviewItem: React.FC<Props> = ({ review, category }) => {
         {(user && user.id === review.author?.id) || true ? (
           <TouchableOpacity
             style={styles.buttonIconContainer}
-            onPress={() => {}}
+            onPress={() => {
+              deletePost(review);
+            }}
           >
             <Image
               source={require("../../assets/images/trash.png")}

@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import {
+  Alert,
   FlatList,
   Image,
   ListRenderItem,
@@ -15,6 +16,9 @@ import {
   Review,
   ReviewRating,
   useCreateReviewMutation,
+  useDeleteImagesMutation,
+  useDeleteReviewMutation,
+  useUpdateReviewMutation,
 } from "../generated/graphql";
 import { ScreenNavigationProp } from "../utils/types";
 
@@ -34,9 +38,54 @@ const ReviewScreenTab: React.FC<Props> = ({
   const { reviews } = useReviews();
 
   const [createReviewMutation, {}] = useCreateReviewMutation();
+  const [updateReviewMutation, {}] = useUpdateReviewMutation();
+  const [deleteReviewMutation, {}] = useDeleteReviewMutation();
+  const [deleteImagesMutation, {}] = useDeleteImagesMutation();
 
   const renderReviewItem: ListRenderItem<Review> = ({ item }) => {
-    return <ReviewItem review={item} category={category} />;
+    return (
+      <ReviewItem
+        review={item}
+        category={category}
+        updatePost={(review) => {
+          navigation.push("Compose", {
+            header: "Update review",
+            title: review.title,
+            content: review.content,
+            rating: review.rating,
+            category: category,
+            onCompose: (title, content, rating, images) => {
+              handleUpdateReview(review.id, title, content, rating, images);
+            },
+          });
+        }}
+        deletePost={(review) => {
+          createAlert("Delete post", "Do you want to delete this post?", () => {
+            handleDeleteReview(review.id, []);
+          });
+        }}
+      />
+    );
+  };
+
+  const createAlert = (
+    title: string,
+    content: string,
+    callback: () => void
+  ) => {
+    Alert.alert(
+      title,
+      content,
+      [
+        {
+          text: "Nope",
+          onPress: () => console.log("Cancel Pressed"),
+          style: "cancel",
+        },
+        { text: "Yes", onPress: () => callback() },
+      ],
+      { cancelable: false }
+    );
   };
 
   const handleCreateReview = async (
@@ -77,6 +126,72 @@ const ReviewScreenTab: React.FC<Props> = ({
       .catch((e) => {
         alert(e.message);
       });
+  };
+
+  const handleUpdateReview = (
+    id: string,
+    title: string,
+    content: string,
+    rating: any,
+    images: string[]
+  ) => {
+    updateReviewMutation({
+      variables: {
+        id,
+        title,
+        content,
+        overall: rating.overall,
+        display: rating.display,
+        processor: rating.processor,
+        battery: rating.battery,
+        software: rating.software,
+        camera: rating.camera,
+        gpu: rating.gpu,
+        memory: rating.memory,
+        thermals: rating.thermals,
+        ports: rating.ports,
+        images,
+      },
+      update: (cache) => {
+        cache.evict({ fieldName: "ratings" });
+      },
+    })
+      .then((res) => {
+        if (res.data?.updateReview?.status) {
+        } else {
+          throw new Error(res.data?.updateReview?.message);
+        }
+      })
+      .catch((error) => {
+        alert(error.message);
+      });
+  };
+
+  const handleDeleteReview = async (id: string, images: string[]) => {
+    try {
+      if (images.length !== 0) {
+        await deleteImagesMutation({
+          variables: {
+            imageIds: images,
+          },
+        });
+      }
+
+      await deleteReviewMutation({
+        variables: {
+          id,
+        },
+        update: (cache) => {
+          cache.evict({ fieldName: "reviews" });
+        },
+      }).then((res) => {
+        if (!res.data?.deleteReview.status) {
+          throw new Error(res.data?.deleteReview.message);
+        }
+      });
+    } catch (error) {
+      alert(error.message);
+    }
   };
 
   return (
