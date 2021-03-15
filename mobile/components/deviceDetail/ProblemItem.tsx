@@ -6,6 +6,7 @@ import CustomText from "../util/CustomText";
 import StatsBox from "./StatsBox";
 import moment from "moment";
 import HTML from "react-native-render-html";
+import { useAuth } from "../../context/AuthContext";
 
 interface Props {
   problem: DeviceProblem;
@@ -27,6 +28,7 @@ const ProblemItem: React.FC<Props> = ({
     starsCount: problem.stars?.length ? problem.stars.length : 0,
     solutionsCount: problem.solutions?.length ? problem.solutions.length : 0,
   });
+  const { user } = useAuth();
 
   return (
     <View style={{ width: "100%" }}>
@@ -103,24 +105,29 @@ const ProblemItem: React.FC<Props> = ({
                 style={styles.buttonIcon}
               />
             </TouchableOpacity>
-            <TouchableOpacity
-              style={styles.buttonIconContainer}
-              onPress={() => updatePost(problem)}
-            >
-              <Image
-                source={require("../../assets/images/pencil.png")}
-                style={styles.buttonIcon}
-              />
-            </TouchableOpacity>
-            <TouchableOpacity
-              style={styles.buttonIconContainer}
-              onPress={() => deletePost(problem)}
-            >
-              <Image
-                source={require("../../assets/images/trash.png")}
-                style={styles.buttonIcon}
-              />
-            </TouchableOpacity>
+            {user && user.id === problem.author?.id ? (
+              <TouchableOpacity
+                style={styles.buttonIconContainer}
+                onPress={() => updatePost(problem)}
+              >
+                <Image
+                  source={require("../../assets/images/pencil.png")}
+                  style={styles.buttonIcon}
+                />
+              </TouchableOpacity>
+            ) : null}
+
+            {user && user.id === problem.author?.id ? (
+              <TouchableOpacity
+                style={styles.buttonIconContainer}
+                onPress={() => deletePost(problem)}
+              >
+                <Image
+                  source={require("../../assets/images/trash.png")}
+                  style={styles.buttonIcon}
+                />
+              </TouchableOpacity>
+            ) : null}
           </View>
         </View>
       </View>

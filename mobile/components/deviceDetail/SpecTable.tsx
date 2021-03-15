@@ -43,7 +43,7 @@ const SpecTable: React.FC<Props> = ({
           title={title}
           content={
             currentOption === "Rating" ? (
-              <RatingBar rating={rating[title.toLowerCase()]} />
+              <RatingBar rating={rating[title.toLowerCase()].toFixed(1)} />
             ) : currentOption === "Technical" ? (
               <CustomText>{spec[title.toLowerCase()]}</CustomText>
             ) : (

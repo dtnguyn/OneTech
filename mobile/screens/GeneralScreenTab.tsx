@@ -6,6 +6,7 @@ import { useAuth } from "../context/AuthContext";
 import { Device, useToggleDeviceFollowMutation } from "../generated/graphql";
 import FastImage from "react-native-fast-image";
 import CustomImage from "../components/util/CustomImage";
+import WebView from "react-native-webview";
 
 interface Props {
   device: Device | undefined;
@@ -58,6 +59,7 @@ const GeneralScreenTab: React.FC<Props> = ({ device }) => {
           source={{ uri: device?.coverImage }}
           style={styles.deviceImage}
         />
+
         <CustomText style={styles.priceText}>Org at: $1099</CustomText>
         <TouchableOpacity style={styles.buyButton}>
           <CustomText>Buy</CustomText>

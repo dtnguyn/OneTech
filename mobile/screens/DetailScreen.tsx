@@ -10,17 +10,19 @@ import {
   NavigationState,
 } from "react-native-tab-view";
 import CustomText from "../components/util/CustomText";
-import { ComposeContext } from "../context/ComposeContext";
 import { ProblemContext } from "../context/ProblemContext";
+import { ReviewContext } from "../context/ReviewContext";
 import {
   Device,
   DeviceProblem,
+  Review,
   ReviewRating,
   useDeviceDetailQuery,
   useDeviceRatingsQuery,
   useProblemsQuery,
+  useReviewsQuery,
 } from "../generated/graphql";
-import { Compose, RootStackParamList } from "../utils/types";
+import { RootStackParamList } from "../utils/types";
 import GeneralScreenTab from "./GeneralScreenTab";
 import ProblemScreenTab from "./ProblemScreenTab";
 import ReviewScreenTab from "./ReviewScreenTab";
@@ -38,6 +40,7 @@ const DetailScreen: React.FC<Props> = ({ route, navigation }: any) => {
   const [device, setDevice] = useState<Device>();
   const [rating, setRating] = useState<ReviewRating>();
   const [problems, setProblems] = useState<DeviceProblem[]>([]);
+  const [reviews, setReviews] = useState<Review[]>([]);
 
   const [problemSearchValue, setProblemSearchValue] = useState("");
   const [reviewSearchValue, setReviewSearchValue] = useState("");
@@ -49,21 +52,6 @@ const DetailScreen: React.FC<Props> = ({ route, navigation }: any) => {
     { key: "problem", title: "Problems" },
     { key: "review", title: "Reviews" },
   ]);
-
-  const renderScene = SceneMap({
-    general: () => <GeneralScreenTab device={device} />,
-    spec: () => <SpecScreenTab device={device} rating={rating} />,
-    problem: () => (
-      <ProblemContext.Provider value={{ problems, setProblems }}>
-        <ProblemScreenTab
-          deviceId={device ? device.id : ""}
-          navigation={navigation}
-          submitSearchValue={handleSearchProblem}
-        />
-      </ProblemContext.Provider>
-    ),
-    review: ReviewScreenTab,
-  });
 
   const { data, error } = useDeviceDetailQuery({
     variables: {
@@ -88,7 +76,35 @@ const DetailScreen: React.FC<Props> = ({ route, navigation }: any) => {
     fetchPolicy: "network-only",
   });
 
+  const { data: reviewsData, error: reviewsError } = useReviewsQuery({
+    variables: {
+      deviceId: route.params.id as string,
+      title: reviewSearchValue,
+      content: reviewSearchValue,
+    },
+    fetchPolicy: "network-only",
+  });
+
   const initialLayout = { width: Dimensions.get("window").width };
+
+  const renderScene = SceneMap({
+    general: () => <GeneralScreenTab device={device} />,
+    spec: () => <SpecScreenTab device={device} rating={rating} />,
+    problem: () => (
+      <ProblemContext.Provider value={{ problems, setProblems }}>
+        <ProblemScreenTab
+          deviceId={device ? device.id : ""}
+          navigation={navigation}
+          submitSearchValue={handleSearchProblem}
+        />
+      </ProblemContext.Provider>
+    ),
+    review: () => (
+      <ReviewContext.Provider value={{ reviews, setReviews }}>
+        <ReviewScreenTab submitSearchValue={handleSearchReview} />
+      </ReviewContext.Provider>
+    ),
+  });
 
   const renderTabBar = (
     props: SceneRendererProps & { navigationState: State }
@@ -112,11 +128,19 @@ const DetailScreen: React.FC<Props> = ({ route, navigation }: any) => {
     </View>
   );
 
-  let timeout: NodeJS.Timeout;
+  let problemTimeout: NodeJS.Timeout;
   const handleSearchProblem = (text: string) => {
-    clearTimeout(timeout);
-    timeout = setTimeout(() => {
+    clearTimeout(problemTimeout);
+    problemTimeout = setTimeout(() => {
       setProblemSearchValue(text);
+    }, 700);
+  };
+
+  let reviewTimeout: NodeJS.Timeout;
+  const handleSearchReview = (text: string) => {
+    clearTimeout(reviewTimeout);
+    reviewTimeout = setTimeout(() => {
+      setReviewSearchValue(text);
     }, 700);
   };
 
@@ -145,6 +169,18 @@ const DetailScreen: React.FC<Props> = ({ route, navigation }: any) => {
       setProblems([]);
     }
   }, [problemsData]);
+
+  useEffect(() => {
+    const reviewArr = reviewsData?.reviews?.data as Review[];
+
+    if (reviewArr && reviewArr.length != 0) {
+      //found reviews
+      setReviews(reviewArr);
+    } else if (reviewArr && reviewArr.length == 0) {
+      //not found
+      setReviews([]);
+    }
+  }, [reviewsData]);
 
   return (
     <TabView
