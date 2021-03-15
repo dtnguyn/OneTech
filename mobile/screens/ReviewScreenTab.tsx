@@ -13,15 +13,15 @@ import { useReviews } from "../context/ReviewContext";
 import { Review } from "../generated/graphql";
 
 interface Props {
+  category: string;
   submitSearchValue: (text: string) => void;
 }
 
-const ReviewScreenTab: React.FC<Props> = ({ submitSearchValue }) => {
+const ReviewScreenTab: React.FC<Props> = ({ category, submitSearchValue }) => {
   const { reviews } = useReviews();
-  const [currentView, setCurrentView] = useState("review");
 
   const renderReviewItem: ListRenderItem<Review> = ({ item }) => {
-    return <ReviewItem review={item} />;
+    return <ReviewItem review={item} category={category} />;
   };
 
   return (
@@ -76,6 +76,7 @@ const styles = StyleSheet.create({
     right: 5,
     top: 8,
     width: 32,
+
     height: 32,
   },
   floatingButtonContainer: {

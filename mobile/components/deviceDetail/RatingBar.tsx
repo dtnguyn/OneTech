@@ -8,7 +8,6 @@ interface Props {
 
 const RatingBar: React.FC<Props> = ({ rating }) => {
   const handleRatingBarColor = (number: number) => {
-    console.log(number);
     if (number > 80) {
       return "#9bc72b";
     } else if (number > 60) {

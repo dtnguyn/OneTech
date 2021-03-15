@@ -35,6 +35,7 @@ const SpecTable: React.FC<Props> = ({
   }, []);
 
   if (!rating) return null;
+
   return (
     <View style={styles.container}>
       {specsArr.map((title) => (
@@ -45,9 +46,11 @@ const SpecTable: React.FC<Props> = ({
             currentOption === "Rating" ? (
               <RatingBar rating={rating[title.toLowerCase()].toFixed(1)} />
             ) : currentOption === "Technical" ? (
-              <CustomText>{spec[title.toLowerCase()]}</CustomText>
+              <CustomText>{spec ? spec[title.toLowerCase()] : null}</CustomText>
             ) : (
-              <CustomText>{spec[title.toLowerCase() + "Simplify"]}</CustomText>
+              <CustomText>
+                {spec ? spec[title.toLowerCase() + "Simplify"] : null}
+              </CustomText>
             )
           }
         />

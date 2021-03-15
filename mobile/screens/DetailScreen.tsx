@@ -101,7 +101,10 @@ const DetailScreen: React.FC<Props> = ({ route, navigation }: any) => {
     ),
     review: () => (
       <ReviewContext.Provider value={{ reviews, setReviews }}>
-        <ReviewScreenTab submitSearchValue={handleSearchReview} />
+        <ReviewScreenTab
+          submitSearchValue={handleSearchReview}
+          category={device ? device.category : "phone"}
+        />
       </ReviewContext.Provider>
     ),
   });
