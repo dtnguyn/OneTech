@@ -13,6 +13,7 @@ interface Props {
   review: Review;
   deletePost: (review: Review) => void;
   updatePost: (review: Review) => void;
+  reportPost: (review: Review) => void;
 }
 
 const ReviewItem: React.FC<Props> = ({
@@ -20,9 +21,24 @@ const ReviewItem: React.FC<Props> = ({
   category,
   deletePost,
   updatePost,
+  reportPost,
 }) => {
   const [currentView, setCurrentView] = useState("review");
   const { user } = useAuth();
+
+  const handleRatingButtonColor = (number: number) => {
+    if (number > 80) {
+      return "#9bc72b";
+    } else if (number > 60) {
+      return "#a8d8ad";
+    } else if (number > 40) {
+      return "#f3e70a";
+    } else if (number > 20) {
+      return "#c65151";
+    } else {
+      return "#ca241c";
+    }
+  };
 
   return (
     <View style={styles.container}>
@@ -38,7 +54,14 @@ const ReviewItem: React.FC<Props> = ({
         </View>
 
         {currentView === "review" ? (
-          <View style={styles.ratingButtonContainer}>
+          <View
+            style={{
+              ...styles.ratingButtonContainer,
+              backgroundColor: handleRatingButtonColor(
+                review.rating.overall ? review.rating.overall * 10 : 0
+              ),
+            }}
+          >
             <TouchableOpacity
               style={styles.ratingButton}
               onPress={() => setCurrentView("rating")}
@@ -77,7 +100,10 @@ const ReviewItem: React.FC<Props> = ({
         />
       )}
       <View style={styles.buttonsContainer}>
-        <TouchableOpacity style={styles.buttonIconContainer}>
+        <TouchableOpacity
+          style={styles.buttonIconContainer}
+          onPress={() => reportPost(review)}
+        >
           <Image
             source={require("../../assets/images/flag.png")}
             style={styles.buttonIcon}
@@ -139,8 +165,6 @@ const styles = StyleSheet.create({
     width: 53,
     height: 53,
     borderRadius: 53,
-    backgroundColor: "#A8D8AD",
-
     marginStart: "auto",
     marginEnd: 5,
     elevation: 4,

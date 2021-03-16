@@ -15,6 +15,7 @@ import {
   DeviceProblem,
   DeviceProblemStar,
   useCreateProblemMutation,
+  useCreateReportMutation,
   useDeleteImagesMutation,
   useDeleteProblemMutation,
   useToggleProblemStarMutation,
@@ -43,6 +44,7 @@ const ProblemScreenTab: React.FC<Props> = ({
   const [updateProblemMutation, {}] = useUpdateProblemMutation();
   const [deleteImagesMutation, {}] = useDeleteImagesMutation();
   const [deleteProblemMutation, {}] = useDeleteProblemMutation();
+  const [createReportMutation] = useCreateReportMutation();
 
   const renderProblemItem: ListRenderItem<DeviceProblem> = ({ item }) => {
     return (
@@ -64,6 +66,17 @@ const ProblemScreenTab: React.FC<Props> = ({
         deletePost={(problem) => {
           createAlert("Delete post", "Do you want to delete this post?", () => {
             handleDeleteProblem(problem.id, []);
+          });
+        }}
+        reportPost={(problem) => {
+          navigation.push("Compose", {
+            header: "Report",
+            title: "",
+            content: "",
+            category: category,
+            onCompose: (title, content, _rating, _images) => {
+              handleCreateReport(problem.id, title, content);
+            },
           });
         }}
       />
@@ -98,6 +111,26 @@ const ProblemScreenTab: React.FC<Props> = ({
       }
     }
     return false;
+  };
+
+  const handleCreateReport = (id: string, title: string, content: string) => {
+    createReportMutation({
+      variables: {
+        title,
+        content,
+        problemId: id,
+      },
+    })
+      .then((response) => {
+        if (response.data?.createReport.status) {
+          console.log("create report successfully");
+        } else {
+          throw new Error(response.data?.createReport.message);
+        }
+      })
+      .catch((error) => {
+        alert(error.message);
+      });
   };
 
   const handleCreateProblem = async (

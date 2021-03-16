@@ -113,15 +113,26 @@ const ComposeScreen: React.FC<Props> = ({ navigation, route }) => {
         />
 
         <TouchableOpacity
-          containerStyle={styles.submitButton}
+          containerStyle={{
+            ...styles.submitButton,
+            backgroundColor:
+              (rating && overallRating === 0) ||
+              !compose.title ||
+              !compose.content
+                ? "#C4C4C4"
+                : "#017BFE",
+          }}
           disabled={
             (rating && overallRating === 0) ||
             !compose.title ||
             !compose.content
           }
           onPress={() => {
-            const finalRating = rating;
-            (finalRating as any).overall = overallRating;
+            if (rating) {
+              const finalRating = rating;
+              (finalRating as any).overall = overallRating;
+            }
+
             route.params.onCompose(compose.title, compose.content, rating, []);
             navigation.pop();
           }}
@@ -179,7 +190,6 @@ const styles = StyleSheet.create({
     height: 60,
     alignItems: "center",
     justifyContent: "center",
-    backgroundColor: "#017BFE",
   },
 });
 

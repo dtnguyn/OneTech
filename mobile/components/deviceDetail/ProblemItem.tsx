@@ -14,6 +14,7 @@ interface Props {
   toggleStar: (problem: DeviceProblem) => void;
   updatePost: (problem: DeviceProblem) => void;
   deletePost: (problem: DeviceProblem) => void;
+  reportPost: (problem: DeviceProblem) => void;
 }
 
 const ProblemItem: React.FC<Props> = ({
@@ -22,6 +23,7 @@ const ProblemItem: React.FC<Props> = ({
   toggleStar,
   updatePost,
   deletePost,
+  reportPost,
 }) => {
   const [starState, setStarState] = useState(starred);
   const [statsState, setStatsState] = useState({
@@ -99,7 +101,10 @@ const ProblemItem: React.FC<Props> = ({
                 style={styles.buttonIcon}
               />
             </TouchableOpacity>
-            <TouchableOpacity style={styles.buttonIconContainer}>
+            <TouchableOpacity
+              style={styles.buttonIconContainer}
+              onPress={() => reportPost(problem)}
+            >
               <Image
                 source={require("../../assets/images/flag.png")}
                 style={styles.buttonIcon}

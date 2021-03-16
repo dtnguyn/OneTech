@@ -15,6 +15,7 @@ import { useReviews } from "../context/ReviewContext";
 import {
   Review,
   ReviewRating,
+  useCreateReportMutation,
   useCreateReviewMutation,
   useDeleteImagesMutation,
   useDeleteReviewMutation,
@@ -41,6 +42,7 @@ const ReviewScreenTab: React.FC<Props> = ({
   const [updateReviewMutation, {}] = useUpdateReviewMutation();
   const [deleteReviewMutation, {}] = useDeleteReviewMutation();
   const [deleteImagesMutation, {}] = useDeleteImagesMutation();
+  const [createReportMutation] = useCreateReportMutation();
 
   const renderReviewItem: ListRenderItem<Review> = ({ item }) => {
     return (
@@ -62,6 +64,17 @@ const ReviewScreenTab: React.FC<Props> = ({
         deletePost={(review) => {
           createAlert("Delete post", "Do you want to delete this post?", () => {
             handleDeleteReview(review.id, []);
+          });
+        }}
+        reportPost={(review) => {
+          navigation.push("Compose", {
+            header: "Report",
+            title: "",
+            content: "",
+            category: category,
+            onCompose: (title, content, rating, images) => {
+              handleCreateReport(review.id, title, content);
+            },
           });
         }}
       />
@@ -86,6 +99,25 @@ const ReviewScreenTab: React.FC<Props> = ({
       ],
       { cancelable: false }
     );
+  };
+
+  const handleCreateReport = (id: string, title: string, content: string) => {
+    createReportMutation({
+      variables: {
+        title,
+        content,
+        reviewId: id,
+      },
+    })
+      .then((response) => {
+        if (response.data?.createReport.status) {
+        } else {
+          throw new Error(response.data?.createReport.message);
+        }
+      })
+      .catch((error) => {
+        alert(error.message);
+      });
   };
 
   const handleCreateReview = async (
