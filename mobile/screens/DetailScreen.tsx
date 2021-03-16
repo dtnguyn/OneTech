@@ -1,26 +1,19 @@
 import { StackScreenProps } from "@react-navigation/stack";
 import React, { useEffect, useState } from "react";
 import { Dimensions, StyleSheet, Text, View } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
 import {
-  TabView,
-  SceneMap,
-  TabBar,
-  SceneRendererProps,
   NavigationState,
+  SceneMap,
+  SceneRendererProps,
+  TabBar,
+  TabView,
 } from "react-native-tab-view";
 import CustomText from "../components/util/CustomText";
-import { ProblemContext } from "../context/ProblemContext";
-import { ReviewContext } from "../context/ReviewContext";
 import {
   Device,
-  DeviceProblem,
-  Review,
   ReviewRating,
   useDeviceDetailQuery,
   useDeviceRatingsQuery,
-  useProblemsQuery,
-  useReviewsQuery,
 } from "../generated/graphql";
 import { RootStackParamList } from "../utils/types";
 import GeneralScreenTab from "./GeneralScreenTab";
@@ -39,11 +32,6 @@ type State = NavigationState<{
 const DetailScreen: React.FC<Props> = ({ route, navigation }: any) => {
   const [device, setDevice] = useState<Device>();
   const [rating, setRating] = useState<ReviewRating>();
-  const [problems, setProblems] = useState<DeviceProblem[]>([]);
-  const [reviews, setReviews] = useState<Review[]>([]);
-
-  const [problemSearchValue, setProblemSearchValue] = useState("");
-  const [reviewSearchValue, setReviewSearchValue] = useState("");
 
   const [index, setIndex] = useState(0);
   const [routes] = React.useState([
@@ -67,48 +55,24 @@ const DetailScreen: React.FC<Props> = ({ route, navigation }: any) => {
     fetchPolicy: "network-only",
   });
 
-  const { data: problemsData, error: problemsError } = useProblemsQuery({
-    variables: {
-      deviceId: route.params.id as string,
-      title: problemSearchValue,
-      content: problemSearchValue,
-    },
-    fetchPolicy: "network-only",
-  });
-
-  const { data: reviewsData, error: reviewsError } = useReviewsQuery({
-    variables: {
-      deviceId: route.params.id as string,
-      title: reviewSearchValue,
-      content: reviewSearchValue,
-    },
-    fetchPolicy: "network-only",
-  });
-
   const initialLayout = { width: Dimensions.get("window").width };
 
   const renderScene = SceneMap({
     general: () => <GeneralScreenTab device={device} />,
     spec: () => <SpecScreenTab device={device} rating={rating} />,
     problem: () => (
-      <ProblemContext.Provider value={{ problems, setProblems }}>
-        <ProblemScreenTab
-          deviceId={device ? device.id : ""}
-          category={device ? device.category : "phone"}
-          navigation={navigation}
-          submitSearchValue={handleSearchProblem}
-        />
-      </ProblemContext.Provider>
+      <ProblemScreenTab
+        deviceId={device ? device.id : ""}
+        category={device ? device.category : "phone"}
+        navigation={navigation}
+      />
     ),
     review: () => (
-      <ReviewContext.Provider value={{ reviews, setReviews }}>
-        <ReviewScreenTab
-          deviceId={device ? device.id : ""}
-          navigation={navigation}
-          category={device ? device.category : "phone"}
-          submitSearchValue={handleSearchReview}
-        />
-      </ReviewContext.Provider>
+      <ReviewScreenTab
+        deviceId={device ? device.id : ""}
+        navigation={navigation}
+        category={device ? device.category : "phone"}
+      />
     ),
   });
 
@@ -134,22 +98,6 @@ const DetailScreen: React.FC<Props> = ({ route, navigation }: any) => {
     </View>
   );
 
-  let problemTimeout: NodeJS.Timeout;
-  const handleSearchProblem = (text: string) => {
-    clearTimeout(problemTimeout);
-    problemTimeout = setTimeout(() => {
-      setProblemSearchValue(text);
-    }, 700);
-  };
-
-  let reviewTimeout: NodeJS.Timeout;
-  const handleSearchReview = (text: string) => {
-    clearTimeout(reviewTimeout);
-    reviewTimeout = setTimeout(() => {
-      setReviewSearchValue(text);
-    }, 700);
-  };
-
   useEffect(() => {
     const devices = data?.singleDevice?.data as Device[];
     if (devices && devices.length != 0) {
@@ -163,30 +111,6 @@ const DetailScreen: React.FC<Props> = ({ route, navigation }: any) => {
       setRating(ratings[0]);
     }
   }, [ratingData]);
-
-  useEffect(() => {
-    const problemArr = problemsData?.problems?.data as DeviceProblem[];
-
-    if (problemArr && problemArr.length != 0) {
-      //found problems
-      setProblems(problemArr);
-    } else if (problemArr && problemArr.length == 0) {
-      //not found
-      setProblems([]);
-    }
-  }, [problemsData]);
-
-  useEffect(() => {
-    const reviewArr = reviewsData?.reviews?.data as Review[];
-
-    if (reviewArr && reviewArr.length != 0) {
-      //found reviews
-      setReviews(reviewArr);
-    } else if (reviewArr && reviewArr.length == 0) {
-      //not found
-      setReviews([]);
-    }
-  }, [reviewsData]);
 
   return (
     <TabView

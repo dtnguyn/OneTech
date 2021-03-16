@@ -1,17 +1,15 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Alert,
   FlatList,
   Image,
   ListRenderItem,
   StyleSheet,
-  Text,
   TextInput,
   TouchableOpacity,
   View,
 } from "react-native";
 import ReviewItem from "../components/deviceDetail/ReviewItem";
-import { useReviews } from "../context/ReviewContext";
 import {
   Review,
   ReviewRating,
@@ -19,6 +17,7 @@ import {
   useCreateReviewMutation,
   useDeleteImagesMutation,
   useDeleteReviewMutation,
+  useReviewsQuery,
   useUpdateReviewMutation,
 } from "../generated/graphql";
 import { ScreenNavigationProp } from "../utils/types";
@@ -27,22 +26,30 @@ interface Props {
   deviceId: string;
   navigation: ScreenNavigationProp;
   category: string;
-  submitSearchValue: (text: string) => void;
 }
 
 const ReviewScreenTab: React.FC<Props> = ({
   deviceId,
   category,
   navigation,
-  submitSearchValue,
 }) => {
-  const { reviews } = useReviews();
+  const [reviews, setReviews] = useState<Array<Review>>();
+  const [reviewSearchValue, setReviewSearchValue] = useState("");
 
   const [createReviewMutation, {}] = useCreateReviewMutation();
   const [updateReviewMutation, {}] = useUpdateReviewMutation();
   const [deleteReviewMutation, {}] = useDeleteReviewMutation();
   const [deleteImagesMutation, {}] = useDeleteImagesMutation();
   const [createReportMutation] = useCreateReportMutation();
+
+  const { data: reviewsData, error: reviewsError } = useReviewsQuery({
+    variables: {
+      deviceId,
+      title: reviewSearchValue,
+      content: reviewSearchValue,
+    },
+    fetchPolicy: "network-only",
+  });
 
   const renderReviewItem: ListRenderItem<Review> = ({ item }) => {
     return (
@@ -79,6 +86,14 @@ const ReviewScreenTab: React.FC<Props> = ({
         }}
       />
     );
+  };
+
+  let reviewTimeout: NodeJS.Timeout;
+  const handleSearchReview = (text: string) => {
+    clearTimeout(reviewTimeout);
+    reviewTimeout = setTimeout(() => {
+      setReviewSearchValue(text);
+    }, 700);
   };
 
   const createAlert = (
@@ -226,6 +241,18 @@ const ReviewScreenTab: React.FC<Props> = ({
     }
   };
 
+  useEffect(() => {
+    const reviewArr = reviewsData?.reviews?.data as Review[];
+
+    if (reviewArr && reviewArr.length != 0) {
+      //found reviews
+      setReviews(reviewArr);
+    } else if (reviewArr && reviewArr.length == 0) {
+      //not found
+      setReviews([]);
+    }
+  }, [reviewsData]);
+
   return (
     <View style={styles.container}>
       <View style={styles.textInputContainer}>
@@ -233,7 +260,7 @@ const ReviewScreenTab: React.FC<Props> = ({
           style={styles.textInput}
           placeholder="Find problems..."
           onChangeText={(text) => {
-            submitSearchValue(text);
+            handleSearchReview(text);
           }}
         />
         <Image

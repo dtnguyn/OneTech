@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import {
   Alert,
   Image,
@@ -10,7 +10,6 @@ import {
 import { FlatList, TouchableOpacity } from "react-native-gesture-handler";
 import ProblemItem from "../components/deviceDetail/ProblemItem";
 import { useAuth } from "../context/AuthContext";
-import { useProblems } from "../context/ProblemContext";
 import {
   DeviceProblem,
   DeviceProblemStar,
@@ -18,6 +17,7 @@ import {
   useCreateReportMutation,
   useDeleteImagesMutation,
   useDeleteProblemMutation,
+  useProblemsQuery,
   useToggleProblemStarMutation,
   useUpdateProblemMutation,
 } from "../generated/graphql";
@@ -27,17 +27,16 @@ interface Props {
   deviceId: string;
   category: string;
   navigation: ScreenNavigationProp;
-  submitSearchValue: (text: string) => void;
 }
 
 const ProblemScreenTab: React.FC<Props> = ({
   deviceId,
   category,
   navigation,
-  submitSearchValue,
 }) => {
   const { user } = useAuth();
-  const { problems, setProblems } = useProblems();
+  const [problems, setProblems] = useState<Array<DeviceProblem>>();
+  const [problemSearchValue, setProblemSearchValue] = useState("");
 
   const [toggleProblemStarMutation, {}] = useToggleProblemStarMutation();
   const [createProblemMutation, {}] = useCreateProblemMutation();
@@ -45,6 +44,23 @@ const ProblemScreenTab: React.FC<Props> = ({
   const [deleteImagesMutation, {}] = useDeleteImagesMutation();
   const [deleteProblemMutation, {}] = useDeleteProblemMutation();
   const [createReportMutation] = useCreateReportMutation();
+
+  const { data: problemsData, error: problemsError } = useProblemsQuery({
+    variables: {
+      deviceId,
+      title: problemSearchValue,
+      content: problemSearchValue,
+    },
+    fetchPolicy: "network-only",
+  });
+
+  let problemTimeout: NodeJS.Timeout;
+  const handleSearchProblem = (text: string) => {
+    clearTimeout(problemTimeout);
+    problemTimeout = setTimeout(() => {
+      setProblemSearchValue(text);
+    }, 700);
+  };
 
   const renderProblemItem: ListRenderItem<DeviceProblem> = ({ item }) => {
     return (
@@ -239,6 +255,18 @@ const ProblemScreenTab: React.FC<Props> = ({
       });
   };
 
+  useEffect(() => {
+    const problemArr = problemsData?.problems?.data as DeviceProblem[];
+
+    if (problemArr && problemArr.length != 0) {
+      //found problems
+      setProblems(problemArr);
+    } else if (problemArr && problemArr.length == 0) {
+      //not found
+      setProblems([]);
+    }
+  }, [problemsData]);
+
   return (
     <View style={styles.container}>
       <View style={styles.textInputContainer}>
@@ -246,7 +274,7 @@ const ProblemScreenTab: React.FC<Props> = ({
           style={styles.textInput}
           placeholder="Find problems..."
           onChangeText={(text) => {
-            submitSearchValue(text);
+            handleSearchProblem(text);
           }}
         />
         <Image
