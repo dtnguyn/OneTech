@@ -7,7 +7,7 @@ import {
   Query,
   Resolver,
 } from "type-graphql";
-import { getConnection, getRepository } from "typeorm";
+import { Brackets, getConnection, getRepository } from "typeorm";
 import { Device } from "../entities/Device";
 import { DeviceProblem, ProblemResponse } from "../entities/DeviceProblem";
 import {
@@ -269,6 +269,7 @@ export class ProblemResolver {
     @Arg("content", { nullable: true }) content: string
   ) {
     try {
+      // console.log("DebugApp: ", deviceId, title, content, authorId);
       //await sleep(3000);
       const builder = this.problemRepo.createQueryBuilder("problem");
       builder
@@ -277,17 +278,21 @@ export class ProblemResolver {
         .leftJoinAndSelect("problem.stars", "stars")
         .leftJoinAndSelect("problem.images", "images")
         .leftJoinAndSelect("problem.solutions", "solutions");
-      if (authorId) builder.where("problem.authorId = :authorId", { authorId });
-      if (deviceId) builder.where("problem.deviceId = :deviceId", { deviceId });
+      if (authorId)
+        builder.andWhere("problem.authorId = :authorId", { authorId });
+      if (deviceId)
+        builder.andWhere("problem.deviceId = :deviceId", { deviceId });
 
       if (title && content) {
-        builder
-          .andWhere("LOWER(problem.title) LIKE LOWER(:title)", {
-            title: "%" + title + "%",
+        builder.andWhere(
+          new Brackets((qb) => {
+            qb.where("LOWER(problem.title) LIKE LOWER(:title)", {
+              title: "%" + title + "%",
+            }).orWhere("LOWER(problem.content) LIKE LOWER(:content)", {
+              content: "%" + content + "%",
+            });
           })
-          .orWhere("LOWER(problem.content) LIKE LOWER(:content)", {
-            content: "%" + content + "%",
-          });
+        );
       } else if (title)
         builder.andWhere("LOWER(problem.title) LIKE LOWER(:title)", {
           title: "%" + title + "%",

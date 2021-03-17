@@ -8,7 +8,7 @@ import {
   Query,
   Resolver,
 } from "type-graphql";
-import { getConnection, getRepository } from "typeorm";
+import { Brackets, getConnection, getRepository } from "typeorm";
 import { Review, ReviewResponse } from "../entities/Review";
 import { ReviewImage } from "../entities/ReviewImage";
 import { ReviewRating, ReviewRatingResponse } from "../entities/ReviewRating";
@@ -280,6 +280,8 @@ export class ReviewResolver {
     @Arg("title", { nullable: true }) title: string,
     @Arg("content", { nullable: true }) content: string
   ) {
+    console.log("DebugApp: Reviews: ", deviceId, title, content, authorId);
+
     try {
       const builder = await this.reviewRepo
         .createQueryBuilder("review")
@@ -287,17 +289,22 @@ export class ReviewResolver {
         .leftJoinAndSelect("review.rating", "rating")
         .leftJoinAndSelect("review.images", "images");
 
-      if (authorId) builder.where("review.authorId = :authorId", { authorId });
-      if (deviceId) builder.where("review.deviceId = :deviceId", { deviceId });
+      if (deviceId)
+        builder.andWhere("review.deviceId = :deviceId", { deviceId });
+
+      if (authorId)
+        builder.andWhere("review.authorId = :authorId", { authorId });
 
       if (title && content) {
-        builder
-          .andWhere("LOWER(review.title) LIKE LOWER(:title)", {
-            title: "%" + title + "%",
+        builder.andWhere(
+          new Brackets((qb) => {
+            qb.where("LOWER(review.title) LIKE LOWER(:title)", {
+              title: "%" + title + "%",
+            }).orWhere("LOWER(review.content) LIKE LOWER(:content)", {
+              content: "%" + content + "%",
+            });
           })
-          .orWhere("LOWER(review.content) LIKE LOWER(:content)", {
-            content: "%" + content + "%",
-          });
+        );
       } else if (title)
         builder.andWhere("LOWER(review.title) LIKE LOWER(:title)", {
           title: "%" + title + "%",
