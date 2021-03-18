@@ -9,6 +9,7 @@ import {
 } from "react-native";
 import { FlatList, TouchableOpacity } from "react-native-gesture-handler";
 import ProblemItem from "../components/deviceDetail/ProblemItem";
+import EmptyPlaceholder from "../components/util/EmptyPlaceholder";
 import { useAuth } from "../context/AuthContext";
 import {
   DeviceProblem,
@@ -66,6 +67,7 @@ const ProblemScreenTab: React.FC<Props> = ({
     return (
       <ProblemItem
         problem={item}
+        clickAction={(problemId) => navigation.push("Solution", { problemId })}
         starred={isStarred(item.stars!)}
         toggleStar={handleToggleProblemStar}
         updatePost={(problem) => {
@@ -282,14 +284,19 @@ const ProblemScreenTab: React.FC<Props> = ({
           style={styles.searchIcon}
         />
       </View>
-      <FlatList
-        style={{
-          width: "100%",
-          paddingHorizontal: 10,
-        }}
-        data={problems}
-        renderItem={renderProblemItem}
-      />
+      {problems?.length ? (
+        <FlatList
+          style={{
+            width: "100%",
+            paddingHorizontal: 10,
+          }}
+          data={problems}
+          renderItem={renderProblemItem}
+        />
+      ) : (
+        <EmptyPlaceholder />
+      )}
+
       <View style={styles.floatingButtonContainer}>
         <TouchableOpacity
           style={styles.floatingButton}

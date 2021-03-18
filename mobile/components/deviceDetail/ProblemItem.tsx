@@ -11,6 +11,7 @@ import { useAuth } from "../../context/AuthContext";
 interface Props {
   problem: DeviceProblem;
   starred: boolean;
+  clickAction: (problemId: string) => void;
   toggleStar: (problem: DeviceProblem) => void;
   updatePost: (problem: DeviceProblem) => void;
   deletePost: (problem: DeviceProblem) => void;
@@ -20,6 +21,7 @@ interface Props {
 const ProblemItem: React.FC<Props> = ({
   problem,
   starred,
+  clickAction,
   toggleStar,
   updatePost,
   deletePost,
@@ -52,13 +54,16 @@ const ProblemItem: React.FC<Props> = ({
           />
         </View>
         <View style={styles.right}>
-          <CustomText
-            fontFamily="MSemiBold"
-            style={{ color: "#E35427" }}
-            fontSize={18}
-          >
-            {problem.title}
-          </CustomText>
+          <TouchableOpacity onPress={() => clickAction(problem.id)}>
+            <CustomText
+              fontFamily="MSemiBold"
+              style={{ color: "#E35427" }}
+              fontSize={18}
+            >
+              {problem.title}
+            </CustomText>
+          </TouchableOpacity>
+
           <CustomText fontFamily="MLight">
             {moment(problem.createdAt).format("LL")}
           </CustomText>
