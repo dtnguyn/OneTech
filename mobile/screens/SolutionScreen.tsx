@@ -19,7 +19,7 @@ interface Props {
 const SolutionScreen: React.FC<Props> = ({ route, navigation }) => {
   const [problem, setProblem] = useState<DeviceProblem>();
   const [solutions, setSolutions] = useState<Solution[]>();
-  const [scrollY, setScrollY] = useState(new Animated.Value(0));
+  const [pickedSolution, setPickedSolution] = useState<Solution>();
   const { data, loading, error } = useProblemDetailQuery({
     variables: {
       id: route.params.problemId,
@@ -70,9 +70,18 @@ const SolutionScreen: React.FC<Props> = ({ route, navigation }) => {
             //   });
           }}
         />
-        <CustomText style={{ marginTop: 20 }}>
-          Solutions from other users
+        <CustomText
+          style={{ marginTop: 20 }}
+          fontFamily="MSemiBold"
+          fontSize={20}
+        >
+          Solutions
         </CustomText>
+        {pickedSolution ? (
+          <View style={{ width: "100%" }}>
+            <SolutionItem solution={pickedSolution} />
+          </View>
+        ) : null}
       </View>
     );
   };
@@ -84,7 +93,14 @@ const SolutionScreen: React.FC<Props> = ({ route, navigation }) => {
       setProblem(arr[0]);
 
       if (prob.solutions) {
-        setSolutions(prob.solutions);
+        for (const solution of prob.solutions) {
+          if (solution.isPicked) {
+            setPickedSolution(solution);
+            break;
+          }
+        }
+
+        setSolutions(prob.solutions.filter((solution) => !solution.isPicked));
       }
     }
   }, [data]);
@@ -92,23 +108,22 @@ const SolutionScreen: React.FC<Props> = ({ route, navigation }) => {
   if (!problem) return null;
   return (
     <View style={styles.container}>
-      <View>
-        <FlatList
-          style={{
-            width: "100%",
-            paddingHorizontal: 10,
-          }}
-          data={solutions}
-          renderItem={renderSolutionList}
-          ListHeaderComponent={renderHeader}
-        />
-      </View>
+      <FlatList
+        style={{
+          width: "100%",
+          paddingHorizontal: 10,
+        }}
+        data={solutions}
+        renderItem={renderSolutionList}
+        ListHeaderComponent={renderHeader}
+      />
     </View>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
+    width: "100%",
     alignItems: "center",
     height: "100%",
   },
@@ -121,7 +136,6 @@ const styles = StyleSheet.create({
 
   problemContainer: {
     marginTop: 10,
-    paddingHorizontal: 10,
     alignItems: "center",
   },
 });

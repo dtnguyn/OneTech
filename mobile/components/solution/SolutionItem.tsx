@@ -15,7 +15,11 @@ const SolutionItem: React.FC<Props> = ({ solution }) => {
     <View style={styles.container}>
       <View style={styles.header}>
         <View style={styles.statsBoxContainer}>
-          <StatsBox value={160} title="stars" color="yellow" />
+          <StatsBox
+            value={solution.stars ? solution.stars.length : 0}
+            title="stars"
+            color="yellow"
+          />
         </View>
         <Image
           source={{ uri: solution.author.avatar }}
@@ -29,12 +33,21 @@ const SolutionItem: React.FC<Props> = ({ solution }) => {
             {moment(solution.createdAt).format("LL")}
           </CustomText>
         </View>
+        {solution.isPicked ? (
+          <Image
+            source={require("../../assets/images/check.png")}
+            style={styles.checkIcon}
+          />
+        ) : null}
       </View>
-      <HTML
-        source={{ html: solution.content }}
-        contentWidth={50}
-        baseFontStyle={{ fontFamily: "MMedium" }}
-      />
+      <View style={{ width: "100%" }}>
+        <HTML
+          source={{ html: solution.content }}
+          contentWidth={50}
+          baseFontStyle={{ fontFamily: "MMedium" }}
+        />
+      </View>
+
       <View style={styles.buttonsContainer}>
         <TouchableOpacity style={styles.buttonIconContainer} onPress={() => {}}>
           <Image
@@ -83,12 +96,19 @@ const styles = StyleSheet.create({
     marginStart: 10,
   },
   statsBoxContainer: {
-    width: "18%",
+    width: "15%",
   },
   userIcon: {
     width: "15%",
     aspectRatio: 1,
     marginStart: 10,
+    borderRadius: 300,
+    backgroundColor: "#C4C4C4",
+  },
+  checkIcon: {
+    width: "10%",
+    aspectRatio: 1,
+    marginStart: "auto",
     borderRadius: 300,
     backgroundColor: "#C4C4C4",
   },
