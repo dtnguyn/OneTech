@@ -41,7 +41,15 @@ const SearchScreen: React.FC<Props> = ({ navigation }) => {
   };
 
   const renderItem: ListRenderItem<Device> = ({ item }) => {
-    return <AutoComplete key={item.id} title={item.name} />;
+    return (
+      <AutoComplete
+        key={item.id}
+        title={item.name}
+        pressAction={(title) =>
+          navigation.push("Detail", { name: title, id: item.id })
+        }
+      />
+    );
   };
 
   useEffect(() => {

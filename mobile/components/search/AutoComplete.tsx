@@ -5,13 +5,19 @@ import CustomText from "../util/CustomText";
 
 interface Props {
   title: string;
+  pressAction: (title: string) => void;
 }
 
-const AutoComplete: React.FC<Props> = ({ title }) => {
+const AutoComplete: React.FC<Props> = ({ title, pressAction }) => {
   return (
     <View style={styles.container}>
-      <CustomText>{title}</CustomText>
-      <View style={styles.divider} />
+      <TouchableOpacity
+        containerStyle={{ width: "100%" }}
+        onPress={() => pressAction(title)}
+      >
+        <CustomText>{title}</CustomText>
+        <View style={styles.divider} />
+      </TouchableOpacity>
     </View>
   );
 };
