@@ -1,16 +1,34 @@
 import moment from "moment";
-import React from "react";
+import React, { useState } from "react";
 import { Image, StyleSheet, TouchableOpacity, View } from "react-native";
 import HTML from "react-native-render-html";
-import { Solution } from "../../generated/graphql";
+import { DeviceProblem, Solution } from "../../generated/graphql";
 import StatsBox from "../deviceDetail/StatsBox";
 import CustomText from "../util/CustomText";
 
 interface Props {
   solution: Solution;
+  starred: boolean;
+  checkPost: (solution: Solution) => void;
+  toggleStar: (solution: Solution) => void;
+  updatePost: (solution: Solution) => void;
+  deletePost: (solution: Solution) => void;
+  reportPost: (solution: Solution) => void;
 }
 
-const SolutionItem: React.FC<Props> = ({ solution }) => {
+const SolutionItem: React.FC<Props> = ({
+  solution,
+  starred,
+  checkPost,
+  toggleStar,
+  updatePost,
+  deletePost,
+  reportPost,
+}) => {
+  const [starState, setStarState] = useState(starred);
+  const [statsState, setStatsState] = useState({
+    starsCount: solution.stars?.length ? solution.stars.length : 0,
+  });
   return (
     <View style={styles.container}>
       <View style={styles.header}>
@@ -49,25 +67,68 @@ const SolutionItem: React.FC<Props> = ({ solution }) => {
       </View>
 
       <View style={styles.buttonsContainer}>
-        <TouchableOpacity style={styles.buttonIconContainer} onPress={() => {}}>
+        <TouchableOpacity
+          style={styles.buttonIconContainer}
+          onPress={() => checkPost(solution)}
+        >
           <Image
-            source={require("../../assets/images/check.png")}
+            source={
+              solution.isPicked
+                ? require("../../assets/images/uncheck.png")
+                : require("../../assets/images/check.png")
+            }
             style={styles.buttonIcon}
           />
         </TouchableOpacity>
-        <TouchableOpacity style={styles.buttonIconContainer} onPress={() => {}}>
+        <TouchableOpacity
+          style={styles.buttonIconContainer}
+          onPress={() => {
+            if (starState)
+              setStatsState({
+                ...statsState,
+                starsCount: statsState.starsCount - 1,
+              });
+            else
+              setStatsState({
+                ...statsState,
+                starsCount: statsState.starsCount + 1,
+              });
+
+            setStarState(!starState);
+            toggleStar(solution);
+          }}
+        >
           <Image
-            source={require("../../assets/images/star.png")}
+            source={
+              starState
+                ? require("../../assets/images/starred.png")
+                : require("../../assets/images/star.png")
+            }
             style={styles.buttonIcon}
           />
         </TouchableOpacity>
-        <TouchableOpacity style={styles.buttonIconContainer} onPress={() => {}}>
+        <TouchableOpacity
+          style={styles.buttonIconContainer}
+          onPress={() => reportPost(solution)}
+        >
           <Image
             source={require("../../assets/images/flag.png")}
             style={styles.buttonIcon}
           />
         </TouchableOpacity>
-        <TouchableOpacity style={styles.buttonIconContainer} onPress={() => {}}>
+        <TouchableOpacity
+          style={styles.buttonIconContainer}
+          onPress={() => updatePost(solution)}
+        >
+          <Image
+            source={require("../../assets/images/pencil.png")}
+            style={styles.buttonIcon}
+          />
+        </TouchableOpacity>
+        <TouchableOpacity
+          style={styles.buttonIconContainer}
+          onPress={() => deletePost(solution)}
+        >
           <Image
             source={require("../../assets/images/trash.png")}
             style={styles.buttonIcon}
@@ -91,6 +152,7 @@ const styles = StyleSheet.create({
     display: "flex",
     flexDirection: "row",
     alignItems: "center",
+    marginBottom: 10,
   },
   headerText: {
     marginStart: 10,

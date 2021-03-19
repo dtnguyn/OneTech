@@ -8,15 +8,15 @@ export type RootStackParamList = {
   Auth: undefined;
   Web: undefined;
   Detail: { name: string; id: string };
-  Solution: { problemId: string };
+  Solution: { problemId: string; deviceId: string; category: string };
   Compose: {
     header: string;
-    title: string;
+    title: string | null;
     content: string;
     rating?: ReviewRating;
-    category: string;
+    category: string | null;
     onCompose: (
-      title: string,
+      title: string | null,
       content: string,
       rating: ReviewRating | null | undefined,
       images: string[]

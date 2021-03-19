@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Image, StyleSheet, useWindowDimensions, View } from "react-native";
 import { TouchableOpacity } from "react-native-gesture-handler";
 import { DeviceProblem } from "../../generated/graphql";
@@ -93,6 +93,7 @@ const ProblemItem: React.FC<Props> = ({
                     ...statsState,
                     starsCount: statsState.starsCount + 1,
                   });
+
                 setStarState(!starState);
                 toggleStar(problem);
               }}

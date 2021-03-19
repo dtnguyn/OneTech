@@ -67,7 +67,9 @@ const ProblemScreenTab: React.FC<Props> = ({
     return (
       <ProblemItem
         problem={item}
-        clickAction={(problemId) => navigation.push("Solution", { problemId })}
+        clickAction={(problemId) =>
+          navigation.push("Solution", { problemId, deviceId, category })
+        }
         starred={isStarred(item.stars!)}
         toggleStar={handleToggleProblemStar}
         updatePost={(problem) => {
@@ -77,6 +79,7 @@ const ProblemScreenTab: React.FC<Props> = ({
             content: problem.content,
             category: category,
             onCompose: (title, content, _rating, images) => {
+              if (!title || !content) return;
               handleEditProblem(problem.id, title, content, images);
             },
           });
@@ -93,6 +96,7 @@ const ProblemScreenTab: React.FC<Props> = ({
             content: "",
             category: category,
             onCompose: (title, content, _rating, _images) => {
+              if (!title || !content) return;
               handleCreateReport(problem.id, title, content);
             },
           });
@@ -307,6 +311,7 @@ const ProblemScreenTab: React.FC<Props> = ({
               content: "",
               category: category,
               onCompose: (title, content, _rating, images) => {
+                if (!title || !content) return;
                 handleCreateProblem(title, content, images);
               },
             })

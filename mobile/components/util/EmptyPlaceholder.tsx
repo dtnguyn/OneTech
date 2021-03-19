@@ -22,10 +22,12 @@ const styles = StyleSheet.create({
     width: "100%",
     display: "flex",
     alignItems: "center",
+    marginTop: 50,
   },
   image: {
-    width: 53,
-    height: 53,
+    marginTop: 30,
+    width: 80,
+    height: 80,
   },
 });
 

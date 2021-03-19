@@ -25,7 +25,7 @@ interface Props {
 
 const ComposeScreen: React.FC<Props> = ({ navigation, route }) => {
   const [compose, setCompose] = useState({
-    title: route.params.title,
+    title: route.params.title ? route.params.title : "",
     content: route.params.content,
   });
 
@@ -34,7 +34,7 @@ const ComposeScreen: React.FC<Props> = ({ navigation, route }) => {
   const [overallRating, setOverallRating] = useState<number>(0);
 
   useEffect(() => {
-    if (!rating) return;
+    if (!rating || !route.params.category) return;
     switch (route.params.category) {
       case "phone":
         setSpecsArr(mobileSpec);
@@ -69,12 +69,17 @@ const ComposeScreen: React.FC<Props> = ({ navigation, route }) => {
   return (
     <ScrollView>
       <View style={styles.container}>
-        <CustomText style={styles.label}>Title</CustomText>
-        <TextInput
-          style={styles.titleInput}
-          value={compose?.title}
-          onChangeText={(text) => setCompose({ ...compose, title: text })}
-        />
+        {route.params.title !== null ? (
+          <CustomText style={styles.label}>Title</CustomText>
+        ) : null}
+
+        {route.params.title !== null ? (
+          <TextInput
+            style={styles.titleInput}
+            value={compose?.title}
+            onChangeText={(text) => setCompose({ ...compose, title: text })}
+          />
+        ) : null}
 
         {rating ? (
           <View style={styles.ratingContainer}>
@@ -117,14 +122,14 @@ const ComposeScreen: React.FC<Props> = ({ navigation, route }) => {
             ...styles.submitButton,
             backgroundColor:
               (rating && overallRating === 0) ||
-              !compose.title ||
+              (!compose.title && route.params.title != null) ||
               !compose.content
                 ? "#C4C4C4"
                 : "#017BFE",
           }}
           disabled={
             (rating && overallRating === 0) ||
-            !compose.title ||
+            (!compose.title && route.params.title != null) ||
             !compose.content
           }
           onPress={() => {
