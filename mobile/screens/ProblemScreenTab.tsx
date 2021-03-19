@@ -52,7 +52,7 @@ const ProblemScreenTab: React.FC<Props> = ({
       title: problemSearchValue,
       content: problemSearchValue,
     },
-    fetchPolicy: "network-only",
+    fetchPolicy: "cache-and-network",
   });
 
   let problemTimeout: NodeJS.Timeout;

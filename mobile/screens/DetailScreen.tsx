@@ -45,14 +45,14 @@ const DetailScreen: React.FC<Props> = ({ route, navigation }: any) => {
     variables: {
       id: route.params.id as string,
     },
-    fetchPolicy: "network-only",
+    fetchPolicy: "cache-and-network",
   });
 
   const { data: ratingData } = useDeviceRatingsQuery({
     variables: {
       deviceId: route.params.id as string,
     },
-    fetchPolicy: "network-only",
+    fetchPolicy: "cache-and-network",
   });
 
   const initialLayout = { width: Dimensions.get("window").width };

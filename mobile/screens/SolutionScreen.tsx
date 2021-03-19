@@ -30,7 +30,7 @@ const SolutionScreen: React.FC<Props> = ({ route, navigation }) => {
     variables: {
       id: route.params.problemId,
     },
-    fetchPolicy: "network-only",
+    fetchPolicy: "cache-and-network",
   });
   const { user } = useAuth();
   const [createSolutionMutation, {}] = useCreateSolutionMutation();
