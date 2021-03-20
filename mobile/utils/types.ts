@@ -22,12 +22,14 @@ export type RootStackParamList = {
       images: string[]
     ) => void;
   };
+  Account: { userId: string };
 };
 
 export type ScreenNavigationProp = StackNavigationProp<RootStackParamList>;
 export type ComposeRouteProp = RouteProp<RootStackParamList, "Compose">;
 export type DetailRouteProp = RouteProp<RootStackParamList, "Detail">;
 export type SolutionRouteProp = RouteProp<RootStackParamList, "Solution">;
+export type AccountRouteProp = RouteProp<RootStackParamList, "Account">;
 
 export type RatingValue = {
   overall: number;

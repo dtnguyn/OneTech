@@ -35,7 +35,12 @@ const HomeScreen: React.FC<Props> = ({ navigation }) => {
 
   const renderDevices: ListRenderItem<Device[]> = ({ item, index }) => {
     return (
-      <DeviceCarousel devices={item} key={index} navigation={navigation} />
+      <DeviceCarousel
+        devices={item}
+        key={index}
+        title={item.length ? item[0].brand : "No available device"}
+        navigation={navigation}
+      />
     );
   };
 
@@ -94,7 +99,10 @@ const HomeScreen: React.FC<Props> = ({ navigation }) => {
   return (
     <SafeAreaView>
       <View style={styles.container}>
-        <AppBar moveToAuth={() => navigation.push("Auth")} />
+        <AppBar
+          moveToAuth={() => navigation.push("Auth")}
+          moveToAccount={(userId) => navigation.push("Account", { userId })}
+        />
 
         <AnimatedLoader
           visible={loading}

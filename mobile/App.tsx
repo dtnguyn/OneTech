@@ -25,6 +25,7 @@ import { useFonts } from "expo-font";
 import CustomText from "./components/util/CustomText";
 import ComposeScreen from "./screens/ComposeScreen";
 import SolutionScreen from "./screens/SolutionScreen";
+import AccountScreen from "./screens/AccountScreen/AccountScreen";
 const { manifest } = Constants;
 
 const client = new ApolloClient({
@@ -144,6 +145,23 @@ export default function App() {
                 headerTitle: () => (
                   <CustomText fontSize={20} fontFamily="MSemiBold">
                     Solutions
+                  </CustomText>
+                ),
+              })}
+            />
+
+            <RootStack.Screen
+              name="Account"
+              component={AccountScreen}
+              options={({ route }) => ({
+                headerShown: true,
+                headerStyle: {
+                  backgroundColor: "#A8D8AD",
+                },
+
+                headerTitle: () => (
+                  <CustomText fontSize={20} fontFamily="MSemiBold">
+                    Account
                   </CustomText>
                 ),
               })}

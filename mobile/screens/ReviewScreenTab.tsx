@@ -48,7 +48,7 @@ const ReviewScreenTab: React.FC<Props> = ({
       title: reviewSearchValue,
       content: reviewSearchValue,
     },
-    fetchPolicy: "network-only",
+    fetchPolicy: "cache-and-network",
   });
 
   const renderReviewItem: ListRenderItem<Review> = ({ item }) => {

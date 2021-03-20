@@ -9,10 +9,11 @@ import DeviceItem from "./DeviceItem";
 
 interface Props {
   devices: Array<Device>;
+  title: string;
   navigation: ScreenNavigationProp;
 }
 
-const DeviceCarousel: React.FC<Props> = ({ devices, navigation }) => {
+const DeviceCarousel: React.FC<Props> = ({ devices, title, navigation }) => {
   const SliderWidth = Dimensions.get("screen").width;
   const [activeIndex, setActivateIndex] = useState(0);
 
@@ -44,7 +45,7 @@ const DeviceCarousel: React.FC<Props> = ({ devices, navigation }) => {
         fontFamily="MSemiBold"
         style={styles.carouselTitle}
       >
-        {devices.length ? devices[0].brand : "No available device"}
+        {title}
       </CustomText>
       <Carousel
         layout={"default"}

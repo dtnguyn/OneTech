@@ -14,9 +14,10 @@ import CustomText from "../util/CustomText";
 
 interface Props {
   moveToAuth: () => void;
+  moveToAccount: (userId: string) => void;
 }
 
-const AppBar: React.FC<Props> = ({ moveToAuth }) => {
+const AppBar: React.FC<Props> = ({ moveToAuth, moveToAccount }) => {
   const { user } = useAuth();
 
   return (
@@ -29,7 +30,12 @@ const AppBar: React.FC<Props> = ({ moveToAuth }) => {
         OneTech
       </CustomText>
       {user ? (
-        <TouchableOpacity style={styles.userIconContainer} onPress={() => {}}>
+        <TouchableOpacity
+          style={styles.userIconContainer}
+          onPress={() => {
+            moveToAccount(user.id);
+          }}
+        >
           <Image source={{ uri: user.avatar }} style={styles.userIcon} />
         </TouchableOpacity>
       ) : (
