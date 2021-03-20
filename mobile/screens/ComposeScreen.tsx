@@ -1,22 +1,14 @@
-import { useFonts } from "expo-font";
+import Slider from "@react-native-community/slider";
 import React, { useEffect, useState } from "react";
-import { Platform, StyleSheet, useWindowDimensions, View } from "react-native";
+import { StyleSheet, View } from "react-native";
 import {
   ScrollView,
   TextInput,
   TouchableOpacity,
 } from "react-native-gesture-handler";
-import WebView from "react-native-webview";
 import CustomText from "../components/util/CustomText";
-import * as Linking from "expo-linking";
-import {
-  ComposeRouteProp,
-  RatingValue,
-  ScreenNavigationProp,
-} from "../utils/types";
-import Slider from "@react-native-community/slider";
-import { ReviewRating } from "../generated/graphql";
 import { laptopSpec, mobileSpec, pcSpec } from "../utils/specArr";
+import { ComposeRouteProp, ScreenNavigationProp } from "../utils/types";
 
 interface Props {
   navigation: ScreenNavigationProp;

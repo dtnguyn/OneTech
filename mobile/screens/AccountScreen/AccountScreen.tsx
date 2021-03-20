@@ -42,7 +42,9 @@ const AccountScreen: React.FC<Props> = ({ route, navigation }) => {
     profile: () => (
       <ProfileScreenTab userId={route.params.userId} navigation={navigation} />
     ),
-    posts: () => <PostsScreenTab />,
+    posts: () => (
+      <PostsScreenTab userId={route.params.userId} navigation={navigation} />
+    ),
     settings: () => <SettingsScreenTab />,
   });
 

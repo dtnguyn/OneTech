@@ -31,6 +31,7 @@ const { manifest } = Constants;
 const client = new ApolloClient({
   // uri: `http://${manifest.debuggerHost.split(":").shift()}:4000/graphql`,
   uri: `https://api.onetech.guru/graphql`,
+
   cache: new InMemoryCache(),
 });
 const RootStack = createStackNavigator<RootStackParamList>();

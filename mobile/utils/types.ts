@@ -8,7 +8,7 @@ export type RootStackParamList = {
   Auth: undefined;
   Web: undefined;
   Detail: { name: string; id: string };
-  Solution: { problemId: string; deviceId: string; category: string };
+  Solution: { problemId: string; deviceId: string };
   Compose: {
     header: string;
     title: string | null;
