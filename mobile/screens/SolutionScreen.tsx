@@ -1,22 +1,12 @@
 import React, { useEffect, useState } from "react";
-import { Alert, Image, ListRenderItem, StyleSheet, View } from "react-native";
-import { FlatList, TouchableOpacity } from "react-native-gesture-handler";
-import SolutionItem from "../components/solution/SolutionItem";
-import EmptyPlaceholder from "../components/util/EmptyPlaceholder";
+import { Image, StyleSheet, View } from "react-native";
+import { TouchableOpacity } from "react-native-gesture-handler";
 import Solutions from "../components/util/Solutions";
-import { useAuth } from "../context/AuthContext";
 import {
   DeviceProblem,
   Solution,
-  SolutionStar,
-  useCreateReportMutation,
   useCreateSolutionMutation,
-  useDeleteImagesMutation,
-  useDeleteSolutionMutation,
   useProblemDetailQuery,
-  useToggleSolutionPickedMutation,
-  useToggleSolutionStarMutation,
-  useUpdateSolutionMutation,
 } from "../generated/graphql";
 import { ScreenNavigationProp, SolutionRouteProp } from "../utils/types";
 
@@ -33,85 +23,7 @@ const SolutionScreen: React.FC<Props> = ({ route, navigation }) => {
     },
     fetchPolicy: "cache-and-network",
   });
-  const { user } = useAuth();
   const [createSolutionMutation, {}] = useCreateSolutionMutation();
-  const [updateSolutionMutation, {}] = useUpdateSolutionMutation();
-  const [deleteSolutionMutation, {}] = useDeleteSolutionMutation();
-  const [deleteImagesMutation, {}] = useDeleteImagesMutation();
-  const [toggleSolutionStarMutation, {}] = useToggleSolutionStarMutation();
-  const [toggleSolutionPickedMutation, {}] = useToggleSolutionPickedMutation();
-  const [createReportMutation] = useCreateReportMutation();
-
-  const renderSolutionList: ListRenderItem<Solution> = ({ item }) => {
-    return (
-      <SolutionItem
-        solution={item}
-        starred={isStarred(item.stars!)}
-        checkPost={(solution) => {
-          handleToggleSolutionPicked(
-            solution.author.id,
-            solution.id,
-            route.params.problemId
-          );
-        }}
-        toggleStar={(solution) => {
-          handleToggleSolutionStar(user!.id, solution.id);
-        }}
-        updatePost={(solution) => {
-          navigation.push("Compose", {
-            header: "Update solution",
-            title: null,
-            content: solution.content,
-            category: null,
-            onCompose: (_title, content, _rating, images) => {
-              handleUpdateSolution(solution.id, images, content);
-            },
-          });
-        }}
-        deletePost={(solution) => {
-          createAlert(
-            "Delete Post",
-            "Do you want to delete this solution",
-            () => {
-              handleDeleteSolution(solution.id, []);
-            }
-          );
-        }}
-        reportPost={(solution) => {
-          navigation.push("Compose", {
-            header: "Report solution",
-            title: "",
-            content: "",
-            category: null,
-            onCompose: (title, content, _rating, images) => {
-              if (!title || !content) return;
-              handleCreateReport(solution.id, title, content);
-            },
-          });
-        }}
-      />
-    );
-  };
-
-  const createAlert = (
-    title: string,
-    content: string,
-    callback: () => void
-  ) => {
-    Alert.alert(
-      title,
-      content,
-      [
-        {
-          text: "Nope",
-          onPress: () => console.log("Cancel Pressed"),
-          style: "cancel",
-        },
-        { text: "Yes", onPress: () => callback() },
-      ],
-      { cancelable: false }
-    );
-  };
 
   const handleCreateSolution = async (
     problemId: string,
@@ -138,135 +50,6 @@ const SolutionScreen: React.FC<Props> = ({ route, navigation }) => {
       .catch((error) => {
         alert(error.message);
       });
-  };
-
-  const handleUpdateSolution = async (
-    id: string,
-    images: string[],
-    content?: string,
-    isPicked?: boolean
-  ) => {
-    await updateSolutionMutation({
-      variables: {
-        id,
-        content,
-        isPicked,
-        images,
-      },
-      update: (cache) => {
-        cache.evict({ fieldName: "singleProblem" });
-        cache.evict({ fieldName: "solutions" });
-      },
-    })
-      .then((res) => {
-        if (res.data?.updateSolution.status) {
-        } else {
-          throw new Error(res.data?.updateSolution.message);
-        }
-      })
-      .catch((error) => {
-        alert(error.message);
-      });
-  };
-
-  const handleDeleteSolution = async (id: string, images: string[]) => {
-    try {
-      if (images.length !== 0) {
-        await deleteImagesMutation({
-          variables: {
-            imageIds: images,
-          },
-        });
-      }
-      await deleteSolutionMutation({
-        variables: {
-          id,
-        },
-        update: (cache) => {
-          cache.evict({ fieldName: "singleProblem" });
-        },
-      }).then((res) => {
-        if (!res.data?.deleteSolution.status) {
-          throw new Error(res.data?.deleteSolution.message);
-        }
-      });
-    } catch (error) {
-      alert(error.message);
-    }
-  };
-
-  const handleToggleSolutionStar = (userId: string, solutionId: string) => {
-    toggleSolutionStarMutation({
-      variables: {
-        solutionId,
-        userId,
-      },
-      update: (cache) => {
-        cache.evict({ fieldName: "singleProblem" });
-        cache.evict({ fieldName: "solutions" });
-      },
-    })
-      .then((res) => {
-        if (!res.data?.toggleSolutionStar.status) {
-          throw new Error(res.data?.toggleSolutionStar.message);
-        }
-      })
-      .catch((error) => {
-        alert(error.message);
-      });
-  };
-
-  const handleToggleSolutionPicked = (
-    solverId: string,
-    solutionId: string,
-    problemId: string
-  ) => {
-    toggleSolutionPickedMutation({
-      variables: {
-        solutionId,
-        solverId,
-        problemId,
-      },
-      update: (cache) => {
-        cache.evict({ fieldName: "singleProblem" });
-        cache.evict({ fieldName: "solutions" });
-      },
-    })
-      .then((res) => {
-        if (!res.data?.toggleSolutionPicked.status) {
-          throw new Error(res.data?.toggleSolutionPicked.message);
-        }
-      })
-      .catch((error) => {
-        alert(error.message);
-      });
-  };
-  const handleCreateReport = (id: string, title: string, content: string) => {
-    createReportMutation({
-      variables: {
-        title,
-        content,
-        solutionId: id,
-      },
-    })
-      .then((response) => {
-        if (response.data?.createReport.status) {
-          console.log("create report successfully");
-        } else {
-          throw new Error(response.data?.createReport.message);
-        }
-      })
-      .catch((error) => {
-        alert(error.message);
-      });
-  };
-  const isStarred = (stars: SolutionStar[]) => {
-    for (const star of stars) {
-      if (star.userId === user?.id) {
-        return true;
-      }
-    }
-    return false;
   };
 
   useEffect(() => {
@@ -297,18 +80,6 @@ const SolutionScreen: React.FC<Props> = ({ route, navigation }) => {
 
   return (
     <View style={styles.container}>
-      {/* {!solutions?.length ? (
-        <EmptyPlaceholder />
-      ) : (
-        <FlatList
-          style={{
-            width: "100%",
-            paddingHorizontal: 10,
-          }}
-          data={solutions}
-          renderItem={renderSolutionList}
-        />
-      )} */}
       <Solutions
         solutions={solutions}
         checkAvailable={true}
