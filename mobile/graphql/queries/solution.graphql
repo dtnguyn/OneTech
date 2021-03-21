@@ -4,6 +4,7 @@ query Solutions($userId: String, $problemId: String) {
     message
     data {
       id
+      problemId
       author {
         username
         id

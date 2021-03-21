@@ -4,6 +4,7 @@ import CustomSwitch from "../../components/auth/CustomSwitch";
 import ProblemItem from "../../components/deviceDetail/ProblemItem";
 import CustomText from "../../components/util/CustomText";
 import Problems from "../../components/util/Problems";
+import Solutions from "../../components/util/Solutions";
 import {
   DeviceProblem,
   Solution,
@@ -52,11 +53,14 @@ const PostsScreenTab: React.FC<Props> = ({ userId, navigation }) => {
 
   return (
     <View style={styles.container}>
-      <CustomSwitch
-        options={["Problems", "Solutions"]}
-        changeOption={(option) => setCurrentOption(option)}
-        currentOption={currentOption}
-      />
+      <View style={{ marginBottom: 50 }}>
+        <CustomSwitch
+          options={["Problems", "Solutions"]}
+          changeOption={(option) => setCurrentOption(option)}
+          currentOption={currentOption}
+        />
+      </View>
+
       {currentOption === "Problems" ? (
         <Problems
           flatListStyle={{
@@ -66,7 +70,17 @@ const PostsScreenTab: React.FC<Props> = ({ userId, navigation }) => {
           problems={problems}
           navigation={navigation}
         />
-      ) : null}
+      ) : (
+        <Solutions
+          navigation={navigation}
+          checkAvailable={false}
+          solutions={solutions}
+          flatListStyle={{
+            width: "100%",
+            paddingHorizontal: 10,
+          }}
+        />
+      )}
     </View>
   );
 };

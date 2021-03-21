@@ -66,6 +66,7 @@ query ProblemDetail($id: String!) {
       }
       solutions {
         id
+        problemId
         author {
           username
           id

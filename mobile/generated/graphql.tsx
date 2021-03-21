@@ -1346,7 +1346,7 @@ export type ProblemDetailQuery = (
         & Pick<DeviceProblemStar, 'problemId' | 'userId'>
       )>>, solutions?: Maybe<Array<(
         { __typename?: 'Solution' }
-        & Pick<Solution, 'id' | 'content' | 'isPicked' | 'createdAt' | 'updatedAt'>
+        & Pick<Solution, 'id' | 'problemId' | 'content' | 'isPicked' | 'createdAt' | 'updatedAt'>
         & { author: (
           { __typename?: 'User' }
           & Pick<User, 'username' | 'id' | 'avatar'>
@@ -1404,7 +1404,7 @@ export type SolutionsQuery = (
     & Pick<SolutionResponse, 'status' | 'message'>
     & { data?: Maybe<Array<(
       { __typename?: 'Solution' }
-      & Pick<Solution, 'id' | 'content' | 'isPicked' | 'createdAt' | 'updatedAt'>
+      & Pick<Solution, 'id' | 'problemId' | 'content' | 'isPicked' | 'createdAt' | 'updatedAt'>
       & { author: (
         { __typename?: 'User' }
         & Pick<User, 'username' | 'id' | 'avatar'>
@@ -2745,6 +2745,7 @@ export const ProblemDetailDocument = gql`
       }
       solutions {
         id
+        problemId
         author {
           username
           id
@@ -2867,6 +2868,7 @@ export const SolutionsDocument = gql`
     message
     data {
       id
+      problemId
       author {
         username
         id

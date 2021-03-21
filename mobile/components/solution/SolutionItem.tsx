@@ -9,7 +9,7 @@ import CustomText from "../util/CustomText";
 interface Props {
   solution: Solution;
   starred: boolean;
-  checkPost: (solution: Solution) => void;
+  checkPost: ((solution: Solution) => void) | null;
   toggleStar: (solution: Solution) => void;
   updatePost: (solution: Solution) => void;
   deletePost: (solution: Solution) => void;
@@ -67,19 +67,22 @@ const SolutionItem: React.FC<Props> = ({
       </View>
 
       <View style={styles.buttonsContainer}>
-        <TouchableOpacity
-          style={styles.buttonIconContainer}
-          onPress={() => checkPost(solution)}
-        >
-          <Image
-            source={
-              solution.isPicked
-                ? require("../../assets/images/uncheck.png")
-                : require("../../assets/images/check.png")
-            }
-            style={styles.buttonIcon}
-          />
-        </TouchableOpacity>
+        {checkPost !== null ? (
+          <TouchableOpacity
+            style={styles.buttonIconContainer}
+            onPress={() => checkPost(solution)}
+          >
+            <Image
+              source={
+                solution.isPicked
+                  ? require("../../assets/images/uncheck.png")
+                  : require("../../assets/images/check.png")
+              }
+              style={styles.buttonIcon}
+            />
+          </TouchableOpacity>
+        ) : null}
+
         <TouchableOpacity
           style={styles.buttonIconContainer}
           onPress={() => {
