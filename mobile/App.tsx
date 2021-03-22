@@ -32,7 +32,7 @@ const client = new ApolloClient({
   // uri: `http://${manifest.debuggerHost.split(":").shift()}:4000/graphql`,
   uri: `https://api.onetech.guru/graphql`,
 
-  cache: new InMemoryCache(),
+  cache: new InMemoryCache({}),
 });
 const RootStack = createStackNavigator<RootStackParamList>();
 // const prefix = Linking.createURL("/");
@@ -40,6 +40,8 @@ const RootStack = createStackNavigator<RootStackParamList>();
 LogBox.ignoreLogs([
   "Non-serializable values were found in the navigation state",
 ]);
+
+LogBox.ignoreLogs(["Cache data may be lost"]);
 
 export default function App() {
   const [user, setUser] = useState<User | null>(null);

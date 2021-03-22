@@ -15,6 +15,7 @@ import {
   useDeviceRatingsQuery,
 } from "../../generated/graphql";
 import { AccountRouteProp, ScreenNavigationProp } from "../../utils/types";
+import NotificationsScreen from "./NotificationsScreenTab";
 import PostsScreenTab from "./PostsScreenTab";
 import ProfileScreenTab from "./ProfileScreenTab";
 import SettingsScreenTab from "./SettingsScreenTab";
@@ -33,6 +34,7 @@ const AccountScreen: React.FC<Props> = ({ route, navigation }) => {
   const [routes] = React.useState([
     { key: "profile", title: "Profile" },
     { key: "posts", title: "Posts" },
+    { key: "notifications", title: "Notifications" },
     { key: "settings", title: "Settings" },
   ]);
 
@@ -45,6 +47,7 @@ const AccountScreen: React.FC<Props> = ({ route, navigation }) => {
     posts: () => (
       <PostsScreenTab userId={route.params.userId} navigation={navigation} />
     ),
+    notifications: () => <NotificationsScreen />,
     settings: () => <SettingsScreenTab />,
   });
 
