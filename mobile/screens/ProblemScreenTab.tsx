@@ -27,15 +27,10 @@ import { ScreenNavigationProp } from "../utils/types";
 
 interface Props {
   deviceId: string;
-  category: string;
   navigation: ScreenNavigationProp;
 }
 
-const ProblemScreenTab: React.FC<Props> = ({
-  deviceId,
-  category,
-  navigation,
-}) => {
+const ProblemScreenTab: React.FC<Props> = ({ deviceId, navigation }) => {
   const { user } = useAuth();
   const [problems, setProblems] = useState<Array<DeviceProblem>>([]);
   const [problemSearchValue, setProblemSearchValue] = useState("");
@@ -139,7 +134,7 @@ const ProblemScreenTab: React.FC<Props> = ({
               header: "Add a problem",
               title: "",
               content: "",
-              category: category,
+              category: null,
               onCompose: (title, content, _rating, images) => {
                 if (!title || !content) return;
                 handleCreateProblem(deviceId, title, content, images);

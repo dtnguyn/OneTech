@@ -3,19 +3,31 @@ import { Image, StyleSheet, Text, View } from "react-native";
 import { ScrollView, TouchableOpacity } from "react-native-gesture-handler";
 import CustomText from "../components/util/CustomText";
 import { useAuth } from "../context/AuthContext";
-import { Device, useToggleDeviceFollowMutation } from "../generated/graphql";
+import {
+  Device,
+  useDeviceDetailQuery,
+  useToggleDeviceFollowMutation,
+} from "../generated/graphql";
 import FastImage from "react-native-fast-image";
 import CustomImage from "../components/util/CustomImage";
 import WebView from "react-native-webview";
 
 interface Props {
-  device: Device | undefined;
+  deviceId: string;
 }
 
-const GeneralScreenTab: React.FC<Props> = ({ device }) => {
+const GeneralScreenTab: React.FC<Props> = ({ deviceId }) => {
+  const [device, setDevice] = useState<Device>();
   const [followed, setFollowed] = useState(false);
   const { user } = useAuth();
   const [toggleDeviceFollowMutation, {}] = useToggleDeviceFollowMutation();
+
+  const { data, error } = useDeviceDetailQuery({
+    variables: {
+      id: deviceId as string,
+    },
+    fetchPolicy: "cache-and-network",
+  });
 
   const handleToggleFollowDevice = async (deviceId: string, userId: string) => {
     setFollowed(!followed);
@@ -49,6 +61,13 @@ const GeneralScreenTab: React.FC<Props> = ({ device }) => {
     }
     setFollowed(false);
   }, [user, device]);
+
+  useEffect(() => {
+    const devices = data?.singleDevice?.data as Device[];
+    if (devices && devices.length != 0) {
+      setDevice(devices[0]);
+    }
+  }, [data]);
 
   if (!device) return null;
 

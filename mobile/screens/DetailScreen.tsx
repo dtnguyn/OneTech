@@ -15,23 +15,28 @@ import {
   useDeviceDetailQuery,
   useDeviceRatingsQuery,
 } from "../generated/graphql";
-import { RootStackParamList } from "../utils/types";
+import {
+  DetailRouteProp,
+  RootStackParamList,
+  ScreenNavigationProp,
+} from "../utils/types";
 import GeneralScreenTab from "./GeneralScreenTab";
 import ProblemScreenTab from "./ProblemScreenTab";
 import ReviewScreenTab from "./ReviewScreenTab";
 import SpecScreenTab from "./SpecScreenTab";
 
 interface Props {
-  props: StackScreenProps<RootStackParamList, "Detail">;
+  route: DetailRouteProp;
+  navigation: ScreenNavigationProp;
 }
 type State = NavigationState<{
   key: string;
   title: string;
 }>;
 
-const DetailScreen: React.FC<Props> = ({ route, navigation }: any) => {
-  const [device, setDevice] = useState<Device>();
-  const [rating, setRating] = useState<ReviewRating>();
+const DetailScreen: React.FC<Props> = ({ route, navigation }) => {
+  // const [device, setDevice] = useState<Device>();
+  // const [rating, setRating] = useState<ReviewRating>();
 
   const [index, setIndex] = useState(0);
   const [routes] = React.useState([
@@ -41,37 +46,26 @@ const DetailScreen: React.FC<Props> = ({ route, navigation }: any) => {
     { key: "review", title: "Reviews" },
   ]);
 
-  const { data, error } = useDeviceDetailQuery({
-    variables: {
-      id: route.params.id as string,
-    },
-    fetchPolicy: "cache-and-network",
-  });
-
-  const { data: ratingData } = useDeviceRatingsQuery({
-    variables: {
-      deviceId: route.params.id as string,
-    },
-    fetchPolicy: "cache-and-network",
-  });
+  // const { data: ratingData } = useDeviceRatingsQuery({
+  //   variables: {
+  //     deviceId: route.params.id as string,
+  //   },
+  //   fetchPolicy: "cache-and-network",
+  // });
 
   const initialLayout = { width: Dimensions.get("window").width };
 
   const renderScene = SceneMap({
-    general: () => <GeneralScreenTab device={device} />,
-    spec: () => <SpecScreenTab device={device} rating={rating} />,
+    general: () => <GeneralScreenTab deviceId={route.params.id} />,
+    spec: () => <SpecScreenTab deviceId={route.params.id} />,
     problem: () => (
-      <ProblemScreenTab
-        deviceId={device ? device.id : ""}
-        category={device ? device.category : "phone"}
-        navigation={navigation}
-      />
+      <ProblemScreenTab deviceId={route.params.id} navigation={navigation} />
     ),
     review: () => (
       <ReviewScreenTab
-        deviceId={device ? device.id : ""}
+        deviceId={route.params.id}
         navigation={navigation}
-        category={device ? device.category : "phone"}
+        category={route.params.category}
       />
     ),
   });
@@ -98,19 +92,12 @@ const DetailScreen: React.FC<Props> = ({ route, navigation }: any) => {
     </View>
   );
 
-  useEffect(() => {
-    const devices = data?.singleDevice?.data as Device[];
-    if (devices && devices.length != 0) {
-      setDevice(devices[0]);
-    }
-  }, [data]);
-
-  useEffect(() => {
-    const ratings = ratingData?.ratings?.data as ReviewRating[];
-    if (ratings && ratings?.length === 1) {
-      setRating(ratings[0]);
-    }
-  }, [ratingData]);
+  // useEffect(() => {
+  //   const ratings = ratingData?.ratings?.data as ReviewRating[];
+  //   if (ratings && ratings?.length === 1) {
+  //     setRating(ratings[0]);
+  //   }
+  // }, [ratingData]);
 
   return (
     <TabView

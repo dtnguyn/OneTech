@@ -32,7 +32,11 @@ const DeviceCarousel: React.FC<Props> = ({ devices, title, navigation }) => {
       <DeviceItem
         device={item}
         moveToDetail={() => {
-          navigation.push("Detail", { name: item.name, id: item.id });
+          navigation.push("Detail", {
+            name: item.name,
+            id: item.id,
+            category: item.category,
+          });
         }}
       />
     );
