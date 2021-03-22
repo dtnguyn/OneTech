@@ -2,13 +2,18 @@ import React from "react";
 import { Image, StyleSheet, View } from "react-native";
 import CustomText from "./CustomText";
 
-interface Props {}
+interface Props {
+  title?: string;
+  content?: string;
+}
 
-const EmptyPlaceholder: React.FC<Props> = ({}) => {
+const EmptyPlaceholder: React.FC<Props> = ({ title, content }) => {
   return (
     <View style={styles.container}>
-      <CustomText>No posts yet!</CustomText>
-      <CustomText>Be the first one to post something.</CustomText>
+      <CustomText>{title ? title : `No posts yet!`}</CustomText>
+      <CustomText>
+        {content ? content : `Be the first one to post something.`}
+      </CustomText>
       <Image
         source={require("../../assets/images/empty.png")}
         style={styles.image}

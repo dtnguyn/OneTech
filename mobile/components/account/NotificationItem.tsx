@@ -7,9 +7,13 @@ import CustomText from "../util/CustomText";
 
 interface Props {
   notification: Notification;
+  deleteNotification: (id: string) => void;
 }
 
-const NotificationItem: React.FC<Props> = ({ notification }) => {
+const NotificationItem: React.FC<Props> = ({
+  notification,
+  deleteNotification,
+}) => {
   const [icon, setIcon] = useState<ImageSourcePropType>();
 
   useEffect(() => {
@@ -31,30 +35,33 @@ const NotificationItem: React.FC<Props> = ({ notification }) => {
 
   if (!icon) return null;
   return (
-    <View style={styles.container}>
-      <Image source={icon} style={styles.notificationIcon} />
-      <View style={styles.descriptionContainer}>
-        <CustomText fontFamily="MSemiBold">{notification.title}</CustomText>
-        <CustomText fontFamily="MLight">
-          {moment(notification.createdAt).format("LL")}
-        </CustomText>
-        <CustomText>{notification.content}</CustomText>
-        <TouchableOpacity>
-          <Image
-            source={require("../../assets/images/trash.png")}
-            style={styles.deleteIcon}
-          />
-        </TouchableOpacity>
+    <View style={{ padding: 10 }}>
+      <View style={styles.container}>
+        <Image source={icon} style={styles.notificationIcon} />
+        <View style={styles.descriptionContainer}>
+          <CustomText fontFamily="MSemiBold">{notification.title}</CustomText>
+          <CustomText fontFamily="MLight">
+            {moment(notification.createdAt).format("LL")}
+          </CustomText>
+          <CustomText style={{ marginTop: 10 }}>
+            {notification.content}
+          </CustomText>
+          <TouchableOpacity onPress={() => deleteNotification(notification.id)}>
+            <Image
+              source={require("../../assets/images/trash.png")}
+              style={styles.deleteIcon}
+            />
+          </TouchableOpacity>
+        </View>
       </View>
+      <View style={styles.divider} />
     </View>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
-    padding: 10,
     width: "100%",
-    alignItems: "center",
     display: "flex",
     flexDirection: "row",
   },
@@ -69,8 +76,15 @@ const styles = StyleSheet.create({
     marginStart: 10,
   },
   deleteIcon: {
+    marginTop: 10,
     width: 32,
     height: 32,
+  },
+  divider: {
+    height: 1,
+    backgroundColor: "#c4c4c4",
+    width: "100%",
+    marginTop: 10,
   },
 });
 
