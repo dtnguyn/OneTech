@@ -11,6 +11,7 @@ import {
 import { TouchableWithoutFeedback } from "react-native-gesture-handler";
 import { Device } from "../../generated/graphql";
 import CustomText from "../util/CustomText";
+import { SharedElement } from "react-navigation-shared-element";
 
 interface Props {
   device: Device;
@@ -19,13 +20,20 @@ interface Props {
 
 const DeviceItem: React.FC<Props> = ({ device, moveToDetail }) => {
   return (
-    <TouchableOpacity style={styles.container} onPress={moveToDetail}>
-      <Image
-        source={{
-          uri: device.coverImage,
-        }}
-        style={styles.deviceImage}
-      />
+    <TouchableOpacity
+      activeOpacity={0.8}
+      style={styles.container}
+      onPress={moveToDetail}
+    >
+      <SharedElement id={device.id}>
+        <Image
+          source={{
+            uri: device.coverImage,
+          }}
+          style={styles.deviceImage}
+        />
+      </SharedElement>
+
       <CustomText>{device.name}</CustomText>
     </TouchableOpacity>
   );

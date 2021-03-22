@@ -1,5 +1,11 @@
 import React, { useEffect, useState } from "react";
-import { FlatList, ListRenderItem, StyleSheet, View } from "react-native";
+import {
+  FlatList,
+  ListRenderItem,
+  StyleSheet,
+  useColorScheme,
+  View,
+} from "react-native";
 import AnimatedLoader from "react-native-animated-loader";
 import { ScrollView } from "react-native-gesture-handler";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -26,6 +32,10 @@ const HomeScreen: React.FC<Props> = ({ navigation }) => {
   const [devicesArr, setDevicesArr] = useState<Array<Device[]>>();
   const [searchBoxExpand, setSearchBoxExpand] = useState(false);
   const [currentCategory, setCurrentCategory] = useState("phone");
+  let colorScheme = useColorScheme();
+  console.log("color: ", colorScheme);
+
+  colorScheme = "light";
 
   const { data, error, loading } = useDevicesQuery({
     variables: {

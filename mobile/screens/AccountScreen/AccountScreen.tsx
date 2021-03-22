@@ -8,6 +8,7 @@ import {
   TabView,
 } from "react-native-tab-view";
 import CustomText from "../../components/util/CustomText";
+import { useTheme } from "../../context/ThemeContext";
 import {
   Device,
   ReviewRating,
@@ -37,6 +38,7 @@ const AccountScreen: React.FC<Props> = ({ route, navigation }) => {
     { key: "notifications", title: "Notifications" },
     { key: "settings", title: "Settings" },
   ]);
+  const { theme } = useTheme();
 
   const initialLayout = { width: Dimensions.get("window").width };
 
@@ -57,7 +59,10 @@ const AccountScreen: React.FC<Props> = ({ route, navigation }) => {
     <View>
       <TabBar
         {...props}
-        style={styles.tabView}
+        style={{
+          ...styles.tabView,
+          backgroundColor: theme === "light" ? "#A8D8AD" : "#336B39",
+        }}
         scrollEnabled={true}
         activeColor="#000"
         inactiveColor="#000"
@@ -91,7 +96,6 @@ const styles = StyleSheet.create({
   },
   tabView: {
     color: "#000",
-    backgroundColor: "#A8D8AD",
   },
 });
 

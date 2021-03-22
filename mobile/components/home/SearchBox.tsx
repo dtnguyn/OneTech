@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { Image, TouchableOpacity, View, StyleSheet } from "react-native";
+import { useTheme } from "../../context/ThemeContext";
 import CustomText from "../util/CustomText";
 import DeviceCategory from "./DeviceCategory";
 
@@ -18,14 +19,15 @@ const SearchBox: React.FC<Props> = ({
   currentCategory,
   setCurrentCategory,
 }) => {
-  // return <View style={styles.searchBoxContainer}>
-  //   <View style={styles.searchBox}>
-
-  //   </View>
-  // </View>;
+  const { theme } = useTheme();
 
   return (
-    <View style={styles.searchBoxContainer}>
+    <View
+      style={{
+        ...styles.searchBoxContainer,
+        backgroundColor: theme === "light" ? "#A8D8AD" : "#336B39",
+      }}
+    >
       <View style={styles.searchBox}>
         <View style={styles.searchBoxLeft}>
           <CustomText fontSize={22}>Devices</CustomText>
@@ -99,7 +101,6 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     height: "auto",
     borderRadius: 15,
-    backgroundColor: "#A8D8AD",
     padding: 10,
     marginVertical: 15,
   },

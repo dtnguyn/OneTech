@@ -1,31 +1,40 @@
-import React, { useEffect, useState } from "react";
+import { ApolloClient, ApolloProvider, InMemoryCache } from "@apollo/client";
 import {
-  Button,
-  LogBox,
-  StatusBar,
-  StyleSheet,
-  Text,
-  View,
-  YellowBox,
-} from "react-native";
-import { NavigationContainer } from "@react-navigation/native";
+  NavigationContainer,
+  DarkTheme,
+  DefaultTheme,
+} from "@react-navigation/native";
+import {
+  Provider as PaperProvider,
+  DarkTheme as PaperDarkTheme,
+} from "react-native-paper";
 import { createStackNavigator } from "@react-navigation/stack";
-import HomeScreen from "./screens/HomeScreen";
-import { ApolloClient, InMemoryCache, ApolloProvider } from "@apollo/client";
-import SearchScreen from "./screens/SearchScreen";
-import { RootStackParamList } from "./utils/types";
-import AuthScreen from "./screens/AuthScreen";
 import Constants from "expo-constants";
-import * as Linking from "expo-linking";
-import WebScreen from "./screens/WebScreen";
+import { useFonts } from "expo-font";
+import React, { useEffect, useState } from "react";
+import { LogBox, StyleSheet } from "react-native";
+import { createSharedElementStackNavigator } from "react-navigation-shared-element";
+import CustomText from "./components/util/CustomText";
 import { AuthContext } from "./context/AuthContext";
 import { useMeQuery, User } from "./generated/graphql";
-import DetailScreen from "./screens/DetailScreen";
-import { useFonts } from "expo-font";
-import CustomText from "./components/util/CustomText";
-import ComposeScreen from "./screens/ComposeScreen";
-import SolutionScreen from "./screens/SolutionScreen";
 import AccountScreen from "./screens/AccountScreen/AccountScreen";
+import AuthScreen from "./screens/AuthScreen";
+import ComposeScreen from "./screens/ComposeScreen";
+import DetailScreen from "./screens/DetailScreen";
+import HomeScreen from "./screens/HomeScreen";
+import SearchScreen from "./screens/SearchScreen";
+import SolutionScreen from "./screens/SolutionScreen";
+import WebScreen from "./screens/WebScreen";
+import { RootStackParamList } from "./utils/types";
+import {
+  Appearance,
+  AppearanceProvider,
+  useColorScheme,
+} from "react-native-appearance";
+import { CustomDarkTheme } from "./utils/themes";
+import { getStringData } from "./utils/storageHelper";
+import { ThemeContext } from "./context/ThemeContext";
+
 const { manifest } = Constants;
 
 const client = new ApolloClient({
@@ -45,6 +54,7 @@ LogBox.ignoreLogs(["Cache data may be lost"]);
 
 export default function App() {
   const [user, setUser] = useState<User | null>(null);
+  const [theme, setTheme] = useState("light");
 
   const [fontsLoaded] = useFonts({
     MLight: require("./assets/fonts/Montserrat-Light.ttf"),
@@ -68,109 +78,124 @@ export default function App() {
     }
   }, [data]);
 
+  useEffect(() => {
+    getStringData("appTheme", (result, error) => {
+      if (!error) {
+        setTheme(result ? result : "light");
+      } else {
+        alert(error);
+      }
+    });
+  }, []);
+
   if (!fontsLoaded) return null;
 
   return (
     <ApolloProvider client={client}>
       <AuthContext.Provider value={{ user, setUser }}>
-        <NavigationContainer>
-          <RootStack.Navigator
-            initialRouteName="Home"
-            mode="modal"
-            screenOptions={{ headerTitleAlign: "center" }}
+        <ThemeContext.Provider value={{ theme, setTheme }}>
+          <NavigationContainer
+            theme={theme === "light" ? DefaultTheme : DarkTheme}
           >
-            <RootStack.Screen
-              name="Home"
-              component={HomeScreen}
-              options={{ headerShown: false }}
-            />
-            <RootStack.Screen
-              name="Search"
-              component={SearchScreen}
-              options={{ headerShown: false }}
-            />
+            <RootStack.Navigator
+              initialRouteName="Home"
+              mode="modal"
+              screenOptions={{ headerTitleAlign: "center" }}
+            >
+              <RootStack.Screen
+                name="Home"
+                component={HomeScreen}
+                options={{ headerShown: false }}
+              />
+              <RootStack.Screen
+                name="Search"
+                component={SearchScreen}
+                options={{ headerShown: false }}
+              />
 
-            <RootStack.Screen
-              name="Auth"
-              component={AuthScreen}
-              options={{ headerShown: false }}
-            />
+              <RootStack.Screen
+                name="Auth"
+                component={AuthScreen}
+                options={{ headerShown: false }}
+              />
 
-            <RootStack.Screen
-              name="Web"
-              component={WebScreen}
-              options={{ headerShown: false }}
-            />
+              <RootStack.Screen
+                name="Web"
+                component={WebScreen}
+                options={{ headerShown: false }}
+              />
 
-            <RootStack.Screen
-              name="Detail"
-              component={DetailScreen}
-              options={({ route }) => ({
-                headerShown: true,
-                headerStyle: {
-                  backgroundColor: "#A8D8AD",
-                },
+              <RootStack.Screen
+                name="Detail"
+                component={DetailScreen}
+                options={({ route }) => ({
+                  headerShown: true,
+                  headerStyle: {
+                    elevation: 0,
+                    backgroundColor: theme === "light" ? "#A8D8AD" : "#336B39",
+                  },
 
-                headerTitle: () => (
-                  <CustomText fontSize={20} fontFamily="MSemiBold">
-                    {(route?.params?.name as string)
-                      ? route.params.name
-                      : "Detail"}
-                  </CustomText>
-                ),
-              })}
-            />
+                  headerTitle: () => (
+                    <CustomText fontSize={20} fontFamily="MSemiBold">
+                      {(route?.params?.name as string)
+                        ? route.params.name
+                        : "Detail"}
+                    </CustomText>
+                  ),
+                })}
+              />
 
-            <RootStack.Screen
-              name="Compose"
-              component={ComposeScreen}
-              options={({ route }) => ({
-                headerShown: true,
+              <RootStack.Screen
+                name="Compose"
+                component={ComposeScreen}
+                options={({ route }) => ({
+                  headerShown: true,
 
-                headerTitle: () => (
-                  <CustomText fontSize={20} fontFamily="MSemiBold">
-                    {(route?.params?.header as string)
-                      ? route.params.header
-                      : "Compose"}
-                  </CustomText>
-                ),
-              })}
-            />
+                  headerTitle: () => (
+                    <CustomText fontSize={20} fontFamily="MSemiBold">
+                      {(route?.params?.header as string)
+                        ? route.params.header
+                        : "Compose"}
+                    </CustomText>
+                  ),
+                })}
+              />
 
-            <RootStack.Screen
-              name="Solution"
-              component={SolutionScreen}
-              options={({ route }) => ({
-                headerShown: true,
-                headerStyle: {
-                  backgroundColor: "#A8D8AD",
-                },
-                headerTitle: () => (
-                  <CustomText fontSize={20} fontFamily="MSemiBold">
-                    Solutions
-                  </CustomText>
-                ),
-              })}
-            />
+              <RootStack.Screen
+                name="Solution"
+                component={SolutionScreen}
+                options={({ route }) => ({
+                  headerShown: true,
+                  headerStyle: {
+                    backgroundColor: theme === "light" ? "#A8D8AD" : "#336B39",
+                  },
+                  headerTitle: () => (
+                    <CustomText fontSize={20} fontFamily="MSemiBold">
+                      Solutions
+                    </CustomText>
+                  ),
+                })}
+              />
 
-            <RootStack.Screen
-              name="Account"
-              component={AccountScreen}
-              options={({ route }) => ({
-                headerShown: true,
-                headerStyle: {
-                  backgroundColor: "#A8D8AD",
-                },
+              <RootStack.Screen
+                name="Account"
+                component={AccountScreen}
+                options={({ route }) => ({
+                  headerShown: true,
+                  headerStyle: {
+                    backgroundColor: theme === "light" ? "#A8D8AD" : "#336B39",
+                  },
 
-                headerTitle: () => (
-                  <CustomText fontSize={20} fontFamily="MSemiBold">
-                    Account
-                  </CustomText>
-                ),
-              })}
-            />
-          </RootStack.Navigator>
-        </NavigationContainer>
+                  headerTitle: () => (
+                    <CustomText fontSize={20} fontFamily="MSemiBold">
+                      Account
+                    </CustomText>
+                  ),
+                })}
+              />
+            </RootStack.Navigator>
+          </NavigationContainer>
+        </ThemeContext.Provider>
       </AuthContext.Provider>
     </ApolloProvider>
   );

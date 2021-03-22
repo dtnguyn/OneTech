@@ -79,4 +79,4 @@ const styles = StyleSheet.create({
     padding: 30,
   },
 });
-export default SpecScreenTab;
+export default React.memo(SpecScreenTab);

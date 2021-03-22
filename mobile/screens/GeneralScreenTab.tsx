@@ -12,6 +12,8 @@ import FastImage from "react-native-fast-image";
 import CustomImage from "../components/util/CustomImage";
 import WebView from "react-native-webview";
 
+import { SharedElement } from "react-navigation-shared-element";
+
 interface Props {
   deviceId: string;
 }
@@ -72,12 +74,14 @@ const GeneralScreenTab: React.FC<Props> = ({ deviceId }) => {
   if (!device) return null;
 
   return (
-    <ScrollView>
+    <View>
       <View style={styles.container}>
-        <Image
-          source={{ uri: device?.coverImage }}
-          style={styles.deviceImage}
-        />
+        <SharedElement id={device.id}>
+          <Image
+            source={{ uri: device.coverImage }}
+            style={styles.deviceImage}
+          />
+        </SharedElement>
 
         <CustomText style={styles.priceText}>Org at: $1099</CustomText>
         <TouchableOpacity style={styles.buyButton}>
@@ -104,7 +108,7 @@ const GeneralScreenTab: React.FC<Props> = ({ deviceId }) => {
           />
         </TouchableOpacity>
       </View>
-    </ScrollView>
+    </View>
   );
 };
 
@@ -151,4 +155,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default GeneralScreenTab;
+export default React.memo(GeneralScreenTab);

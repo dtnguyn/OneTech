@@ -1,5 +1,4 @@
-import { StackScreenProps } from "@react-navigation/stack";
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { Dimensions, StyleSheet, Text, View } from "react-native";
 import {
   NavigationState,
@@ -9,17 +8,8 @@ import {
   TabView,
 } from "react-native-tab-view";
 import CustomText from "../components/util/CustomText";
-import {
-  Device,
-  ReviewRating,
-  useDeviceDetailQuery,
-  useDeviceRatingsQuery,
-} from "../generated/graphql";
-import {
-  DetailRouteProp,
-  RootStackParamList,
-  ScreenNavigationProp,
-} from "../utils/types";
+import { useTheme } from "../context/ThemeContext";
+import { DetailRouteProp, ScreenNavigationProp } from "../utils/types";
 import GeneralScreenTab from "./GeneralScreenTab";
 import ProblemScreenTab from "./ProblemScreenTab";
 import ReviewScreenTab from "./ReviewScreenTab";
@@ -35,9 +25,6 @@ type State = NavigationState<{
 }>;
 
 const DetailScreen: React.FC<Props> = ({ route, navigation }) => {
-  // const [device, setDevice] = useState<Device>();
-  // const [rating, setRating] = useState<ReviewRating>();
-
   const [index, setIndex] = useState(0);
   const [routes] = React.useState([
     { key: "general", title: "General" },
@@ -46,12 +33,7 @@ const DetailScreen: React.FC<Props> = ({ route, navigation }) => {
     { key: "review", title: "Reviews" },
   ]);
 
-  // const { data: ratingData } = useDeviceRatingsQuery({
-  //   variables: {
-  //     deviceId: route.params.id as string,
-  //   },
-  //   fetchPolicy: "cache-and-network",
-  // });
+  const { theme } = useTheme();
 
   const initialLayout = { width: Dimensions.get("window").width };
 
@@ -76,7 +58,10 @@ const DetailScreen: React.FC<Props> = ({ route, navigation }) => {
     <View>
       <TabBar
         {...props}
-        style={styles.tabView}
+        style={{
+          ...styles.tabView,
+          backgroundColor: theme === "light" ? "#A8D8AD" : "#336B39",
+        }}
         scrollEnabled={true}
         activeColor="#000"
         inactiveColor="#000"
@@ -91,13 +76,6 @@ const DetailScreen: React.FC<Props> = ({ route, navigation }) => {
       </TabBar>
     </View>
   );
-
-  // useEffect(() => {
-  //   const ratings = ratingData?.ratings?.data as ReviewRating[];
-  //   if (ratings && ratings?.length === 1) {
-  //     setRating(ratings[0]);
-  //   }
-  // }, [ratingData]);
 
   return (
     <TabView
@@ -117,8 +95,19 @@ const styles = StyleSheet.create({
   },
   tabView: {
     color: "#000",
-    backgroundColor: "#A8D8AD",
   },
 });
+
+// (DetailScreen as any).sharedElements = (route: DetailRouteProp) => {
+//   const deviceId = route.params.id;
+//   return [
+//     {
+//       id: deviceId,
+//       animation: "fade",
+//     },
+//   ];
+
+//   return [deviceId];
+// };
 
 export default DetailScreen;

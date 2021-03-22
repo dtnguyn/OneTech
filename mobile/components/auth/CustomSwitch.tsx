@@ -1,6 +1,7 @@
 import React from "react";
 import { StyleSheet, View } from "react-native";
 import { TouchableOpacity } from "react-native-gesture-handler";
+import { useTheme } from "../../context/ThemeContext";
 import CustomText from "../util/CustomText";
 
 interface Props {
@@ -16,6 +17,11 @@ const CustomSwitch: React.FC<Props> = ({
   optionWidth,
   changeOption,
 }) => {
+  const { theme } = useTheme();
+
+  const pickedColor = theme === "light" ? "#A8D8AD" : "#336B39";
+  const unPickedColor = theme === "light" ? "#EBEBEB" : "#545454";
+
   return (
     <View style={styles.container}>
       {options.map((option, index) => (
@@ -24,7 +30,8 @@ const CustomSwitch: React.FC<Props> = ({
           style={{
             ...styles.option,
             width: optionWidth,
-            backgroundColor: option === currentOption ? "#A8D8AD" : "#EBEBEB",
+            backgroundColor:
+              option === currentOption ? pickedColor : unPickedColor,
             borderTopLeftRadius: index === 0 ? 40 : 0,
             borderBottomLeftRadius: index === 0 ? 40 : 0,
             borderTopRightRadius: index === options.length - 1 ? 40 : 0,

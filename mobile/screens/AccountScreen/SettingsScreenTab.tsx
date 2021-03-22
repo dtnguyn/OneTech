@@ -4,11 +4,13 @@ import { ScrollView } from "react-native-gesture-handler";
 import SettingItem from "../../components/account/SettingItem";
 import CustomText from "../../components/util/CustomText";
 import { useAuth } from "../../context/AuthContext";
+import { useTheme } from "../../context/ThemeContext";
 import {
   UserSetting,
   useUpdateUserSettingMutation,
   useSettingQuery,
 } from "../../generated/graphql";
+import { storeStringData } from "../../utils/storageHelper";
 
 interface Props {}
 
@@ -16,6 +18,7 @@ const SettingsScreenTab: React.FC<Props> = ({}) => {
   const [setting, setSetting] = useState<UserSetting>();
 
   const { user } = useAuth();
+  const { theme, setTheme } = useTheme();
 
   const [updateUserSettingMutation, {}] = useUpdateUserSettingMutation();
 
@@ -40,6 +43,26 @@ const SettingsScreenTab: React.FC<Props> = ({}) => {
         cache.evict({ fieldName: "me" });
       },
     });
+  };
+
+  const handleToggleDarkMode = () => {
+    if (theme === "light") {
+      storeStringData("theme", "dark", (result, error) => {
+        if (result) {
+          setTheme("dark");
+        } else {
+          alert(error);
+        }
+      });
+    } else {
+      storeStringData("theme", "light", (result, error) => {
+        if (result) {
+          setTheme("light");
+        } else {
+          alert(error);
+        }
+      });
+    }
   };
 
   useEffect(() => {
@@ -94,8 +117,10 @@ const SettingsScreenTab: React.FC<Props> = ({}) => {
         <SettingItem
           title="Dark mode"
           description="If enabled, the app will be in dark with white text"
-          switchValue={setting.isPrivate}
-          handleSwitchToggle={() => {}}
+          switchValue={theme === "dark"}
+          handleSwitchToggle={() => {
+            handleToggleDarkMode();
+          }}
         />
       </View>
     </ScrollView>
