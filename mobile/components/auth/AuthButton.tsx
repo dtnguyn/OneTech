@@ -17,7 +17,7 @@ const AuthButton: React.FC<Props> = ({ title, icon, onPress }) => {
   return (
     <TouchableOpacity style={styles.authButton} onPress={onPress}>
       <Image source={icon} style={styles.authIcon} />
-      <CustomText>{title}</CustomText>
+      <CustomText style={{ color: "#000" }}>{title}</CustomText>
     </TouchableOpacity>
   );
 };

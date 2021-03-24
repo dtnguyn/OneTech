@@ -40,7 +40,7 @@ const AppBar: React.FC<Props> = ({ moveToAuth, moveToAccount }) => {
         </TouchableOpacity>
       ) : (
         <TouchableOpacity style={styles.signInButton} onPress={moveToAuth}>
-          <CustomText>Sign In</CustomText>
+          <CustomText style={{ color: "#000" }}>Sign In</CustomText>
         </TouchableOpacity>
       )}
     </View>
