@@ -102,7 +102,10 @@ export default function App() {
             <RootStack.Navigator
               initialRouteName="Home"
               mode="modal"
-              screenOptions={{ headerTitleAlign: "center" }}
+              screenOptions={{
+                headerTitleAlign: "center",
+                animationEnabled: false,
+              }}
             >
               <RootStack.Screen
                 name="Home"
@@ -208,7 +211,6 @@ export default function App() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#fff",
     alignItems: "center",
     justifyContent: "center",
   },
