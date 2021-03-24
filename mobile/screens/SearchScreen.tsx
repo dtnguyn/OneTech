@@ -100,10 +100,6 @@ const SearchScreen: React.FC<Props> = ({ navigation }) => {
           renderItem={renderItem}
         />
       </View>
-      <StatusBar
-        barStyle={theme === "light" ? "dark-content" : "light-content"}
-        backgroundColor={theme === "light" ? "#A8D8AD" : "#336B39"}
-      />
     </SafeAreaView>
   );
 };

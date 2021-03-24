@@ -75,10 +75,6 @@ const AccountScreen: React.FC<Props> = ({ route, navigation }) => {
       >
         <Text>Hello</Text>
       </TabBar>
-      <StatusBar
-        barStyle={theme === "light" ? "dark-content" : "light-content"}
-        backgroundColor={theme === "light" ? "#A8D8AD" : "#336B39"}
-      />
     </View>
   );
 

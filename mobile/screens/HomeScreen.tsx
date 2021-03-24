@@ -2,7 +2,6 @@ import React, { useEffect, useState } from "react";
 import {
   FlatList,
   ListRenderItem,
-  StatusBar,
   StyleSheet,
   useColorScheme,
   View,
@@ -23,6 +22,7 @@ import {
 import { ScreenNavigationProp } from "../utils/types";
 import { useAuth } from "../context/AuthContext";
 import { useTheme } from "../context/ThemeContext";
+import { StatusBar } from "expo-status-bar";
 
 interface Props {
   navigation: ScreenNavigationProp;
@@ -127,10 +127,8 @@ const HomeScreen: React.FC<Props> = ({ navigation }) => {
           keyExtractor={(_, index) => index + ""}
         />
       </View>
-      <StatusBar
-        barStyle={theme === "light" ? "dark-content" : "light-content"}
-        backgroundColor={theme === "light" ? "#f2f2f2" : "#000"}
-      />
+
+      <StatusBar style={theme === "light" ? "dark" : "light"} />
     </SafeAreaView>
   );
 };

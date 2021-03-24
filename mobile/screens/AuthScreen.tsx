@@ -67,10 +67,6 @@ const AuthScreen: React.FC<Props> = ({ navigation }) => {
           </View>
         </View>
       </ScrollView>
-      <StatusBar
-        barStyle={theme === "light" ? "dark-content" : "light-content"}
-        backgroundColor={theme === "light" ? "#f2f2f2" : "#000"}
-      />
     </SafeAreaView>
   );
 };

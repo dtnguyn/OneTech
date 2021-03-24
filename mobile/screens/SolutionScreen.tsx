@@ -113,9 +113,6 @@ const SolutionScreen: React.FC<Props> = ({ route, navigation }) => {
           />
         </TouchableOpacity>
       </View>
-      <StatusBar
-        barStyle={theme === "light" ? "dark-content" : "light-content"}
-      />
     </View>
   );
 };

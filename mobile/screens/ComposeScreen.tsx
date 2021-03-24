@@ -138,10 +138,6 @@ const ComposeScreen: React.FC<Props> = ({ navigation, route }) => {
           <CustomText style={{ color: "#fff" }}>Submit</CustomText>
         </TouchableOpacity>
       </View>
-      <StatusBar
-        barStyle={theme === "light" ? "dark-content" : "light-content"}
-        backgroundColor={theme === "light" ? "#A8D8AD" : "#336B39"}
-      />
     </ScrollView>
   );
 };
