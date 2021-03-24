@@ -3,6 +3,7 @@ import {
   FlatList,
   Image,
   ListRenderItem,
+  StatusBar,
   StyleSheet,
   Text,
   View,
@@ -15,6 +16,7 @@ import {
 import { SafeAreaView } from "react-native-safe-area-context";
 import AutoComplete from "../components/search/AutoComplete";
 import CustomText from "../components/util/CustomText";
+import { useTheme } from "../context/ThemeContext";
 import { Device, useDevicesQuery } from "../generated/graphql";
 import { ScreenNavigationProp } from "../utils/types";
 
@@ -25,6 +27,7 @@ interface Props {
 const SearchScreen: React.FC<Props> = ({ navigation }) => {
   const [searchText, setSearchText] = useState<string>("");
   const [devices, setDevices] = useState<Array<Device>>([]);
+  const { theme } = useTheme();
 
   const { data, error, loading } = useDevicesQuery({
     variables: {
@@ -46,7 +49,11 @@ const SearchScreen: React.FC<Props> = ({ navigation }) => {
         key={item.id}
         title={item.name}
         pressAction={(title) =>
-          navigation.push("Detail", { name: title, id: item.id })
+          navigation.push("Detail", {
+            name: title,
+            id: item.id,
+            category: item.category,
+          })
         }
       />
     );
@@ -77,18 +84,26 @@ const SearchScreen: React.FC<Props> = ({ navigation }) => {
           </CustomText>
         </View>
         <TextInput
-          style={styles.textInputContainer}
+          style={{
+            ...styles.textInputContainer,
+            color: theme === "light" ? "#000" : "#fafafa",
+          }}
+          placeholderTextColor={theme === "light" ? "#c4c4c4" : "#545454"}
           placeholder="enter your device name..."
           onChangeText={(text) => {
             handleSearchDevice(text);
           }}
         />
         <FlatList
-          style={{ width: "100%", marginBottom: 30 }}
+          style={{ width: "100%" }}
           data={devices}
           renderItem={renderItem}
         />
       </View>
+      <StatusBar
+        barStyle={theme === "light" ? "dark-content" : "light-content"}
+        backgroundColor={theme === "light" ? "#A8D8AD" : "#336B39"}
+      />
     </SafeAreaView>
   );
 };
@@ -98,6 +113,7 @@ const styles = StyleSheet.create({
     display: "flex",
     alignItems: "center",
     marginHorizontal: 10,
+    height: "100%",
   },
   appBarContainer: {
     display: "flex",
@@ -127,6 +143,7 @@ const styles = StyleSheet.create({
     margin: 10,
     width: "100%",
     height: 50,
+    fontFamily: "MMedium",
     borderColor: "gray",
     borderWidth: 0.2,
     borderRadius: 5,

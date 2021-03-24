@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import {
   FlatList,
   ListRenderItem,
+  StatusBar,
   StyleSheet,
   useColorScheme,
   View,
@@ -21,6 +22,7 @@ import {
 } from "../generated/graphql";
 import { ScreenNavigationProp } from "../utils/types";
 import { useAuth } from "../context/AuthContext";
+import { useTheme } from "../context/ThemeContext";
 
 interface Props {
   navigation: ScreenNavigationProp;
@@ -32,10 +34,7 @@ const HomeScreen: React.FC<Props> = ({ navigation }) => {
   const [devicesArr, setDevicesArr] = useState<Array<Device[]>>();
   const [searchBoxExpand, setSearchBoxExpand] = useState(false);
   const [currentCategory, setCurrentCategory] = useState("phone");
-  let colorScheme = useColorScheme();
-  console.log("color: ", colorScheme);
-
-  colorScheme = "light";
+  const { theme } = useTheme();
 
   const { data, error, loading } = useDevicesQuery({
     variables: {
@@ -128,6 +127,10 @@ const HomeScreen: React.FC<Props> = ({ navigation }) => {
           keyExtractor={(_, index) => index + ""}
         />
       </View>
+      <StatusBar
+        barStyle={theme === "light" ? "dark-content" : "light-content"}
+        backgroundColor={theme === "light" ? "#f2f2f2" : "#000"}
+      />
     </SafeAreaView>
   );
 };

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Image, StyleSheet, View, AppState } from "react-native";
+import { Image, StyleSheet, View, AppState, StatusBar } from "react-native";
 import { ScrollView, TouchableOpacity } from "react-native-gesture-handler";
 import { SafeAreaView } from "react-native-safe-area-context";
 import AuthButton from "../components/auth/AuthButton";
@@ -10,6 +10,7 @@ import CustomText from "../components/util/CustomText";
 import { useMeQuery } from "../generated/graphql";
 import { ScreenNavigationProp } from "../utils/types";
 import * as Linking from "expo-linking";
+import { useTheme } from "../context/ThemeContext";
 
 interface Props {
   navigation: ScreenNavigationProp;
@@ -18,7 +19,7 @@ interface Props {
 const AuthScreen: React.FC<Props> = ({ navigation }) => {
   const [currentOption, setCurrentOption] = useState("Log in");
   const [text, setText] = useState("");
-
+  const { theme } = useTheme();
   const { data } = useMeQuery({
     variables: {},
   });
@@ -66,6 +67,10 @@ const AuthScreen: React.FC<Props> = ({ navigation }) => {
           </View>
         </View>
       </ScrollView>
+      <StatusBar
+        barStyle={theme === "light" ? "dark-content" : "light-content"}
+        backgroundColor={theme === "light" ? "#f2f2f2" : "#000"}
+      />
     </SafeAreaView>
   );
 };

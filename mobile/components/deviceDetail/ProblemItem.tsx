@@ -7,6 +7,7 @@ import StatsBox from "./StatsBox";
 import moment from "moment";
 import HTML from "react-native-render-html";
 import { useAuth } from "../../context/AuthContext";
+import { useTheme } from "../../context/ThemeContext";
 
 interface Props {
   problem: DeviceProblem;
@@ -33,6 +34,7 @@ const ProblemItem: React.FC<Props> = ({
     solutionsCount: problem.solutions?.length ? problem.solutions.length : 0,
   });
   const { user } = useAuth();
+  const { theme } = useTheme();
 
   return (
     <View style={{ width: "100%" }}>
@@ -70,7 +72,10 @@ const ProblemItem: React.FC<Props> = ({
           <HTML
             source={{ html: problem.content }}
             contentWidth={50}
-            baseFontStyle={{ fontFamily: "MMedium" }}
+            baseFontStyle={{
+              fontFamily: "MMedium",
+              color: theme === "light" ? "#000" : "#fafafa",
+            }}
             computeEmbeddedMaxWidth={(width) => 300}
             containerStyle={{
               width: useWindowDimensions().width * 0.8,

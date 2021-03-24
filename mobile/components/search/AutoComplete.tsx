@@ -16,7 +16,7 @@ const AutoComplete: React.FC<Props> = ({ title, pressAction }) => {
         onPress={() => pressAction(title)}
       >
         <CustomText>{title}</CustomText>
-        <View style={styles.divider} />
+        {/* <View style={styles.divider} /> */}
       </TouchableOpacity>
     </View>
   );

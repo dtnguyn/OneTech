@@ -79,7 +79,7 @@ export default function App() {
   }, [data]);
 
   useEffect(() => {
-    getStringData("appTheme", (result, error) => {
+    getStringData("theme", (result, error) => {
       if (!error) {
         setTheme(result ? result : "light");
       } else {
@@ -87,6 +87,8 @@ export default function App() {
       }
     });
   }, []);
+
+  console.log(DefaultTheme.colors);
 
   if (!fontsLoaded) return null;
 
@@ -150,7 +152,9 @@ export default function App() {
                 component={ComposeScreen}
                 options={({ route }) => ({
                   headerShown: true,
-
+                  headerStyle: {
+                    backgroundColor: theme === "light" ? "#A8D8AD" : "#336B39",
+                  },
                   headerTitle: () => (
                     <CustomText fontSize={20} fontFamily="MSemiBold">
                       {(route?.params?.header as string)

@@ -1,12 +1,13 @@
 import Slider from "@react-native-community/slider";
 import React, { useEffect, useState } from "react";
-import { StyleSheet, View } from "react-native";
+import { StatusBar, StyleSheet, View } from "react-native";
 import {
   ScrollView,
   TextInput,
   TouchableOpacity,
 } from "react-native-gesture-handler";
 import CustomText from "../components/util/CustomText";
+import { useTheme } from "../context/ThemeContext";
 import { laptopSpec, mobileSpec, pcSpec } from "../utils/specArr";
 import { ComposeRouteProp, ScreenNavigationProp } from "../utils/types";
 
@@ -20,7 +21,7 @@ const ComposeScreen: React.FC<Props> = ({ navigation, route }) => {
     title: route.params.title ? route.params.title : "",
     content: route.params.content,
   });
-
+  const { theme } = useTheme();
   const [rating, setRating] = useState(route.params.rating);
   const [specsArr, setSpecsArr] = useState<Array<string>>([]);
   const [overallRating, setOverallRating] = useState<number>(0);
@@ -137,6 +138,10 @@ const ComposeScreen: React.FC<Props> = ({ navigation, route }) => {
           <CustomText style={{ color: "#fff" }}>Submit</CustomText>
         </TouchableOpacity>
       </View>
+      <StatusBar
+        barStyle={theme === "light" ? "dark-content" : "light-content"}
+        backgroundColor={theme === "light" ? "#A8D8AD" : "#336B39"}
+      />
     </ScrollView>
   );
 };

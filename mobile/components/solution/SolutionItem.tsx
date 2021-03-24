@@ -2,6 +2,7 @@ import moment from "moment";
 import React, { useState } from "react";
 import { Image, StyleSheet, TouchableOpacity, View } from "react-native";
 import HTML from "react-native-render-html";
+import { useTheme } from "../../context/ThemeContext";
 import { DeviceProblem, Solution } from "../../generated/graphql";
 import StatsBox from "../deviceDetail/StatsBox";
 import CustomText from "../util/CustomText";
@@ -29,6 +30,8 @@ const SolutionItem: React.FC<Props> = ({
   const [statsState, setStatsState] = useState({
     starsCount: solution.stars?.length ? solution.stars.length : 0,
   });
+  const { theme } = useTheme();
+
   return (
     <View style={styles.container}>
       <View style={styles.header}>
@@ -62,7 +65,10 @@ const SolutionItem: React.FC<Props> = ({
         <HTML
           source={{ html: solution.content }}
           contentWidth={50}
-          baseFontStyle={{ fontFamily: "MMedium" }}
+          baseFontStyle={{
+            fontFamily: "MMedium",
+            color: theme === "light" ? "#000" : "#fafafa",
+          }}
         />
       </View>
 

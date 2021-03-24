@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from "react";
-import { Image, StyleSheet, View } from "react-native";
+import { Image, StatusBar, StyleSheet, View } from "react-native";
 import { TouchableOpacity } from "react-native-gesture-handler";
 import Solutions from "../components/util/Solutions";
+import { useTheme } from "../context/ThemeContext";
 import {
   DeviceProblem,
   Solution,
@@ -24,6 +25,7 @@ const SolutionScreen: React.FC<Props> = ({ route, navigation }) => {
     fetchPolicy: "cache-and-network",
   });
   const [createSolutionMutation, {}] = useCreateSolutionMutation();
+  const { theme } = useTheme();
 
   const handleCreateSolution = async (
     problemId: string,
@@ -111,6 +113,9 @@ const SolutionScreen: React.FC<Props> = ({ route, navigation }) => {
           />
         </TouchableOpacity>
       </View>
+      <StatusBar
+        barStyle={theme === "light" ? "dark-content" : "light-content"}
+      />
     </View>
   );
 };

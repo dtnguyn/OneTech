@@ -4,6 +4,7 @@ import { Image, StyleSheet, useWindowDimensions, View } from "react-native";
 import { TouchableOpacity } from "react-native-gesture-handler";
 import HTML from "react-native-render-html";
 import { useAuth } from "../../context/AuthContext";
+import { useTheme } from "../../context/ThemeContext";
 import { Review } from "../../generated/graphql";
 import CustomText from "../util/CustomText";
 import SpecTable from "./SpecTable";
@@ -25,6 +26,7 @@ const ReviewItem: React.FC<Props> = ({
 }) => {
   const [currentView, setCurrentView] = useState("review");
   const { user } = useAuth();
+  const { theme } = useTheme();
 
   const handleRatingButtonColor = (number: number) => {
     if (number > 80) {
@@ -66,7 +68,9 @@ const ReviewItem: React.FC<Props> = ({
               style={styles.ratingButton}
               onPress={() => setCurrentView("rating")}
             >
-              <CustomText>{review.rating.overall?.toFixed(1)}</CustomText>
+              <CustomText style={{ color: "#000" }}>
+                {review.rating.overall?.toFixed(1)}
+              </CustomText>
             </TouchableOpacity>
           </View>
         ) : (
@@ -88,7 +92,10 @@ const ReviewItem: React.FC<Props> = ({
           <CustomText>{review.title}</CustomText>
           <HTML
             source={{ html: review.content }}
-            baseFontStyle={{ fontFamily: "MMedium" }}
+            baseFontStyle={{
+              fontFamily: "MMedium",
+              color: theme === "light" ? "#000" : "#fafafa",
+            }}
           />
         </View>
       ) : (

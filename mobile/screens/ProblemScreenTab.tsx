@@ -12,6 +12,7 @@ import ProblemItem from "../components/deviceDetail/ProblemItem";
 import EmptyPlaceholder from "../components/util/EmptyPlaceholder";
 import Problems from "../components/util/Problems";
 import { useAuth } from "../context/AuthContext";
+import { useTheme } from "../context/ThemeContext";
 import {
   DeviceProblem,
   DeviceProblemStar,
@@ -35,12 +36,8 @@ const ProblemScreenTab: React.FC<Props> = ({ deviceId, navigation }) => {
   const [problems, setProblems] = useState<Array<DeviceProblem>>([]);
   const [problemSearchValue, setProblemSearchValue] = useState("");
 
-  const [toggleProblemStarMutation, {}] = useToggleProblemStarMutation();
   const [createProblemMutation, {}] = useCreateProblemMutation();
-  const [updateProblemMutation, {}] = useUpdateProblemMutation();
-  const [deleteImagesMutation, {}] = useDeleteImagesMutation();
-  const [deleteProblemMutation, {}] = useDeleteProblemMutation();
-  const [createReportMutation] = useCreateReportMutation();
+  const { theme } = useTheme();
 
   const { data: problemsData, error: problemsError } = useProblemsQuery({
     variables: {
@@ -106,14 +103,18 @@ const ProblemScreenTab: React.FC<Props> = ({ deviceId, navigation }) => {
     <View style={styles.container}>
       <View style={styles.textInputContainer}>
         <TextInput
-          style={styles.textInput}
+          style={{
+            ...styles.textInput,
+            color: theme === "light" ? "#000" : "#fafafa",
+          }}
+          placeholderTextColor={theme === "light" ? "#c4c4c4" : "#545454"}
           placeholder="Find problems..."
           onChangeText={(text) => {
             handleSearchProblem(text);
           }}
         />
         <Image
-          source={require("../assets/images/search.png")}
+          source={require("../assets/images/search2.png")}
           style={styles.searchIcon}
         />
       </View>
@@ -166,6 +167,7 @@ const styles = StyleSheet.create({
   textInput: {
     fontFamily: "MMedium",
     height: 50,
+    color: "#FAFAFA",
     borderColor: "gray",
     borderWidth: 0.2,
     borderRadius: 5,

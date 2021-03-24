@@ -10,6 +10,7 @@ import {
   View,
 } from "react-native";
 import ReviewItem from "../components/deviceDetail/ReviewItem";
+import { useTheme } from "../context/ThemeContext";
 import {
   Review,
   ReviewRating,
@@ -35,6 +36,7 @@ const ReviewScreenTab: React.FC<Props> = ({
 }) => {
   const [reviews, setReviews] = useState<Array<Review>>();
   const [reviewSearchValue, setReviewSearchValue] = useState("");
+  const { theme } = useTheme();
 
   const [createReviewMutation, {}] = useCreateReviewMutation();
   const [updateReviewMutation, {}] = useUpdateReviewMutation();
@@ -64,6 +66,7 @@ const ReviewScreenTab: React.FC<Props> = ({
             rating: review.rating,
             category: category,
             onCompose: (title, content, rating, images) => {
+              if (!title) return;
               handleUpdateReview(review.id, title, content, rating, images);
             },
           });
@@ -80,6 +83,7 @@ const ReviewScreenTab: React.FC<Props> = ({
             content: "",
             category: category,
             onCompose: (title, content, rating, images) => {
+              if (!title) return;
               handleCreateReport(review.id, title, content);
             },
           });
@@ -257,14 +261,18 @@ const ReviewScreenTab: React.FC<Props> = ({
     <View style={styles.container}>
       <View style={styles.textInputContainer}>
         <TextInput
-          style={styles.textInput}
+          style={{
+            ...styles.textInput,
+            color: theme === "light" ? "#000" : "#fafafa",
+          }}
+          placeholderTextColor={theme === "light" ? "#c4c4c4" : "#545454"}
           placeholder="Find problems..."
           onChangeText={(text) => {
             handleSearchReview(text);
           }}
         />
         <Image
-          source={require("../assets/images/search.png")}
+          source={require("../assets/images/search2.png")}
           style={styles.searchIcon}
         />
       </View>
@@ -297,6 +305,7 @@ const ReviewScreenTab: React.FC<Props> = ({
               } as ReviewRating,
               category: category,
               onCompose: (title, content, rating, images) => {
+                if (!title) return;
                 handleCreateReview(deviceId, title, content, rating, images);
               },
             });

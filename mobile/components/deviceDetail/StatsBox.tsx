@@ -16,7 +16,9 @@ const StatsBox: React.FC<Props> = ({ title, value, color }) => {
         backgroundColor: color === "green" ? "#62D67B" : "#EEF227",
       }}
     >
-      <CustomText fontSize={13}>{value}</CustomText>
+      <CustomText fontSize={13} style={{ color: "#000" }}>
+        {value}
+      </CustomText>
       <CustomText style={styles.text} fontSize={10}>
         {title}
       </CustomText>
@@ -36,6 +38,7 @@ const styles = StyleSheet.create({
   text: {
     position: "absolute",
     bottom: 2,
+    color: "#000",
   },
 });
 
