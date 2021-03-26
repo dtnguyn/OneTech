@@ -2,6 +2,7 @@ import { HeaderTitle } from "@react-navigation/stack";
 import React, { useState } from "react";
 import { Dimensions, ListRenderItem, StyleSheet, View } from "react-native";
 import Carousel, { AdditionalParallaxProps } from "react-native-snap-carousel";
+import { SharedElement } from "react-navigation-shared-element";
 import { Device } from "../../generated/graphql";
 import { ScreenNavigationProp } from "../../utils/types";
 import CustomText from "../util/CustomText";
@@ -29,16 +30,18 @@ const DeviceCarousel: React.FC<Props> = ({ devices, title, navigation }) => {
       parallaxProps?: AdditionalParallaxProps | undefined
     ) => React.ReactNode) = ({ item }: any) => {
     return (
-      <DeviceItem
-        device={item}
-        moveToDetail={() => {
-          navigation.push("Detail", {
-            name: item.name,
-            id: item.id,
-            category: item.category,
-          });
-        }}
-      />
+      <SharedElement id={item.id}>
+        <DeviceItem
+          device={item}
+          moveToDetail={() => {
+            navigation.push("Detail", {
+              name: item.name,
+              id: item.id,
+              category: item.category,
+            });
+          }}
+        />
+      </SharedElement>
     );
   };
 

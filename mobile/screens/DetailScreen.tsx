@@ -71,9 +71,7 @@ const DetailScreen: React.FC<Props> = ({ route, navigation }) => {
           height: 2,
           borderRadius: 10,
         }}
-      >
-        <Text>Hello</Text>
-      </TabBar>
+      ></TabBar>
     </View>
   );
 
@@ -98,16 +96,16 @@ const styles = StyleSheet.create({
   },
 });
 
-// (DetailScreen as any).sharedElements = (route: DetailRouteProp) => {
-//   const deviceId = route.params.id;
-//   return [
-//     {
-//       id: deviceId,
-//       animation: "fade",
-//     },
-//   ];
+(DetailScreen as any).sharedElements = (route: DetailRouteProp) => {
+  const deviceId = route.params.id;
+  return [
+    {
+      id: deviceId,
+      animation: "fade",
+    },
+  ];
 
-//   return [deviceId];
-// };
+  return [deviceId];
+};
 
 export default DetailScreen;

@@ -11,6 +11,7 @@ import styles from "../styles/Notifications.module.css";
 import { withApollo } from "../utils/withApollo";
 import socketIOClient from "socket.io-client";
 import { useAuth } from "../context/AuthContext";
+import Head from "next/head";
 
 interface NotificationsProps {}
 
@@ -83,6 +84,10 @@ const Notifications: React.FC<NotificationsProps> = ({}) => {
 
   return (
     <div className={styles.notificationsPageContainer}>
+      <Head>
+        <title>Notifications</title>
+        <meta name="viewport" content="initial-scale=1.0, width=device-width" />
+      </Head>
       <p className={styles.notificationsPageTitle}>Notifications</p>
       <div className={styles.notificationsContainer}>
         {notifications?.map((notification) => (

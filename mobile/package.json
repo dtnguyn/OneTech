@@ -63,6 +63,7 @@
     "react-native-webview": "11.0.0",
     "react-navigation-fluid-transitions": "^0.3.2",
     "react-navigation-shared-element": "^5.0.0-alpha1",
+    "react-navigation-stack": "^2.8.4",
     "react-navigation-transitions": "^1.0.12"
   },
   "devDependencies": {

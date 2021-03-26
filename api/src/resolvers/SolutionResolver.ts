@@ -242,6 +242,7 @@ export class SolutionResolver {
 
   @Query(() => SolutionResponse)
   async solutions(
+    @Ctx() { req }: MyContext,
     @Arg("problemId", { nullable: true }) problemId: string,
     @Arg("userId", { nullable: true }) userId: string
   ) {
@@ -252,12 +253,20 @@ export class SolutionResolver {
         .leftJoinAndSelect("solution.problem", "problem")
         .orderBy("solution.createdAt", "DESC")
         .leftJoinAndSelect("solution.author", "author")
+        .leftJoinAndSelect("author.setting", "setting")
         .leftJoinAndSelect("solution.images", "images");
       if (problemId)
         builder.where("solution.problemId = :problemId", { problemId });
       if (userId) builder.where("solution.authorId = :userId", { userId });
 
-      const solutions = await builder.getMany();
+      let solutions = await builder.getMany();
+
+      if (userId && solutions.length) {
+        const user = solutions[0].author;
+        if (user.setting.isPrivate && user.id !== (req.session as any).userId) {
+          solutions = [];
+        }
+      }
 
       return {
         status: true,

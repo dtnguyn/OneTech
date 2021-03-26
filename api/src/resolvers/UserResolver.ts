@@ -253,12 +253,14 @@ export class UserResolver {
         .where("user.id = :id", { id })
         .getOne();
 
+      // console.log("Debug: ", id, user);
       return {
         status: true,
         message: "Getting users successfully.",
         data: [user],
       };
     } catch (error) {
+      console.log(error.message);
       return {
         status: false,
         message: error.message,

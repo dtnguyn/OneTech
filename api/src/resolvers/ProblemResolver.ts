@@ -263,6 +263,7 @@ export class ProblemResolver {
 
   @Query(() => ProblemResponse, { nullable: true })
   async problems(
+    @Ctx() { req }: MyContext,
     @Arg("deviceId", { nullable: true }) deviceId: string,
     @Arg("authorId", { nullable: true }) authorId: string,
     @Arg("title", { nullable: true }) title: string,
@@ -274,6 +275,7 @@ export class ProblemResolver {
       const builder = this.problemRepo.createQueryBuilder("problem");
       builder
         .leftJoinAndSelect("problem.author", "author")
+        .leftJoinAndSelect("author.setting", "setting")
         .leftJoinAndSelect("problem.device", "device")
         .leftJoinAndSelect("problem.stars", "stars")
         .leftJoinAndSelect("problem.images", "images")
@@ -303,7 +305,14 @@ export class ProblemResolver {
         });
 
       builder.orderBy("problem.createdAt", "DESC");
-      const problems = await builder.getMany();
+      let problems = await builder.getMany();
+
+      if (authorId && problems.length) {
+        const user = problems[0].author;
+        if (user.setting.isPrivate && user.id !== (req.session as any).userId) {
+          problems = [];
+        }
+      }
 
       return {
         status: true,

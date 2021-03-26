@@ -163,7 +163,7 @@ const Problems: React.FC<ProblemsProps> = ({
         userId: authUser!.id,
       },
       update: (cache) => {
-        cache.evict({ fieldName: "problems" });
+        cache.evict({ fieldName: "singleUser" });
       },
     })
       .then((res) => {

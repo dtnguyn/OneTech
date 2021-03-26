@@ -74,7 +74,7 @@ const GeneralScreenTab: React.FC<Props> = ({ deviceId }) => {
   if (!device) return null;
 
   return (
-    <View>
+    <ScrollView>
       <View style={styles.container}>
         <SharedElement id={device.id}>
           <Image
@@ -108,7 +108,7 @@ const GeneralScreenTab: React.FC<Props> = ({ deviceId }) => {
           />
         </TouchableOpacity>
       </View>
-    </View>
+    </ScrollView>
   );
 };
 

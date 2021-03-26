@@ -462,6 +462,8 @@ export type Mutation = {
   deleteSolution: SolutionResponse;
   toggleSolutionStar: SolutionResponse;
   toggleSolutionPicked: SolutionResponse;
+  createAdminUsers: UserResponse;
+  loginAdmin: UserResponse;
   deleteUser: UserResponse;
   logout: UserResponse;
   createSetting: UserSettingResponse;
@@ -495,6 +497,7 @@ export type MutationCreateDeviceArgs = {
   category: Scalars['String'];
   brand: Scalars['String'];
   name: Scalars['String'];
+  adminId: Scalars['String'];
 };
 
 
@@ -502,10 +505,12 @@ export type MutationUpdateDeviceArgs = {
   specInput: UpdateDeviceSpecInput;
   deviceInput: UpdateDeviceInput;
   id: Scalars['String'];
+  adminId: Scalars['String'];
 };
 
 
 export type MutationDeleteDeviceArgs = {
+  adminId: Scalars['String'];
   id: Scalars['String'];
 };
 
@@ -528,16 +533,19 @@ export type MutationCreateSpecArgs = {
   display_simplify?: Maybe<Scalars['String']>;
   display?: Maybe<Scalars['String']>;
   deviceId: Scalars['String'];
+  adminId: Scalars['String'];
 };
 
 
 export type MutationUpdateDeviceSpecArgs = {
   input: UpdateDeviceSpecInput;
   deviceId: Scalars['String'];
+  adminId: Scalars['String'];
 };
 
 
 export type MutationDeleteDeviceSpecArgs = {
+  adminId: Scalars['String'];
   deviceId: Scalars['String'];
 };
 
@@ -674,6 +682,17 @@ export type MutationToggleSolutionPickedArgs = {
   solverId: Scalars['String'];
   solutionId: Scalars['String'];
   problemId: Scalars['String'];
+};
+
+
+export type MutationCreateAdminUsersArgs = {
+  adminId: Scalars['String'];
+};
+
+
+export type MutationLoginAdminArgs = {
+  adminId: Scalars['String'];
+  userId: Scalars['String'];
 };
 
 

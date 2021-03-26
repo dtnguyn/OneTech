@@ -10,6 +10,7 @@ interface BodyProps {
 }
 
 const Body: React.FC<BodyProps> = ({ user, devices }) => {
+  console.log("user: ", user);
   return (
     <div className={styles.userPageBodyContainer}>
       {devices.length ? (

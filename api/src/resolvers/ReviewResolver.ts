@@ -275,6 +275,7 @@ export class ReviewResolver {
 
   @Query(() => ReviewResponse)
   async reviews(
+    @Ctx() { req }: MyContext,
     @Arg("deviceId", { nullable: true }) deviceId: string,
     @Arg("authorId", { nullable: true }) authorId: string,
     @Arg("title", { nullable: true }) title: string,
@@ -286,6 +287,7 @@ export class ReviewResolver {
       const builder = await this.reviewRepo
         .createQueryBuilder("review")
         .leftJoinAndSelect("review.author", "author")
+        .leftJoinAndSelect("author.setting", "setting")
         .leftJoinAndSelect("review.rating", "rating")
         .leftJoinAndSelect("review.images", "images");
 
@@ -314,10 +316,14 @@ export class ReviewResolver {
           content: "%" + content + "%",
         });
 
-      const reviews = await builder
-        .orderBy("review.createdAt", "DESC")
-        .getMany();
+      let reviews = await builder.orderBy("review.createdAt", "DESC").getMany();
 
+      if (authorId && reviews.length) {
+        const user = reviews[0].author;
+        if (user.setting.isPrivate && user.id !== (req.session as any).userId) {
+          reviews = [];
+        }
+      }
       return {
         status: true,
         message: "Getting reviews successfully.",
