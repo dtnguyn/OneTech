@@ -10,9 +10,9 @@ interface Props {
 const PrivatePlaceHolder: React.FC<Props> = ({ title, content }) => {
   return (
     <View style={styles.container}>
-      <CustomText>{title ? title : `No posts yet!`}</CustomText>
+      <CustomText>{title ? title : `Access denied!`}</CustomText>
       <CustomText>
-        {content ? content : `Be the first one to post something.`}
+        {content ? content : `You don't have access to this data`}
       </CustomText>
       <Image
         source={require("../../assets/images/private.png")}

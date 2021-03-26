@@ -6,10 +6,13 @@ import CustomText from "../../components/util/CustomText";
 import PrivatePlaceHolder from "../../components/util/PrivatePlaceHolder";
 import Problems from "../../components/util/Problems";
 import Solutions from "../../components/util/Solutions";
+import { useAuth } from "../../context/AuthContext";
 import {
   DeviceProblem,
   Solution,
   useProblemsQuery,
+  UserSetting,
+  useSettingQuery,
   useSolutionsQuery,
 } from "../../generated/graphql";
 import { ScreenNavigationProp } from "../../utils/types";
@@ -23,6 +26,8 @@ const PostsScreenTab: React.FC<Props> = ({ userId, navigation }) => {
   const [currentOption, setCurrentOption] = useState("Problems");
   const [problems, setProblems] = useState<DeviceProblem[]>([]);
   const [solutions, setSolutions] = useState<Solution[]>([]);
+  const [isPrivate, setIsPrivate] = useState<boolean | undefined>();
+  const { user: currentUser } = useAuth();
 
   const { data: problemsData, error: problemsError } = useProblemsQuery({
     variables: {
@@ -32,6 +37,13 @@ const PostsScreenTab: React.FC<Props> = ({ userId, navigation }) => {
   });
 
   const { data: solutionsData, error: solutionsError } = useSolutionsQuery({
+    variables: {
+      userId: userId,
+    },
+    fetchPolicy: "cache-and-network",
+  });
+
+  const { data: settingsData, error } = useSettingQuery({
     variables: {
       userId: userId,
     },
@@ -51,6 +63,19 @@ const PostsScreenTab: React.FC<Props> = ({ userId, navigation }) => {
       setSolutions(arr);
     }
   }, [solutionsData]);
+
+  useEffect(() => {
+    const arr = settingsData?.setting?.data as UserSetting[];
+
+    if (arr && arr.length) {
+      if (arr[0].isPrivate && userId !== currentUser?.id) {
+        setIsPrivate(true);
+      } else setIsPrivate(false);
+    }
+  }, [settingsData]);
+
+  if (isPrivate === undefined) return null;
+  if (isPrivate === true) return <PrivatePlaceHolder />;
 
   return (
     <View style={styles.container}>
