@@ -3,6 +3,7 @@ import { Image, StyleSheet, View } from "react-native";
 import { ScrollView } from "react-native-gesture-handler";
 import DeviceCarousel from "../../components/home/DeviceCarousel";
 import CustomText from "../../components/util/CustomText";
+import { useAuth } from "../../context/AuthContext";
 import {
   Device,
   useDevicesQuery,
@@ -20,6 +21,7 @@ const ProfileScreenTab: React.FC<Props> = ({ userId, navigation }) => {
   const [user, setUser] = useState<User>();
   const [followedDevices, setFollowedDevices] = useState<Device[]>([]);
   const [starCount, setStarCount] = useState<number>();
+  const { user: currentUser } = useAuth();
 
   const { data: userData, error: userError } = useSingleUserQuery({
     variables: {
@@ -73,8 +75,8 @@ const ProfileScreenTab: React.FC<Props> = ({ userId, navigation }) => {
         <View style={styles.userContainer}>
           <Image style={styles.userIcon} source={{ uri: user.avatar }} />
           <View style={styles.userInfo}>
-            <CustomText fontSize={20}>{user.username}</CustomText>
-            <CustomText>{user.email}</CustomText>
+            <CustomText fontSize={18}>{user.username}</CustomText>
+            <CustomText fontSize={12}>{user.email}</CustomText>
             <View style={styles.userStatsContainer}>
               <Image
                 style={styles.statsIcon}
@@ -91,11 +93,13 @@ const ProfileScreenTab: React.FC<Props> = ({ userId, navigation }) => {
             </View>
           </View>
         </View>
-        <DeviceCarousel
-          devices={followedDevices}
-          title={`Followed devices (${followedDevices.length})`}
-          navigation={navigation}
-        />
+        {user.setting?.isPrivate && user.id !== currentUser?.id ? null : (
+          <DeviceCarousel
+            devices={followedDevices}
+            title={`Followed devices (${followedDevices.length})`}
+            navigation={navigation}
+          />
+        )}
       </View>
     </ScrollView>
   );

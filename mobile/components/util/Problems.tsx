@@ -42,6 +42,7 @@ const Problems: React.FC<Props> = ({ problems, flatListStyle, navigation }) => {
     return (
       <ProblemItem
         problem={item}
+        goToAccount={(userId) => navigation.push("Account", { userId })}
         clickAction={(problemId) =>
           navigation.push("Solution", { problemId, deviceId: item.device.id })
         }

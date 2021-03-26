@@ -1311,6 +1311,10 @@ export type ProblemsQuery = (
       )>, author?: Maybe<(
         { __typename?: 'User' }
         & Pick<User, 'id' | 'avatar' | 'username'>
+        & { setting?: Maybe<(
+          { __typename?: 'UserSetting' }
+          & Pick<UserSetting, 'isPrivate'>
+        )> }
       )>, stars?: Maybe<Array<(
         { __typename?: 'DeviceProblemStar' }
         & Pick<DeviceProblemStar, 'problemId' | 'userId'>
@@ -1408,6 +1412,10 @@ export type SolutionsQuery = (
       & { author: (
         { __typename?: 'User' }
         & Pick<User, 'username' | 'id' | 'avatar'>
+        & { setting?: Maybe<(
+          { __typename?: 'UserSetting' }
+          & Pick<UserSetting, 'isPrivate'>
+        )> }
       ), problem: (
         { __typename?: 'DeviceProblem' }
         & Pick<DeviceProblem, 'id' | 'title' | 'content'>
@@ -2677,6 +2685,9 @@ export const ProblemsDocument = gql`
         id
         avatar
         username
+        setting {
+          isPrivate
+        }
       }
       stars {
         problemId
@@ -2873,6 +2884,9 @@ export const SolutionsDocument = gql`
         username
         id
         avatar
+        setting {
+          isPrivate
+        }
       }
       content
       problem {

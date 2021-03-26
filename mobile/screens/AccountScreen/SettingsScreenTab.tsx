@@ -96,7 +96,9 @@ const SettingsScreenTab: React.FC<Props> = ({}) => {
           title="Private mode"
           description="If enabled, people cannot see your profile in detailed"
           switchValue={setting.isPrivate}
-          handleSwitchToggle={() => {}}
+          handleSwitchToggle={() => {
+            handleToggleSetting("isPrivate", !setting.isPrivate);
+          }}
         />
         <SettingItem
           title="Notifications"

@@ -8,12 +8,14 @@ import {
   TabView,
 } from "react-native-tab-view";
 import CustomText from "../../components/util/CustomText";
+import { useAuth } from "../../context/AuthContext";
 import { useTheme } from "../../context/ThemeContext";
 import {
   Device,
   ReviewRating,
   useDeviceDetailQuery,
   useDeviceRatingsQuery,
+  useSettingQuery,
 } from "../../generated/graphql";
 import { AccountRouteProp, ScreenNavigationProp } from "../../utils/types";
 import NotificationsScreen from "./NotificationsScreenTab";
@@ -30,15 +32,32 @@ type State = NavigationState<{
   title: string;
 }>;
 
+const authUserRoute = [
+  { key: "profile", title: "Profile" },
+  { key: "posts", title: "Posts" },
+  { key: "notifications", title: "Notifications" },
+  { key: "settings", title: "Settings" },
+];
+
+const userRoute = [
+  { key: "profile", title: "Profile" },
+  { key: "posts", title: "Posts" },
+];
+
 const AccountScreen: React.FC<Props> = ({ route, navigation }) => {
+  const { user } = useAuth();
   const [index, setIndex] = useState(0);
-  const [routes] = React.useState([
-    { key: "profile", title: "Profile" },
-    { key: "posts", title: "Posts" },
-    { key: "notifications", title: "Notifications" },
-    { key: "settings", title: "Settings" },
-  ]);
+  const [routes] = React.useState(
+    user && user.id === route.params.userId ? authUserRoute : userRoute
+  );
   const { theme } = useTheme();
+
+  // const { data, error } = useSettingQuery({
+  //   variables: {
+  //     userId: user?.id!,
+  //   },
+  //   fetchPolicy: "cache-and-network",
+  // });
 
   const initialLayout = { width: Dimensions.get("window").width };
 
@@ -49,8 +68,10 @@ const AccountScreen: React.FC<Props> = ({ route, navigation }) => {
     posts: () => (
       <PostsScreenTab userId={route.params.userId} navigation={navigation} />
     ),
-    notifications: () => <NotificationsScreen />,
-    settings: () => <SettingsScreenTab />,
+    notifications: () =>
+      user && user.id === route.params.userId ? <NotificationsScreen /> : null,
+    settings: () =>
+      user && user.id === route.params.userId ? <SettingsScreenTab /> : null,
   });
 
   const renderTabBar = (

@@ -3,6 +3,7 @@ import { FlatList, ListRenderItem, StyleSheet, View } from "react-native";
 import CustomSwitch from "../../components/auth/CustomSwitch";
 import ProblemItem from "../../components/deviceDetail/ProblemItem";
 import CustomText from "../../components/util/CustomText";
+import PrivatePlaceHolder from "../../components/util/PrivatePlaceHolder";
 import Problems from "../../components/util/Problems";
 import Solutions from "../../components/util/Solutions";
 import {

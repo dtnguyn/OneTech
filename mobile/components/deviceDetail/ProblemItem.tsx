@@ -12,6 +12,7 @@ import { useTheme } from "../../context/ThemeContext";
 interface Props {
   problem: DeviceProblem;
   starred: boolean;
+  goToAccount: (userId: string) => void;
   clickAction: (problemId: string) => void;
   toggleStar: (problem: DeviceProblem) => void;
   updatePost: (problem: DeviceProblem) => void;
@@ -22,6 +23,7 @@ interface Props {
 const ProblemItem: React.FC<Props> = ({
   problem,
   starred,
+  goToAccount,
   clickAction,
   toggleStar,
   updatePost,
@@ -40,10 +42,18 @@ const ProblemItem: React.FC<Props> = ({
     <View style={{ width: "100%" }}>
       <View style={styles.container}>
         <View style={styles.left}>
-          <Image
-            source={{ uri: problem.author?.avatar }}
-            style={styles.userIcon}
-          />
+          <TouchableOpacity
+            activeOpacity={1}
+            onPress={() => {
+              goToAccount(problem.author?.id!);
+            }}
+          >
+            <Image
+              source={{ uri: problem.author?.avatar }}
+              style={styles.userIcon}
+            />
+          </TouchableOpacity>
+
           <StatsBox
             title="stars"
             value={statsState.starsCount}

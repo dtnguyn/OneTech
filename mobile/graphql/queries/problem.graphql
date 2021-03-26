@@ -28,6 +28,9 @@ query Problems(
         id
         avatar
         username
+        setting {
+          isPrivate
+        }
       }
       stars {
         problemId
