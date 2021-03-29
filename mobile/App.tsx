@@ -34,6 +34,9 @@ import {
 import { CustomDarkTheme } from "./utils/themes";
 import { getStringData } from "./utils/storageHelper";
 import { ThemeContext } from "./context/ThemeContext";
+// import * as SplashScreen from "expo-splash-screen";
+
+// SplashScreen.preventAutoHideAsync();
 
 const { manifest } = Constants;
 
@@ -88,10 +91,10 @@ export default function App() {
     });
   }, []);
 
-  console.log(DefaultTheme.colors);
+  // console.log("Hello debugApp");
 
-  if (!fontsLoaded) return null;
-
+  // if (!fontsLoaded) return null;
+  // return null;
   return (
     <ApolloProvider client={client}>
       <AuthContext.Provider value={{ user, setUser }}>
