@@ -1,13 +1,16 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { StyleSheet, View } from "react-native";
 import CustomText from "../util/CustomText";
 import AuthButton from "./AuthButton";
 import Constants from "expo-constants";
 import * as Linking from "expo-linking";
 import * as AuthSession from "expo-auth-session";
+import axios from "axios";
 
 import * as WebBrowser from "expo-web-browser";
 import { ScreenNavigationProp } from "../../utils/types";
+import { getStringData } from "../../utils/storageHelper";
+import { InAppBrowser } from "react-native-inappbrowser-reborn";
 
 interface Props {
   navigation: ScreenNavigationProp;
@@ -16,10 +19,34 @@ interface Props {
 const Login: React.FC<Props> = ({ navigation }) => {
   const { manifest } = Constants;
 
-  Linking.addEventListener("url", async (event) => {
-    // console.log(event);
-    // WebBrowser.maybeCompleteAuthSession("success");
-  });
+  // Linking.addEventListener("url", async (event) => {
+  //   console.log("hello");
+  //   WebBrowser.dismissBrowser;
+  // });
+
+  const openLink = async () => {
+    try {
+      const url = `https://api.onetech.guru/auth/login?method=google&from=${Linking.createURL(
+        "/"
+      )}`;
+      if (await InAppBrowser.isAvailable()) {
+        await InAppBrowser.openAuth(url, Linking.createURL("/"), {
+          // iOS Properties
+          ephemeralWebSession: false,
+          // Android Properties
+          showTitle: false,
+          enableUrlBarHiding: true,
+          enableDefaultShare: false,
+        }).then((response) => {
+          if (response.type === "success" && response.url) {
+            Linking.openURL(response.url);
+          }
+        });
+      } else Linking.openURL(url);
+    } catch (error) {
+      alert(error.message);
+    }
+  };
 
   return (
     <View style={styles.container}>
@@ -29,39 +56,89 @@ const Login: React.FC<Props> = ({ navigation }) => {
       <AuthButton
         title="Log in with Google"
         icon={require("../../assets/images/google.png")}
-        onPress={() => {
+        onPress={async () => {
+          // axios
+          //   .get(
+          //     `https://api.onetech.guru/auth/login?method=google&from=${Linking.createURL(
+          //       "/"
+          //     )}`
+          //   )
+          //   .then((response) => {
+          //     console.log(response);
+          //   });
           // Linking.openURL(
           //   `http://${manifest.debuggerHost
           //     .split(":")
           //     .shift()}:4000/auth/login?method=google&from=mobile`
           // );
           // Linking.openURL(
-          //   `https://api.onetech.guru/auth/login?method=google&from=mobile`
+          // `https://api.onetech.guru/auth/login?method=google&from=${Linking.createURL(
+          //   "/"
+          // )}`
           // );
           // const result = await WebBrowser.openAuthSessionAsync(
-          //   `https://api.onetech.guru/auth/login?method=google&from=${Linking.createURL(
-          //     "/"
-          //   )}`,
+          //   `https://onetech.guru`,
           //   Linking.createURL("/")
           // );
-          // await AuthSession.startAsync({
-          // authUrl: `https://api.onetech.guru/auth/login?method=google&from=${Linking.createURL(
-          //   "/"
-          // )}`,
+          // const url = AuthSession.makeRedirectUri({
+          //   native: Linking.createURL("/"),
           // });
-          navigation.push("Web");
+          // await AuthSession.startAsync({
+          //   authUrl: `https://api.onetech.guru/auth/login?method=google&from=${url}`,
+          //   returnUrl: url,
+          // }).catch((error) => {
+          //   console.log(error.message);
+          // });
+          // console.log(
+          //   AuthSession.makeRedirectUri({
+          //     native: "authredirect://",
+          //   })
+          // );
+          // try {
+          //   let authResult = await WebBrowser.openAuthSessionAsync(
+          //     `https://api.onetech.guru/auth/login?method=google&from=${Linking.createURL(
+          //       "/"
+          //     )}`,
+          //     // "https://onetech.guru"
+          //     Linking.createURL("/")
+          //   );
+          //   console.log(authResult);
+          //   // await openLink();
+          // } catch (err) {
+          //   console.log("ERROR:", err);
+          // }
+          navigation.push("Web", {
+            type: "login",
+            url: `https://api.onetech.guru/auth/login?method=google&from=${Linking.createURL(
+              "/"
+            )}`,
+          });
         }}
       />
       <AuthButton
         title="Log in with Facebook"
         icon={require("../../assets/images/facebook.png")}
-        onPress={() => {}}
+        onPress={() => {
+          navigation.push("Web", {
+            type: "login",
+            url: `https://api.onetech.guru/auth/login?method=facebook&from=${Linking.createURL(
+              "/"
+            )}`,
+          });
+        }}
       />
 
       <AuthButton
         title="Log in with Twitter"
         icon={require("../../assets/images/twitter.png")}
-        onPress={() => {}}
+        onPress={() => {
+          navigation.push("Web", {
+            type: "login",
+            url: `https://api.onetech.guru/auth/login?method=twitter&from=${Linking.createURL(
+              "/"
+            )}`,
+          });
+        }}
       />
     </View>
   );

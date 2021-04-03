@@ -11,7 +11,7 @@ import { useMeQuery } from "../generated/graphql";
 import { ScreenNavigationProp } from "../utils/types";
 import * as Linking from "expo-linking";
 import { useTheme } from "../context/ThemeContext";
-
+import CookieManager from "@react-native-cookies/cookies";
 interface Props {
   navigation: ScreenNavigationProp;
 }
@@ -22,13 +22,28 @@ const AuthScreen: React.FC<Props> = ({ navigation }) => {
   const { theme } = useTheme();
   const { data } = useMeQuery({
     variables: {},
+    context: {
+      headers: {
+        cookie:
+          "qid=s%3AHdF41OeS0GlAng01BJmC1alLCtPFznsz.vnArtZRJhVaaZjVxwHYsccgaEYL7PdOfRQr79gnVcSY",
+      },
+    },
   });
 
   useEffect(() => {
+    console.log(data);
     if (data?.me?.status) {
       setText("Logged");
     } else setText("Not Logged");
   }, [data]);
+
+  // CookieManager.get("https://onetech.guru").then((cookies) => {
+  //   console.log("CookieManager.get =>", cookies);
+  // });
+
+  // CookieManager.getAll().then((cookies) => {
+  //   console.log("CookieManager.getAll =>", cookies);
+  // });
 
   return (
     <SafeAreaView>

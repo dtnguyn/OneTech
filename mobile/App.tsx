@@ -34,17 +34,16 @@ import {
 import { CustomDarkTheme } from "./utils/themes";
 import { getStringData } from "./utils/storageHelper";
 import { ThemeContext } from "./context/ThemeContext";
-// import * as SplashScreen from "expo-splash-screen";
-
-// SplashScreen.preventAutoHideAsync();
+import CookieManager from "@react-native-cookies/cookies";
+import * as Linking from "expo-linking";
 
 const { manifest } = Constants;
 
 const client = new ApolloClient({
   // uri: `http://${manifest.debuggerHost.split(":").shift()}:4000/graphql`,
   uri: `https://api.onetech.guru/graphql`,
-
   cache: new InMemoryCache({}),
+  credentials: "include",
 });
 const RootStack = createStackNavigator<RootStackParamList>();
 // const prefix = Linking.createURL("/");
@@ -90,6 +89,20 @@ export default function App() {
       }
     });
   }, []);
+
+  // Get cookies for a url
+
+  // CookieManager.get("https://onetech.guru").then((cookies) => {
+  //   console.log("CookieManager.get =>", cookies);
+  // });
+
+  // CookieManager.getAll().then((cookies) => {
+  //   console.log("CookieManager.getAll =>", cookies);
+  // });
+
+  // CookieManager.clearAll().then((success) => {
+  //   console.log("CookieManager.clearAll =>", success);
+  // });
 
   // console.log("Hello debugApp");
 

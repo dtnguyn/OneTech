@@ -35,7 +35,7 @@ PODS:
     - React-Core
   - EXSecureStore (9.3.0):
     - UMCore
-  - EXSplashScreen (0.8.1):
+  - EXSplashScreen (0.9.0):
     - React-Core
     - UMCore
   - EXSQLite (8.5.0):
@@ -245,7 +245,7 @@ PODS:
   - React-jsinspector (0.63.4)
   - react-native-appearance (0.3.4):
     - React
-  - react-native-cookies (6.0.4):
+  - react-native-cookies (6.0.5):
     - React-Core
   - react-native-safe-area-context (3.1.9):
     - React-Core
@@ -323,6 +323,8 @@ PODS:
     - SDWebImageWebPCoder (~> 0.6.1)
   - RNGestureHandler (1.8.0):
     - React
+  - RNInAppBrowser (3.5.1):
+    - React-Core
   - RNReanimated (1.13.2):
     - React-Core
   - RNScreens (2.15.2):
@@ -409,6 +411,7 @@ DEPENDENCIES:
   - "RNCMaskedView (from `../node_modules/@react-native-community/masked-view`)"
   - RNFastImage (from `../node_modules/react-native-fast-image`)
   - RNGestureHandler (from `../node_modules/react-native-gesture-handler`)
+  - RNInAppBrowser (from `../node_modules/react-native-inappbrowser-reborn`)
   - RNReanimated (from `../node_modules/react-native-reanimated`)
   - RNScreens (from `../node_modules/react-native-screens`)
   - RNSharedElement (from `../node_modules/react-native-shared-element`)
@@ -540,6 +543,8 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native-fast-image"
   RNGestureHandler:
     :path: "../node_modules/react-native-gesture-handler"
+  RNInAppBrowser:
+    :path: "../node_modules/react-native-inappbrowser-reborn"
   RNReanimated:
     :path: "../node_modules/react-native-reanimated"
   RNScreens:
@@ -591,7 +596,7 @@ SPEC CHECKSUMS:
   EXPermissions: 17d4846ad1880f6891c74ae58ca1acb43e47ed47
   EXRandom: d7e0f3dd64810aabd27d59f8ecffee359177e2c3
   EXSecureStore: 1b571851e6068b30b8ec097be848a04603c03bae
-  EXSplashScreen: 8c7c1112ce7611a853486af4737fe2298eda7657
+  EXSplashScreen: ab5984afcca91e0af6b3138f01a8c47dc4955c51
   EXSQLite: bda6a286dded0637bb312ee781239dcca163ff4b
   EXUpdates: 5124c03b19730078482a27b97fcb4718b06ca6b5
   EXWebBrowser: cb4811e6c883876d2e2ba1c10527de96963d410a
@@ -613,7 +618,7 @@ SPEC CHECKSUMS:
   React-jsiexecutor: 93bd528844ad21dc07aab1c67cb10abae6df6949
   React-jsinspector: 58aef7155bc9a9683f5b60b35eccea8722a4f53a
   react-native-appearance: 0f0e5fc2fcef70e03d48c8fe6b00b9158c2ba8aa
-  react-native-cookies: 3b5b182d008b714fefc337df15b787f00385a598
+  react-native-cookies: dd3fe2fd198f54d016fb6875cb8c2fb767170fdc
   react-native-safe-area-context: b6e0e284002381d2ff29fa4fff42b4d8282e3c94
   react-native-slider: e99fc201cefe81270fc9d81714a7a0f5e566b168
   react-native-webview: 6b7950628616679d81bdd75747e50cf6de9b5a5f
@@ -631,6 +636,7 @@ SPEC CHECKSUMS:
   RNCMaskedView: 5a8ec07677aa885546a0d98da336457e2bea557f
   RNFastImage: d4870d58f5936111c56218dbd7fcfc18e65b58ff
   RNGestureHandler: 7a5833d0f788dbd107fbb913e09aa0c1ff333c39
+  RNInAppBrowser: 48b95ba7a4eaff5cc223bca338d3e319561dbd1b
   RNReanimated: e03f7425cb7a38dcf1b644d680d1bfc91c3337ad
   RNScreens: 3d682bcaba69a4f8e55543d90818704f34338db1
   RNSharedElement: 00b1a1420d213a34459bb9a5aacabb38107d7948
@@ -651,6 +657,6 @@ SPEC CHECKSUMS:
   UMTaskManagerInterface: 4c60b43eaf3cb05a164bc9113258a171c18b7bf7
   Yoga: 4bd86afe9883422a7c4028c00e34790f560923d6
 
-PODFILE CHECKSUM: 24b9ad144e50add4dc1cf38811b5084f2eaba030
+PODFILE CHECKSUM: ac97b51d02566b3d7c19eedb9f5cbe9eefdc6ebd
 
 COCOAPODS: 1.10.1

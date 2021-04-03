@@ -1,12 +1,14 @@
+import CookieManager from "@react-native-cookies/cookies";
 import React, { useEffect, useState } from "react";
 import { Image, StyleSheet, View } from "react-native";
-import { ScrollView } from "react-native-gesture-handler";
+import { ScrollView, TouchableOpacity } from "react-native-gesture-handler";
 import DeviceCarousel from "../../components/home/DeviceCarousel";
 import CustomText from "../../components/util/CustomText";
 import { useAuth } from "../../context/AuthContext";
 import {
   Device,
   useDevicesQuery,
+  useLogoutMutation,
   User,
   useSingleUserQuery,
 } from "../../generated/graphql";
@@ -21,7 +23,7 @@ const ProfileScreenTab: React.FC<Props> = ({ userId, navigation }) => {
   const [user, setUser] = useState<User>();
   const [followedDevices, setFollowedDevices] = useState<Device[]>([]);
   const [starCount, setStarCount] = useState<number>();
-  const { user: currentUser } = useAuth();
+  const { user: currentUser, setUser: setCurrentUser } = useAuth();
 
   const { data: userData, error: userError } = useSingleUserQuery({
     variables: {
@@ -38,6 +40,25 @@ const ProfileScreenTab: React.FC<Props> = ({ userId, navigation }) => {
     },
     fetchPolicy: "cache-and-network",
   });
+
+  const [logoutMutation, {}] = useLogoutMutation({});
+
+  const handleLogout = async () => {
+    logoutMutation({
+      update: (cache) => cache.evict({ fieldName: "me" }),
+    }).then((res) => {
+      const response = res.data?.logout;
+      if (response?.status) {
+        navigation.popToTop();
+        setCurrentUser(null);
+        CookieManager.clearAll().then((success) => {
+          console.log("CookieManager.clearAll =>", success);
+        });
+      } else {
+        alert(response?.message);
+      }
+    });
+  };
 
   useEffect(() => {
     let count = 0;
@@ -91,6 +112,16 @@ const ProfileScreenTab: React.FC<Props> = ({ userId, navigation }) => {
                 {user?.problemSolved ? user?.problemSolved.length : 0}
               </CustomText>
             </View>
+            {currentUser?.id === user.id ? (
+              <TouchableOpacity
+                style={{ marginTop: 20 }}
+                onPress={() => {
+                  handleLogout();
+                }}
+              >
+                <CustomText style={{ color: "#E35427" }}>Log out</CustomText>
+              </TouchableOpacity>
+            ) : null}
           </View>
         </View>
         {user.setting?.isPrivate && user.id !== currentUser?.id ? null : (
