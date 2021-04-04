@@ -12,6 +12,7 @@ import { TouchableWithoutFeedback } from "react-native-gesture-handler";
 import { Device } from "../../generated/graphql";
 import CustomText from "../util/CustomText";
 import { SharedElement } from "react-navigation-shared-element";
+import FastImage from "react-native-fast-image";
 
 interface Props {
   device: Device;
@@ -26,11 +27,12 @@ const DeviceItem: React.FC<Props> = ({ device, moveToDetail }) => {
       onPress={moveToDetail}
     >
       <SharedElement id={device.id}>
-        <Image
+        <FastImage
           source={{
             uri: device.coverImage,
           }}
           style={styles.deviceImage}
+          resizeMode={FastImage.resizeMode.contain}
         />
       </SharedElement>
 
@@ -47,7 +49,6 @@ const styles = StyleSheet.create({
   deviceImage: {
     width: 380,
     height: 380,
-    resizeMode: "contain",
   },
 });
 

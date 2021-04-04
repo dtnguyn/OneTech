@@ -8,11 +8,20 @@ interface LoginProps {}
 const Login: React.FC<LoginProps> = ({}) => {
   const { error: alert } = useAlert();
   const onLoginClick = (method: string) => {
+    // console.log(`${process.env.NEXT_PUBLIC_CLIENT_URL}`);
+    // console.log(
+    //   `${process.env.NEXT_PUBLIC_CLIENT_URL}/redirect/auth/login/error`
+    // );
+
     switch (method) {
       case "google": {
         router.push({
           pathname: `${process.env.NEXT_PUBLIC_SERVER_URL}/auth/login`,
-          query: { method: "google" },
+          query: {
+            method: "google",
+            redirect: `${process.env.NEXT_PUBLIC_CLIENT_URL}`,
+            failureRedirect: `${process.env.NEXT_PUBLIC_CLIENT_URL}/redirect/auth/login/error`,
+          },
         });
 
         break;
@@ -21,7 +30,11 @@ const Login: React.FC<LoginProps> = ({}) => {
       case "facebook": {
         router.push({
           pathname: `${process.env.NEXT_PUBLIC_SERVER_URL}/auth/login`,
-          query: { method: "facebook" },
+          query: {
+            method: "facebook",
+            redirect: `${process.env.NEXT_PUBLIC_CLIENT_URL}`,
+            failureRedirect: `${process.env.NEXT_PUBLIC_CLIENT_URL}/redirect/auth/login/error`,
+          },
         });
         break;
       }
@@ -29,7 +42,11 @@ const Login: React.FC<LoginProps> = ({}) => {
       case "twitter": {
         router.push({
           pathname: `${process.env.NEXT_PUBLIC_SERVER_URL}/auth/login`,
-          query: { method: "twitter" },
+          query: {
+            method: "twitter",
+            redirect: `${process.env.NEXT_PUBLIC_CLIENT_URL}`,
+            failureRedirect: `${process.env.NEXT_PUBLIC_CLIENT_URL}/redirect/auth/login/error`,
+          },
         });
         break;
       }

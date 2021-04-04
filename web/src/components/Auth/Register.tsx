@@ -28,7 +28,12 @@ const Register: React.FC<RegisterProps> = ({}) => {
       case "google": {
         router.push({
           pathname: `${process.env.NEXT_PUBLIC_SERVER_URL}/auth/register`,
-          query: { email, method: "google" },
+          query: {
+            email,
+            method: "google",
+            redirect: `${process.env.NEXT_PUBLIC_CLIENT_URL}`,
+            failureRedirect: `${process.env.NEXT_PUBLIC_CLIENT_URL}/redirect/auth/register/error`,
+          },
         });
 
         break;
@@ -37,7 +42,12 @@ const Register: React.FC<RegisterProps> = ({}) => {
       case "facebook": {
         router.push({
           pathname: `${process.env.NEXT_PUBLIC_SERVER_URL}/auth/register`,
-          query: { email, method: "facebook" },
+          query: {
+            email,
+            method: "facebook",
+            redirect: `${process.env.NEXT_PUBLIC_CLIENT_URL}`,
+            failureRedirect: `${process.env.NEXT_PUBLIC_CLIENT_URL}/redirect/auth/register/error`,
+          },
         });
         break;
       }
@@ -45,7 +55,12 @@ const Register: React.FC<RegisterProps> = ({}) => {
       case "twitter": {
         router.push({
           pathname: `${process.env.NEXT_PUBLIC_SERVER_URL}/auth/register`,
-          query: { email, method: "twitter" },
+          query: {
+            email,
+            method: "twitter",
+            redirect: `${process.env.NEXT_PUBLIC_CLIENT_URL}`,
+            failureRedirect: `${process.env.NEXT_PUBLIC_CLIENT_URL}/redirect/auth/register/error`,
+          },
         });
         break;
       }

@@ -69,6 +69,7 @@ export default function App() {
   const { data } = useMeQuery({
     variables: {},
     client: client,
+    fetchPolicy: "cache-and-network",
   });
 
   useEffect(() => {

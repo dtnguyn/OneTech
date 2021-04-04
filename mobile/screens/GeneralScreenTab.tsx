@@ -77,9 +77,10 @@ const GeneralScreenTab: React.FC<Props> = ({ deviceId }) => {
     <ScrollView>
       <View style={styles.container}>
         <SharedElement id={device.id}>
-          <Image
+          <FastImage
             source={{ uri: device.coverImage }}
             style={styles.deviceImage}
+            resizeMode={FastImage.resizeMode.contain}
           />
         </SharedElement>
 
@@ -122,7 +123,6 @@ const styles = StyleSheet.create({
   deviceImage: {
     width: 380,
     height: 380,
-    resizeMode: "contain",
     marginBottom: 5,
   },
   priceText: {

@@ -115,6 +115,8 @@ router.use(passport.initialize());
 
 router.get("/register", (req, res) => {
   (req.session as any).email = req.query.email;
+  (req.session as any).redirect = req.query.redirect;
+  (req.session as any).failureRedirect = req.query.failureRedirect;
 
   switch (req.query.method) {
     case "google": {
@@ -133,8 +135,12 @@ router.get("/register", (req, res) => {
 });
 
 router.get("/login", (req, res) => {
-  console.log(req.query);
-  (req.session as any).from = req.query.from;
+  // console.log(req.headers);
+  (req.session as any).redirect = req.query.redirect;
+  (req.session as any).failureRedirect = req.query.failureRedirect;
+  console.log(req.query.redirect);
+  console.log(req.query.failureRedirect);
+
   switch (req.query.method) {
     case "google": {
       res.redirect("/auth/google");
@@ -157,11 +163,6 @@ router.get(
 );
 
 router.get(
-  "/google",
-  passport.authenticate("google", { scope: ["profile", "email"] })
-);
-
-router.get(
   "/google/callback",
   passport.authenticate("google", { session: false }),
   async (req, res) => {
@@ -173,7 +174,6 @@ router.get(
       (req.session as any).userId = (req.user as any).id;
     } else {
       //If user register
-
       if ((req.session as any).email) {
         try {
           const user = await handleRegister(
@@ -188,15 +188,20 @@ router.get(
         } catch (e) {
           console.log("Fail to register", e.message);
           (req.session as any).email = undefined;
+          if ((req.session as any).failureRedirect)
+            return res.redirect((req.session as any).failureRedirect);
           return res.redirect(500, `${process.env.CLIENT_URL}/auth`);
         }
       } else {
         console.log("Register must provide email");
+        if ((req.session as any).failureRedirect)
+          return res.redirect((req.session as any).failureRedirect);
         return res.redirect(404, `${process.env.CLIENT_URL}/auth`);
       }
     }
     if ((req.session as any).email) (req.session as any).email = undefined;
-    if ((req.session as any).from) res.redirect(301, (req.session as any).from);
+    if ((req.session as any).redirect)
+      res.redirect((req.session as any).redirect);
     else res.redirect(301, `${process.env.CLIENT_URL}`);
   }
 );
@@ -230,15 +235,22 @@ router.get(
         } catch (e) {
           console.log("Fail to register", e.message);
           (req.session as any).email = undefined;
+          if ((req.session as any).failureRedirect)
+            return res.redirect((req.session as any).failureRedirect);
           return res.redirect(500, `${process.env.CLIENT_URL}/auth`);
         }
       } else {
         console.log("Register must provide email");
+        if ((req.session as any).failureRedirect)
+          return res.redirect((req.session as any).failureRedirect);
         return res.redirect(404, `${process.env.CLIENT_URL}/auth`);
       }
     }
     if ((req.session as any).email) (req.session as any).email = undefined;
-    res.redirect(301, `${process.env.CLIENT_URL}`);
+    console.log((req.session as any).redirect);
+    // if ((req.session as any).redirect)
+    //   res.redirect((req.session as any).redirect);
+    // else res.redirect(301, `${process.env.CLIENT_URL}`);
   }
 );
 
@@ -268,15 +280,21 @@ router.get(
         } catch (e) {
           console.log("Fail to register", e.message);
           (req.session as any).email = undefined;
+          if ((req.session as any).failureRedirect)
+            return res.redirect((req.session as any).failureRedirect);
           return res.redirect(500, `${process.env.CLIENT_URL}/auth`);
         }
       } else {
         console.log("Register must provide email");
+        if ((req.session as any).failureRedirect)
+          return res.redirect((req.session as any).failureRedirect);
         return res.redirect(404, `${process.env.CLIENT_URL}/auth`);
       }
     }
     if ((req.session as any).email) (req.session as any).email = undefined;
-    res.redirect(301, `${process.env.CLIENT_URL}`);
+    if ((req.session as any).redirect)
+      res.redirect((req.session as any).redirect);
+    else res.redirect(301, `${process.env.CLIENT_URL}`);
   }
 );
 

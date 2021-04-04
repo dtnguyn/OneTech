@@ -1,6 +1,7 @@
 import CookieManager from "@react-native-cookies/cookies";
 import React, { useEffect, useState } from "react";
 import { Image, StyleSheet, View } from "react-native";
+import FastImage from "react-native-fast-image";
 import { ScrollView, TouchableOpacity } from "react-native-gesture-handler";
 import DeviceCarousel from "../../components/home/DeviceCarousel";
 import CustomText from "../../components/util/CustomText";
@@ -94,7 +95,7 @@ const ProfileScreenTab: React.FC<Props> = ({ userId, navigation }) => {
     <ScrollView>
       <View style={styles.container}>
         <View style={styles.userContainer}>
-          <Image style={styles.userIcon} source={{ uri: user.avatar }} />
+          <FastImage style={styles.userIcon} source={{ uri: user.avatar }} />
           <View style={styles.userInfo}>
             <CustomText fontSize={18}>{user.username}</CustomText>
             <CustomText fontSize={12}>{user.email}</CustomText>

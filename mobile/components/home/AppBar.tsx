@@ -8,6 +8,7 @@ import {
   TouchableOpacity,
   Dimensions,
 } from "react-native";
+import FastImage from "react-native-fast-image";
 import { useAuth } from "../../context/AuthContext";
 import { User } from "../../generated/graphql";
 import CustomText from "../util/CustomText";
@@ -36,7 +37,7 @@ const AppBar: React.FC<Props> = ({ moveToAuth, moveToAccount }) => {
             moveToAccount(user.id);
           }}
         >
-          <Image source={{ uri: user.avatar }} style={styles.userIcon} />
+          <FastImage source={{ uri: user.avatar }} style={styles.userIcon} />
         </TouchableOpacity>
       ) : (
         <TouchableOpacity style={styles.signInButton} onPress={moveToAuth}>
@@ -88,7 +89,6 @@ const styles = StyleSheet.create({
     width: 53,
     height: 53,
     borderRadius: 53,
-    resizeMode: "cover",
   },
 });
 

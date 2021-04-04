@@ -76,7 +76,7 @@ const Header: React.FC<HeaderProps> = ({ device, rating }) => {
               alert("Please login first.");
               return;
             }
-            handleToggleFollowDevice(device.id, user.id, followed);
+            handleToggleFollowDevice(device.id, user.id);
           }}
           variant={followed ? "secondary" : "success"}
           size="lg"

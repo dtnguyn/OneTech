@@ -109,9 +109,7 @@ const Login: React.FC<Props> = ({ navigation }) => {
           // }
           navigation.push("Web", {
             type: "login",
-            url: `https://api.onetech.guru/auth/login?method=google&from=${Linking.createURL(
-              "/"
-            )}`,
+            url: `https://api.onetech.guru/auth/login?method=google&redirect=https://onetech.guru/redirect/auth/login/mobile/success&failureRedirect=https://onetech.guru/redirect/auth/login/mobile/error`,
           });
         }}
       />
@@ -121,9 +119,7 @@ const Login: React.FC<Props> = ({ navigation }) => {
         onPress={() => {
           navigation.push("Web", {
             type: "login",
-            url: `https://api.onetech.guru/auth/login?method=facebook&from=${Linking.createURL(
-              "/"
-            )}`,
+            url: `https://api.onetech.guru/auth/login?method=facebook&redirect=https://onetech.guru/redirect/auth/login/mobile/success&failureRedirect=https://onetech.guru/redirect/auth/login/mobile/error`,
           });
         }}
       />
@@ -134,9 +130,7 @@ const Login: React.FC<Props> = ({ navigation }) => {
         onPress={() => {
           navigation.push("Web", {
             type: "login",
-            url: `https://api.onetech.guru/auth/login?method=twitter&from=${Linking.createURL(
-              "/"
-            )}`,
+            url: `https://api.onetech.guru/auth/login?method=twitter&redirect=https://onetech.guru/redirect/auth/login/mobile/success&failureRedirect=https://onetech.guru/redirect/auth/login/mobile/error`,
           });
         }}
       />

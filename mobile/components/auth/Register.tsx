@@ -1,15 +1,23 @@
 import { useFonts } from "expo-font";
-import React from "react";
+import React, { useState } from "react";
 import { StyleSheet, TextInput, View } from "react-native";
+import { ScreenNavigationProp } from "../../utils/types";
 import CustomText from "../util/CustomText";
 import AuthButton from "./AuthButton";
 
-interface Props {}
+interface Props {
+  navigation: ScreenNavigationProp;
+}
 
-const Register: React.FC<Props> = ({}) => {
-  const [fontsLoaded] = useFonts({
-    MMedium: require("../../assets/fonts/Montserrat-Medium.ttf"),
-  });
+const Register: React.FC<Props> = ({ navigation }) => {
+  const [registerEmail, setRegisterEmail] = useState("");
+
+  const checkEmail = (email: string) => {
+    if (!email) return false;
+    if (!email.includes("@")) return false;
+    console.log(email.includes("."));
+    return true;
+  };
 
   return (
     <View style={styles.container}>
@@ -22,23 +30,43 @@ const Register: React.FC<Props> = ({}) => {
       <TextInput
         style={styles.textInputContainer}
         placeholder="enter your email..."
-        onChangeText={(text) => {}}
+        onChangeText={(text) => {
+          setRegisterEmail(text);
+        }}
       />
       <CustomText style={styles.authStep}>
         Step 2: Choose your preferred login method
       </CustomText>
       <AuthButton
-        title="Log in with Google"
+        title="Sign up with Google"
         icon={require("../../assets/images/google.png")}
-        onPress={() => {}}
+        onPress={() => {
+          if (!checkEmail(registerEmail)) {
+            alert("Please enter a valid email");
+            return;
+          }
+          navigation.push("Web", {
+            type: "register",
+            url: `https://api.onetech.guru/auth/register?method=google&email=${registerEmail}&redirect=https://onetech.guru/redirect/auth/register/mobile/success&failureRedirect=https://onetech.guru/redirect/auth/register/mobile/error`,
+          });
+        }}
       />
       <AuthButton
-        title="Log in with Facebook"
+        title="Sign up with Facebook"
         icon={require("../../assets/images/facebook.png")}
-        onPress={() => {}}
+        onPress={() => {
+          if (!checkEmail(registerEmail)) {
+            alert("Please enter a valid email");
+            return;
+          }
+          navigation.push("Web", {
+            type: "register",
+            url: `https://api.onetech.guru/auth/register?method=facebook&email=${registerEmail}`,
+          });
+        }}
       />
       <AuthButton
-        title="Log in with Twitter"
+        title="Sign up with Twitter"
         icon={require("../../assets/images/twitter.png")}
         onPress={() => {}}
       />
@@ -61,7 +89,7 @@ const styles = StyleSheet.create({
     color: "#A4A2A2",
   },
   textInputContainer: {
-    margin: 10,
+    marginVertical: 10,
     width: "100%",
     height: 55,
     backgroundColor: "#E0E0E0",

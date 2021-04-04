@@ -270,6 +270,7 @@ export class UserResolver {
 
   @Query(() => UserResponse, { nullable: true })
   async me(@Ctx() { req }: MyContext) {
+    console.log(req.headers);
     const user = await this.userRepo
       .createQueryBuilder("user")
       .leftJoinAndSelect("user.setting", "setting")

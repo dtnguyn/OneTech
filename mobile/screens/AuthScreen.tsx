@@ -18,23 +18,17 @@ interface Props {
 
 const AuthScreen: React.FC<Props> = ({ navigation }) => {
   const [currentOption, setCurrentOption] = useState("Log in");
-  const [text, setText] = useState("");
   const { theme } = useTheme();
   const { data } = useMeQuery({
     variables: {},
-    context: {
-      headers: {
-        cookie:
-          "qid=s%3AHdF41OeS0GlAng01BJmC1alLCtPFznsz.vnArtZRJhVaaZjVxwHYsccgaEYL7PdOfRQr79gnVcSY",
-      },
-    },
+    fetchPolicy: "cache-and-network",
   });
 
   useEffect(() => {
     console.log(data);
     if (data?.me?.status) {
-      setText("Logged");
-    } else setText("Not Logged");
+      navigation.pop();
+    }
   }, [data]);
 
   // CookieManager.get("https://onetech.guru").then((cookies) => {
@@ -65,7 +59,7 @@ const AuthScreen: React.FC<Props> = ({ navigation }) => {
                 style={styles.logo}
               />
               <CustomText fontFamily="MRegular" fontSize={34}>
-                {text}
+                OneTech
               </CustomText>
             </View>
             <CustomSwitch
@@ -77,7 +71,7 @@ const AuthScreen: React.FC<Props> = ({ navigation }) => {
             {currentOption === "Log in" ? (
               <Login navigation={navigation} />
             ) : (
-              <Register />
+              <Register navigation={navigation} />
             )}
           </View>
         </View>

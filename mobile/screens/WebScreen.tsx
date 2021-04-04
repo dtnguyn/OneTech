@@ -5,6 +5,8 @@ import * as Linking from "expo-linking";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useMeQuery } from "../generated/graphql";
 import { ScreenNavigationProp, WebRouteProp } from "../utils/types";
+import { TouchableOpacity } from "react-native-gesture-handler";
+import CustomText from "../components/util/CustomText";
 
 interface Props {
   navigation: ScreenNavigationProp;
@@ -12,46 +14,62 @@ interface Props {
 }
 
 const WebScreen: React.FC<Props> = ({ navigation, route }) => {
-  const [logged, setLogged] = useState<boolean>();
-
   const { data, refetch } = useMeQuery({
     variables: {},
   });
 
   useEffect(() => {
     if (data?.me?.status) {
-      setLogged(true);
       navigation.popToTop();
-    } else setLogged(false);
+    }
   }, [data]);
 
-  if (logged === false)
-    return (
-      <SafeAreaView style={styles.container}>
-        <View style={styles.buttonContainer}>
-          <Button title="Done" onPress={() => refetch()} />
+  return (
+    <SafeAreaView style={styles.container}>
+      <View style={styles.buttonContainer}>
+        <View>
+          <Button
+            title="Cancel"
+            color="#6C757D"
+            onPress={async () => {
+              await refetch();
+              if (!data?.me?.status) navigation.pop();
+            }}
+          />
         </View>
-
-        <WebView
-          source={{
-            uri: route.params.url,
+        <View
+          style={{
+            marginLeft: "auto",
           }}
-          sharedCookiesEnabled={true}
-          userAgent="Mozilla/5.0 (Windows NT 6.1; WOW64; Trident/7.0; AS; rv:11.0) like Gecko"
-          style={{ width: "100%", height: "100%", marginTop: 0 }}
-        />
-      </SafeAreaView>
-    );
-  else return <View />;
+        >
+          <Button title="Done" color="#28A744" onPress={() => refetch()} />
+        </View>
+      </View>
+
+      <WebView
+        source={{
+          uri: route.params.url,
+        }}
+        sharedCookiesEnabled={true}
+        userAgent="Mozilla/5.0 (Windows NT 6.1; WOW64; Trident/7.0; AS; rv:11.0) like Gecko"
+        style={{ width: "100%", height: "100%", marginTop: 0 }}
+      />
+    </SafeAreaView>
+  );
 };
 
 const styles = StyleSheet.create({
   container: {
     width: "100%",
     height: "100%",
+    backgroundColor: "#fff",
   },
   buttonContainer: {
-    alignSelf: "flex-start",
+    width: "100%",
+    display: "flex",
+    alignItems: "center",
+    flexDirection: "row",
+    paddingHorizontal: 10,
   },
 });
 
