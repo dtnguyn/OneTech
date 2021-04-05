@@ -61,14 +61,23 @@ const Register: React.FC<Props> = ({ navigation }) => {
           }
           navigation.push("Web", {
             type: "register",
-            url: `https://api.onetech.guru/auth/register?method=facebook&email=${registerEmail}`,
+            url: `https://api.onetech.guru/auth/register?method=facebook&email=${registerEmail}&redirect=https://onetech.guru/redirect/auth/register/mobile/success&failureRedirect=https://onetech.guru/redirect/auth/register/mobile/error`,
           });
         }}
       />
       <AuthButton
         title="Sign up with Twitter"
         icon={require("../../assets/images/twitter.png")}
-        onPress={() => {}}
+        onPress={() => {
+          if (!checkEmail(registerEmail)) {
+            alert("Please enter a valid email");
+            return;
+          }
+          navigation.push("Web", {
+            type: "register",
+            url: `https://api.onetech.guru/auth/register?method=twitter&email=${registerEmail}&redirect=https://onetech.guru/redirect/auth/register/mobile/success&failureRedirect=https://onetech.guru/redirect/auth/register/mobile/error`,
+          });
+        }}
       />
     </View>
   );

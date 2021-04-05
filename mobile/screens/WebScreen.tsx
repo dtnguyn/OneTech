@@ -7,6 +7,7 @@ import { useMeQuery } from "../generated/graphql";
 import { ScreenNavigationProp, WebRouteProp } from "../utils/types";
 import { TouchableOpacity } from "react-native-gesture-handler";
 import CustomText from "../components/util/CustomText";
+import CookieManager from "@react-native-cookies/cookies";
 
 interface Props {
   navigation: ScreenNavigationProp;
@@ -23,6 +24,12 @@ const WebScreen: React.FC<Props> = ({ navigation, route }) => {
       navigation.popToTop();
     }
   }, [data]);
+
+  useEffect(() => {
+    CookieManager.clearAll().then((success) => {
+      console.log("CookieManager.clearAll =>", success);
+    });
+  }, []);
 
   return (
     <SafeAreaView style={styles.container}>
