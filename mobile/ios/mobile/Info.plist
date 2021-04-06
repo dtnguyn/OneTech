@@ -70,5 +70,7 @@
 		<true/>
 		<key>CFBundleDisplayName</key>
 		<string>mobile</string>
+		<key>NSPhotoLibraryUsageDescription</key>
+		<string>mobile</string>
 	</dict>
 </plist>

@@ -1,5 +1,5 @@
 import Slider from "@react-native-community/slider";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { StatusBar, StyleSheet, View } from "react-native";
 import {
   ScrollView,
@@ -10,6 +10,21 @@ import CustomText from "../components/util/CustomText";
 import { useTheme } from "../context/ThemeContext";
 import { laptopSpec, mobileSpec, pcSpec } from "../utils/specArr";
 import { ComposeRouteProp, ScreenNavigationProp } from "../utils/types";
+import {
+  RichEditor,
+  RichToolbar,
+  actions,
+  defaultActions,
+} from "react-native-pell-rich-editor";
+import {
+  launchCamera,
+  launchImageLibrary,
+  ImagePickerResponse,
+} from "react-native-image-picker";
+import {
+  useDeleteImagesMutation,
+  useUploadImageMutation,
+} from "../generated/graphql";
 
 interface Props {
   navigation: ScreenNavigationProp;
@@ -23,8 +38,49 @@ const ComposeScreen: React.FC<Props> = ({ navigation, route }) => {
   });
   const { theme } = useTheme();
   const [rating, setRating] = useState(route.params.rating);
+  const [images, setImages] = useState<Array<string>>([]);
   const [specsArr, setSpecsArr] = useState<Array<string>>([]);
   const [overallRating, setOverallRating] = useState<number>(0);
+  const RichText = useRef<any>(); //reference to the RichEditor component
+  const [uploadImageMutation, {}] = useUploadImageMutation();
+  const [deleteImagesMutation, {}] = useDeleteImagesMutation();
+
+  const handleUploadImage = async (
+    response: ImagePickerResponse,
+    success: (url: string) => void,
+    failure: (err: string, options?: any | undefined) => void,
+    progress?: ((percent: number) => void) | undefined
+  ) => {
+    if (!response.base64 || !response.fileName) {
+      failure("image is not valid");
+      return;
+    }
+    await uploadImageMutation({
+      variables: {
+        image: response.base64!,
+        imageId: response.fileName!,
+      },
+    })
+      .then((res) => {
+        if (res.data?.uploadImage.status) {
+          images.push(response.fileName!);
+          success(res.data.uploadImage.data![0] as string);
+        } else {
+          failure(res.data?.uploadImage.message!);
+        }
+      })
+      .catch((error) => {
+        failure(error.message);
+      });
+  };
+
+  const handleDeleteImages = (arr: Array<string>) => {
+    deleteImagesMutation({
+      variables: {
+        imageIds: arr,
+      },
+    });
+  };
 
   useEffect(() => {
     if (!rating || !route.params.category) return;
@@ -102,12 +158,61 @@ const ComposeScreen: React.FC<Props> = ({ navigation, route }) => {
         ) : null}
 
         <CustomText style={styles.label}>Content</CustomText>
-        <TextInput
+        {/* <TextInput
           style={styles.contentInput}
           multiline={true}
           value={compose?.content}
           textAlignVertical="top"
           onChangeText={(text) => setCompose({ ...compose, content: text })}
+        /> */}
+
+        <RichToolbar
+          style={{ width: "90%" }}
+          editor={RichText}
+          disabled={false}
+          selectedIconTint={"#017BFE"}
+          onPressAddImage={() => {
+            launchImageLibrary(
+              {
+                mediaType: "photo",
+                includeBase64: true,
+              },
+              (response) => {
+                handleUploadImage(
+                  response,
+                  (url) => {
+                    RichText.current.insertImage(url);
+                  },
+                  (errMsg, _) => {
+                    alert(errMsg);
+                  }
+                );
+              }
+            );
+          }}
+          // iconSize={40}
+          actions={[
+            actions.setBold,
+            actions.setItalic,
+            actions.insertBulletsList,
+            actions.insertOrderedList,
+            actions.insertImage,
+          ]}
+
+          // iconMap={{
+          //   customAction: customIcon,
+          // }}
+        />
+        <RichEditor
+          disabled={false}
+          // containerStyle={styles.contentInput}
+          ref={RichText}
+          style={styles.contentInput}
+          placeholder={"Start Writing Here"}
+          initialContentHTML={compose.content}
+          onChange={(text) => setCompose({ ...compose, content: text })}
+          // editorInitializedCallback={editorInitializedCallback}
+          // onHeightChange={handleHeightChange}
         />
 
         <TouchableOpacity
@@ -173,8 +278,7 @@ const styles = StyleSheet.create({
   contentInput: {
     marginBottom: 20,
     width: "90%",
-
-    height: 500,
+    minHeight: 500,
     fontFamily: "MMedium",
     borderColor: "gray",
     backgroundColor: "#fff",
