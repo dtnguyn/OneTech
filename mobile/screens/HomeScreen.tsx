@@ -113,12 +113,12 @@ const HomeScreen: React.FC<Props> = ({ navigation }) => {
           moveToAccount={(userId) => navigation.push("Account", { userId })}
         />
 
-        <AnimatedLoader
+        {/* <AnimatedLoader
           visible={loading}
           source={require("../assets/others/loader.json")}
           animationStyle={styles.lottie}
           speed={1}
-        />
+        /> */}
         <FlatList
           style={{ marginBottom: 120 }}
           ListHeaderComponent={renderHeader}

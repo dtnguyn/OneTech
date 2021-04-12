@@ -34,19 +34,24 @@ const CustomEditor: React.FC<CustomEditorProps> = ({
     failure: (err: string, options?: any | undefined) => void,
     progress?: ((percent: number) => void) | undefined
   ) => {
+    const imageId = "img_" + Date().toString().replaceAll(" ", "_");
     await uploadImageMutation({
       variables: {
-        image: blobInfo.base64(),
-        imageId: blobInfo.id(),
+        image: blobInfo.blob(),
+        imageId,
       },
-    }).then((res) => {
-      if (res.data?.uploadImage.status) {
-        images.push(blobInfo.id());
-        success(res.data.uploadImage.data![0] as string);
-      } else {
-        failure(res.data?.uploadImage.message!);
-      }
-    });
+    })
+      .then((res) => {
+        if (res.data?.uploadImage.status) {
+          images.push(imageId);
+          success(res.data.uploadImage.data![0] as string);
+        } else {
+          failure(res.data?.uploadImage.message!);
+        }
+      })
+      .catch((error) => {
+        failure(error.message);
+      });
   };
 
   const handleDeleteImages = (arr: Array<string>) => {

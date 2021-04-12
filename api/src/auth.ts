@@ -248,9 +248,9 @@ router.get(
     }
     if ((req.session as any).email) (req.session as any).email = undefined;
     console.log((req.session as any).redirect);
-    // if ((req.session as any).redirect)
-    //   res.redirect((req.session as any).redirect);
-    // else res.redirect(301, `${process.env.CLIENT_URL}`);
+    if ((req.session as any).redirect)
+      res.redirect((req.session as any).redirect);
+    else res.redirect(301, `${process.env.CLIENT_URL}`);
   }
 );
 

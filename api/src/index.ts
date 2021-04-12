@@ -144,7 +144,13 @@ import Redis from "ioredis";
     },
   });
 
-  apolloServer.applyMiddleware({ app, cors: false });
+  apolloServer.applyMiddleware({
+    app,
+    cors: false,
+    bodyParserConfig: {
+      limit: "50mb",
+    },
+  });
 
   http.listen(parseInt(process.env.PORT!), () => {
     console.log("One-tech server running");

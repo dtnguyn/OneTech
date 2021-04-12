@@ -1,16 +1,16 @@
+import { Storage } from "@google-cloud/storage";
+import { rejects } from "assert";
+import { GraphQLUpload } from "graphql-upload";
+import path from "path";
+import { Arg, Ctx, Mutation, Query, Resolver } from "type-graphql";
+import { getRepository } from "typeorm";
 import {
   ProblemImage,
   ProblemImageResponse,
   UploadImageResponse,
 } from "../entities/ProblemImage";
-import { Arg, Ctx, Mutation, Query, Resolver } from "type-graphql";
-import { Storage } from "@google-cloud/storage";
-import path from "path";
-import stream from "stream";
-import { getRepository } from "typeorm";
 import { ReviewImage, ReviewImageResponse } from "../entities/ReviewImage";
-import { rejects } from "assert";
-import { MyContext } from "../types";
+import { MyContext, Upload } from "../types";
 
 const gc = new Storage({
   keyFilename: path.join(__dirname, `../../${process.env.GOOGLE_STORAGE}`),
@@ -24,11 +24,62 @@ export class ImageResolver {
   problemImageRepo = getRepository(ProblemImage);
   reviewImageRepo = getRepository(ReviewImage);
 
+  // @Mutation(() => UploadImageResponse)
+  // async uploadImage(
+  //   @Ctx() { req }: MyContext,
+  //   @Arg("image", () => String) image: string,
+  //   @Arg("imageId", () => String) imageId: string
+  // ) {
+  //   if (!(req.session as any).userId) {
+  //     return {
+  //       status: false,
+  //       message: "You haven't logged in. Please Log in and try again.",
+  //     };
+  //   }
+
+  //   const url: string = await new Promise((resolve, reject) => {
+  //     var bufferStream = new stream.PassThrough();
+  //     bufferStream.end(Buffer.from(image, "base64"));
+  //     const file = bucket.file(imageId);
+  //     bufferStream
+  //       .pipe(
+  //         file.createWriteStream({
+  //           metadata: {
+  //             contentType: "image/jpeg",
+  //             metadata: {
+  //               custom: "metadata",
+  //             },
+  //           },
+  //           public: true,
+  //           validation: "md5",
+  //         })
+  //       )
+  //       .on("error", function (err) {
+  //         reject(err.message);
+  //       })
+  //       .on("finish", function () {
+  //         resolve(`https://storage.googleapis.com/${bucket.name}/${imageId}`);
+  //       });
+  //   });
+
+  //   if (url) {
+  //     return {
+  //       status: true,
+  //       message: "Upload image successfully",
+  //       data: [url],
+  //     };
+  //   } else
+  //     return {
+  //       status: false,
+  //       message: "Fail to upload image",
+  //     };
+  // }
+
   @Mutation(() => UploadImageResponse)
   async uploadImage(
     @Ctx() { req }: MyContext,
-    @Arg("image", () => String) image: string,
-    @Arg("imageId", () => String) imageId: string
+    @Arg("imageId", () => String) imageId: string,
+    @Arg("image", () => GraphQLUpload) image: Upload
   ) {
     if (!(req.session as any).userId) {
       return {
@@ -36,43 +87,43 @@ export class ImageResolver {
         message: "You haven't logged in. Please Log in and try again.",
       };
     }
-
-    const url: string = await new Promise((resolve, reject) => {
-      var bufferStream = new stream.PassThrough();
-      bufferStream.end(Buffer.from(image, "base64"));
-      const file = bucket.file(imageId);
-      bufferStream
-        .pipe(
-          file.createWriteStream({
-            metadata: {
-              contentType: "image/jpeg",
-              metadata: {
-                custom: "metadata",
-              },
-            },
-            public: true,
-            validation: "md5",
+    try {
+      const url: string = await new Promise((resolve, reject) => {
+        const file = bucket.file(imageId);
+        image
+          .createReadStream()
+          .pipe(
+            file.createWriteStream({
+              resumable: false,
+              gzip: true,
+            })
+          )
+          .on("error", function (err) {
+            reject(err.message);
+            console.log(err);
           })
-        )
-        .on("error", function (err) {
-          reject(err.message);
-        })
-        .on("finish", function () {
-          resolve(`https://storage.googleapis.com/${bucket.name}/${imageId}`);
-        });
-    });
+          .on("finish", function () {
+            resolve(`https://storage.googleapis.com/${bucket.name}/${imageId}`);
+          });
+      });
 
-    if (url) {
-      return {
-        status: true,
-        message: "Upload image successfully",
-        data: [url],
-      };
-    } else
+      if (url) {
+        return {
+          status: true,
+          message: "Upload image successfully",
+          data: [url],
+        };
+      } else
+        return {
+          status: false,
+          message: "Fail to upload image",
+        };
+    } catch (error) {
       return {
         status: false,
-        message: "Fail to upload image",
+        message: error.message,
       };
+    }
   }
 
   @Mutation(() => UploadImageResponse)

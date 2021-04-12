@@ -55,17 +55,22 @@ const ComposeScreen: React.FC<Props> = ({ navigation, route }) => {
       failure("image is not valid");
       return;
     }
+
+    // const test =
+    console.log("Hello");
     await uploadImageMutation({
       variables: {
-        image: response.base64!,
+        image: JSON.stringify(response.base64!),
         imageId: response.fileName!,
       },
     })
       .then((res) => {
+        console.log(res.data?.uploadImage);
         if (res.data?.uploadImage.status) {
           images.push(response.fileName!);
           success(res.data.uploadImage.data![0] as string);
         } else {
+          console.log(res.data?.uploadImage);
           failure(res.data?.uploadImage.message!);
         }
       })
