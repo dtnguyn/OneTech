@@ -13,6 +13,8 @@ export type Scalars = {
   Float: number;
   /** The javascript `Date` as string. Type represents date and time as the ISO Date string. */
   DateTime: any;
+  /** The `Upload` scalar type represents a file upload. */
+  Upload: any;
 };
 
 export type Query = {
@@ -551,8 +553,8 @@ export type MutationDeleteDeviceSpecArgs = {
 
 
 export type MutationUploadImageArgs = {
+  image: Scalars['Upload'];
   imageId: Scalars['String'];
-  image: Scalars['String'];
 };
 
 
@@ -755,6 +757,7 @@ export type UploadImageResponse = {
   data?: Maybe<Array<Scalars['String']>>;
 };
 
+
 export type UpdateProblemInput = {
   title?: Maybe<Scalars['String']>;
   content?: Maybe<Scalars['String']>;
@@ -804,7 +807,7 @@ export type ToggleDeviceFollowMutation = (
 );
 
 export type UploadImageMutationVariables = Exact<{
-  image: Scalars['String'];
+  image: Scalars['Upload'];
   imageId: Scalars['String'];
 }>;
 
@@ -1553,7 +1556,7 @@ export type ToggleDeviceFollowMutationHookResult = ReturnType<typeof useToggleDe
 export type ToggleDeviceFollowMutationResult = Apollo.MutationResult<ToggleDeviceFollowMutation>;
 export type ToggleDeviceFollowMutationOptions = Apollo.BaseMutationOptions<ToggleDeviceFollowMutation, ToggleDeviceFollowMutationVariables>;
 export const UploadImageDocument = gql`
-    mutation UploadImage($image: String!, $imageId: String!) {
+    mutation UploadImage($image: Upload!, $imageId: String!) {
   uploadImage(image: $image, imageId: $imageId) {
     status
     message

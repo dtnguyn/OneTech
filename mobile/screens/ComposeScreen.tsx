@@ -25,6 +25,8 @@ import {
   useDeleteImagesMutation,
   useUploadImageMutation,
 } from "../generated/graphql";
+import { ReactNativeFile } from "apollo-upload-client";
+import { BackHandler } from "react-native";
 
 interface Props {
   navigation: ScreenNavigationProp;
@@ -51,23 +53,33 @@ const ComposeScreen: React.FC<Props> = ({ navigation, route }) => {
     failure: (err: string, options?: any | undefined) => void,
     progress?: ((percent: number) => void) | undefined
   ) => {
-    if (!response.base64 || !response.fileName) {
+    if (!response.fileName || !response.uri) {
       failure("image is not valid");
       return;
     }
 
-    // const test =
-    console.log("Hello");
+    const str = "img_" + Date().toString();
+    let imageId = "";
+    for (let i = 0; i < str.length; i++) {
+      if (str[i] === " ") {
+        imageId += "_";
+      } else imageId += str[i];
+    }
+    const file = new ReactNativeFile({
+      uri: response.uri!,
+      name: "a.jpg",
+      type: "image/jpeg",
+    });
     await uploadImageMutation({
       variables: {
-        image: JSON.stringify(response.base64!),
-        imageId: response.fileName!,
+        image: file,
+        imageId,
       },
     })
       .then((res) => {
         console.log(res.data?.uploadImage);
         if (res.data?.uploadImage.status) {
-          images.push(response.fileName!);
+          images.push(imageId);
           success(res.data.uploadImage.data![0] as string);
         } else {
           console.log(res.data?.uploadImage);
@@ -118,6 +130,21 @@ const ComposeScreen: React.FC<Props> = ({ navigation, route }) => {
   useEffect(() => {
     if (!route.params.rating?.overall) return;
     setOverallRating(route.params.rating?.overall!);
+  }, []);
+
+  useEffect(() => {
+    BackHandler.addEventListener("hardwareBackPress", () => {
+      console.log("here");
+      handleDeleteImages(images);
+      navigation.goBack();
+      return true;
+    });
+    return () => {
+      BackHandler.removeEventListener("hardwareBackPress", () => {
+        console.log("here remove");
+        return true;
+      });
+    };
   }, []);
 
   return (

@@ -36,12 +36,18 @@ import { getStringData } from "./utils/storageHelper";
 import { ThemeContext } from "./context/ThemeContext";
 import CookieManager from "@react-native-cookies/cookies";
 import * as Linking from "expo-linking";
+import { createUploadLink } from "apollo-upload-client";
 
 const { manifest } = Constants;
 
+const uploadLink = createUploadLink({
+  uri: `https://api.onetech.guru/graphql`,
+  credentials: "include",
+});
+
 const client = new ApolloClient({
   // uri: `http://${manifest.debuggerHost.split(":").shift()}:4000/graphql`,
-  uri: `https://api.onetech.guru/graphql`,
+  link: uploadLink as any,
   cache: new InMemoryCache({}),
   credentials: "include",
 });

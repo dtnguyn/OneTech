@@ -1,4 +1,4 @@
-mutation UploadImage($image: String!, $imageId: String!) {
+mutation UploadImage($image: Upload!, $imageId: String!) {
   uploadImage(image: $image, imageId: $imageId) {
     status
     message
