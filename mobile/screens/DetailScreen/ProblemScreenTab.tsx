@@ -8,11 +8,11 @@ import {
   View,
 } from "react-native";
 import { TouchableOpacity } from "react-native-gesture-handler";
-import ProblemItem from "../components/deviceDetail/ProblemItem";
-import EmptyPlaceholder from "../components/util/EmptyPlaceholder";
-import Problems from "../components/util/Problems";
-import { useAuth } from "../context/AuthContext";
-import { useTheme } from "../context/ThemeContext";
+import ProblemItem from "../../components/deviceDetail/ProblemItem";
+import EmptyPlaceholder from "../../components/util/EmptyPlaceholder";
+import Problems from "../../components/util/Problems";
+import { useAuth } from "../../context/AuthContext";
+import { useTheme } from "../../context/ThemeContext";
 import {
   DeviceProblem,
   DeviceProblemStar,
@@ -23,8 +23,8 @@ import {
   useProblemsQuery,
   useToggleProblemStarMutation,
   useUpdateProblemMutation,
-} from "../generated/graphql";
-import { ScreenNavigationProp } from "../utils/types";
+} from "../../generated/graphql";
+import { ScreenNavigationProp } from "../../utils/types";
 
 interface Props {
   deviceId: string;

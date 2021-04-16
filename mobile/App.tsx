@@ -8,7 +8,10 @@ import {
   Provider as PaperProvider,
   DarkTheme as PaperDarkTheme,
 } from "react-native-paper";
-import { createStackNavigator } from "@react-navigation/stack";
+import {
+  createStackNavigator,
+  HeaderBackButton,
+} from "@react-navigation/stack";
 import Constants from "expo-constants";
 import { useFonts } from "expo-font";
 import React, { useEffect, useState } from "react";
@@ -20,7 +23,7 @@ import { useMeQuery, User } from "./generated/graphql";
 import AccountScreen from "./screens/AccountScreen/AccountScreen";
 import AuthScreen from "./screens/AuthScreen";
 import ComposeScreen from "./screens/ComposeScreen";
-import DetailScreen from "./screens/DetailScreen";
+import DetailScreen from "./screens/DetailScreen/DetailScreen";
 import HomeScreen from "./screens/HomeScreen";
 import SearchScreen from "./screens/SearchScreen";
 import SolutionScreen from "./screens/SolutionScreen";
@@ -176,7 +179,7 @@ export default function App() {
               <RootStack.Screen
                 name="Compose"
                 component={ComposeScreen}
-                options={({ route }) => ({
+                options={({ route, navigation }) => ({
                   headerShown: true,
                   headerStyle: {
                     backgroundColor: theme === "light" ? "#A8D8AD" : "#336B39",
@@ -188,6 +191,7 @@ export default function App() {
                         : "Compose"}
                     </CustomText>
                   ),
+                  headerLeft: () => null,
                 })}
               />
 

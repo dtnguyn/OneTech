@@ -1,15 +1,15 @@
 import React, { useEffect, useState } from "react";
 import { StyleSheet, View } from "react-native";
 import { ScrollView } from "react-native-gesture-handler";
-import CustomSwitch from "../components/auth/CustomSwitch";
-import SpecTable from "../components/deviceDetail/SpecTable";
-import SpecTableRow from "../components/deviceDetail/SpecTableRow";
+import CustomSwitch from "../../components/auth/CustomSwitch";
+import SpecTable from "../../components/deviceDetail/SpecTable";
+import SpecTableRow from "../../components/deviceDetail/SpecTableRow";
 import {
   Device,
   ReviewRating,
   useDeviceDetailQuery,
   useDeviceRatingsQuery,
-} from "../generated/graphql";
+} from "../../generated/graphql";
 
 interface Props {
   // device: Device | undefined;

@@ -7,9 +7,9 @@ import {
   TabBar,
   TabView,
 } from "react-native-tab-view";
-import CustomText from "../components/util/CustomText";
-import { useTheme } from "../context/ThemeContext";
-import { DetailRouteProp, ScreenNavigationProp } from "../utils/types";
+import CustomText from "../../components/util/CustomText";
+import { useTheme } from "../../context/ThemeContext";
+import { DetailRouteProp, ScreenNavigationProp } from "../../utils/types";
 import GeneralScreenTab from "./GeneralScreenTab";
 import ProblemScreenTab from "./ProblemScreenTab";
 import ReviewScreenTab from "./ReviewScreenTab";

@@ -39,8 +39,8 @@ const ComposeScreen: React.FC<Props> = ({ navigation, route }) => {
     content: route.params.content,
   });
   const { theme } = useTheme();
-  const [rating, setRating] = useState(route.params.rating);
   const [images, setImages] = useState<Array<string>>([]);
+  const [rating, setRating] = useState(route.params.rating);
   const [specsArr, setSpecsArr] = useState<Array<string>>([]);
   const [overallRating, setOverallRating] = useState<number>(0);
   const RichText = useRef<any>(); //reference to the RichEditor component
@@ -79,7 +79,7 @@ const ComposeScreen: React.FC<Props> = ({ navigation, route }) => {
       .then((res) => {
         console.log(res.data?.uploadImage);
         if (res.data?.uploadImage.status) {
-          images.push(imageId);
+          setImages([...images, imageId]);
           success(res.data.uploadImage.data![0] as string);
         } else {
           console.log(res.data?.uploadImage);
@@ -92,6 +92,7 @@ const ComposeScreen: React.FC<Props> = ({ navigation, route }) => {
   };
 
   const handleDeleteImages = (arr: Array<string>) => {
+    if (!arr.length) return;
     deleteImagesMutation({
       variables: {
         imageIds: arr,
@@ -136,7 +137,7 @@ const ComposeScreen: React.FC<Props> = ({ navigation, route }) => {
     BackHandler.addEventListener("hardwareBackPress", () => {
       console.log("here");
       handleDeleteImages(images);
-      navigation.goBack();
+      navigation.pop();
       return true;
     });
     return () => {
@@ -249,7 +250,7 @@ const ComposeScreen: React.FC<Props> = ({ navigation, route }) => {
 
         <TouchableOpacity
           containerStyle={{
-            ...styles.submitButton,
+            ...styles.buttonContainer,
             backgroundColor:
               (rating && overallRating === 0) ||
               (!compose.title && route.params.title != null) ||
@@ -273,6 +274,20 @@ const ComposeScreen: React.FC<Props> = ({ navigation, route }) => {
           }}
         >
           <CustomText style={{ color: "#fff" }}>Submit</CustomText>
+        </TouchableOpacity>
+        <TouchableOpacity
+          containerStyle={{
+            ...styles.buttonContainer,
+            backgroundColor: "#ed2626",
+            marginTop: 10,
+          }}
+          onPress={() => {
+            console.log(images);
+            handleDeleteImages(images);
+            navigation.pop();
+          }}
+        >
+          <CustomText style={{ color: "#fff" }}>Cancel</CustomText>
         </TouchableOpacity>
       </View>
     </ScrollView>
@@ -318,7 +333,7 @@ const styles = StyleSheet.create({
     borderRadius: 5,
     padding: 10,
   },
-  submitButton: {
+  buttonContainer: {
     width: "90%",
     borderRadius: 15,
     height: 60,

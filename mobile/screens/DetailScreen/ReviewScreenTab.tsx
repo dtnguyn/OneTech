@@ -9,8 +9,8 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
-import ReviewItem from "../components/deviceDetail/ReviewItem";
-import { useTheme } from "../context/ThemeContext";
+import ReviewItem from "../../components/deviceDetail/ReviewItem";
+import { useTheme } from "../../context/ThemeContext";
 import {
   Review,
   ReviewRating,
@@ -20,8 +20,8 @@ import {
   useDeleteReviewMutation,
   useReviewsQuery,
   useUpdateReviewMutation,
-} from "../generated/graphql";
-import { ScreenNavigationProp } from "../utils/types";
+} from "../../generated/graphql";
+import { ScreenNavigationProp } from "../../utils/types";
 
 interface Props {
   deviceId: string;
@@ -272,7 +272,7 @@ const ReviewScreenTab: React.FC<Props> = ({
           }}
         />
         <Image
-          source={require("../assets/images/search2.png")}
+          source={require("../../assets/images/search2.png")}
           style={styles.searchIcon}
         />
       </View>
@@ -313,7 +313,7 @@ const ReviewScreenTab: React.FC<Props> = ({
         >
           <Image
             style={styles.floatingIcon}
-            source={require("../assets/images/add2.png")}
+            source={require("../../assets/images/add2.png")}
           />
         </TouchableOpacity>
       </View>

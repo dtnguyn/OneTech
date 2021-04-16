@@ -1,15 +1,15 @@
 import React, { useEffect, useState } from "react";
 import { Image, StyleSheet, Text, View } from "react-native";
 import { ScrollView, TouchableOpacity } from "react-native-gesture-handler";
-import CustomText from "../components/util/CustomText";
-import { useAuth } from "../context/AuthContext";
+import CustomText from "../../components/util/CustomText";
+import { useAuth } from "../../context/AuthContext";
 import {
   Device,
   useDeviceDetailQuery,
   useToggleDeviceFollowMutation,
-} from "../generated/graphql";
+} from "../../generated/graphql";
 import FastImage from "react-native-fast-image";
-import CustomImage from "../components/util/CustomImage";
+import CustomImage from "../../components/util/CustomImage";
 import WebView from "react-native-webview";
 
 import { SharedElement } from "react-navigation-shared-element";
@@ -88,7 +88,7 @@ const GeneralScreenTab: React.FC<Props> = ({ deviceId }) => {
         <TouchableOpacity style={styles.buyButton}>
           <CustomText>Buy</CustomText>
           <Image
-            source={require("../assets/images/cart.png")}
+            source={require("../../assets/images/cart.png")}
             style={styles.buttonIcon}
           />
         </TouchableOpacity>
@@ -104,7 +104,7 @@ const GeneralScreenTab: React.FC<Props> = ({ deviceId }) => {
         >
           <CustomText>{followed ? `Unfollow` : "Follow"}</CustomText>
           <Image
-            source={require("../assets/images/add.png")}
+            source={require("../../assets/images/add.png")}
             style={styles.buttonIcon}
           />
         </TouchableOpacity>
