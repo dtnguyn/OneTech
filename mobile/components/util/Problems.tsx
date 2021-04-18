@@ -32,7 +32,6 @@ const Problems: React.FC<Props> = ({ problems, flatListStyle, navigation }) => {
   const { user } = useAuth();
 
   const [toggleProblemStarMutation, {}] = useToggleProblemStarMutation();
-  const [createProblemMutation, {}] = useCreateProblemMutation();
   const [updateProblemMutation, {}] = useUpdateProblemMutation();
   const [deleteImagesMutation, {}] = useDeleteImagesMutation();
   const [deleteProblemMutation, {}] = useDeleteProblemMutation();
@@ -60,9 +59,10 @@ const Problems: React.FC<Props> = ({ problems, flatListStyle, navigation }) => {
             },
           });
         }}
-        deletePost={(problem) => {
+        deletePost={(problem, images) => {
           createAlert("Delete post", "Do you want to delete this post?", () => {
-            handleDeleteProblem(problem.id, []);
+            console.log("delete images: ", images);
+            handleDeleteProblem(problem.id, images);
           });
         }}
         reportPost={(problem) => {

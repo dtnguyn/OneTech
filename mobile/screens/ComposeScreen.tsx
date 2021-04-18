@@ -269,7 +269,12 @@ const ComposeScreen: React.FC<Props> = ({ navigation, route }) => {
               (finalRating as any).overall = overallRating;
             }
 
-            route.params.onCompose(compose.title, compose.content, rating, []);
+            route.params.onCompose(
+              compose.title,
+              compose.content,
+              rating,
+              images
+            );
             navigation.pop();
           }}
         >

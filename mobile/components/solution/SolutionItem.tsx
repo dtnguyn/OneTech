@@ -13,7 +13,7 @@ interface Props {
   checkPost: ((solution: Solution) => void) | null;
   toggleStar: (solution: Solution) => void;
   updatePost: (solution: Solution) => void;
-  deletePost: (solution: Solution) => void;
+  deletePost: (solution: Solution, images: string[]) => void;
   reportPost: (solution: Solution) => void;
 }
 
@@ -136,7 +136,12 @@ const SolutionItem: React.FC<Props> = ({
         </TouchableOpacity>
         <TouchableOpacity
           style={styles.buttonIconContainer}
-          onPress={() => deletePost(solution)}
+          onPress={() => {
+            const images = solution.images.map((solution) => {
+              return solution.path;
+            });
+            deletePost(solution, images);
+          }}
         >
           <Image
             source={require("../../assets/images/trash.png")}

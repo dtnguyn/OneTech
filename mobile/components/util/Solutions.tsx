@@ -76,12 +76,12 @@ const Solutions: React.FC<Props> = ({
             },
           });
         }}
-        deletePost={(solution) => {
+        deletePost={(solution, images) => {
           createAlert(
             "Delete Post",
             "Do you want to delete this solution",
             () => {
-              handleDeleteSolution(solution.id, []);
+              handleDeleteSolution(solution.id, images);
             }
           );
         }}

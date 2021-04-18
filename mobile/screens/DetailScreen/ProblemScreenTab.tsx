@@ -114,7 +114,7 @@ const ProblemScreenTab: React.FC<Props> = ({ deviceId, navigation }) => {
           }}
         />
         <Image
-          source={require("../assets/images/search2.png")}
+          source={require("../../assets/images/search2.png")}
           style={styles.searchIcon}
         />
       </View>
@@ -145,7 +145,7 @@ const ProblemScreenTab: React.FC<Props> = ({ deviceId, navigation }) => {
         >
           <Image
             style={styles.floatingIcon}
-            source={require("../assets/images/add2.png")}
+            source={require("../../assets/images/add2.png")}
           />
         </TouchableOpacity>
       </View>

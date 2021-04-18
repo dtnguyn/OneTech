@@ -12,7 +12,7 @@ import SpecTable from "./SpecTable";
 interface Props {
   category: string;
   review: Review;
-  deletePost: (review: Review) => void;
+  deletePost: (review: Review, images: string[]) => void;
   updatePost: (review: Review) => void;
   reportPost: (review: Review) => void;
 }
@@ -134,7 +134,10 @@ const ReviewItem: React.FC<Props> = ({
           <TouchableOpacity
             style={styles.buttonIconContainer}
             onPress={() => {
-              deletePost(review);
+              const images = review.images.map((image) => {
+                return image.path;
+              });
+              deletePost(review, images);
             }}
           >
             <Image

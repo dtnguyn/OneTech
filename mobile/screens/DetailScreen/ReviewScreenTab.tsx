@@ -71,9 +71,9 @@ const ReviewScreenTab: React.FC<Props> = ({
             },
           });
         }}
-        deletePost={(review) => {
+        deletePost={(review, images) => {
           createAlert("Delete post", "Do you want to delete this post?", () => {
-            handleDeleteReview(review.id, []);
+            handleDeleteReview(review.id, images);
           });
         }}
         reportPost={(review) => {

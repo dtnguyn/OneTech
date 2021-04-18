@@ -16,7 +16,7 @@ interface Props {
   clickAction: (problemId: string) => void;
   toggleStar: (problem: DeviceProblem) => void;
   updatePost: (problem: DeviceProblem) => void;
-  deletePost: (problem: DeviceProblem) => void;
+  deletePost: (problem: DeviceProblem, images: string[]) => void;
   reportPost: (problem: DeviceProblem) => void;
 }
 
@@ -146,7 +146,12 @@ const ProblemItem: React.FC<Props> = ({
             {user && user.id === problem.author?.id ? (
               <TouchableOpacity
                 style={styles.buttonIconContainer}
-                onPress={() => deletePost(problem)}
+                onPress={() => {
+                  const images = problem.images.map((problem) => {
+                    return problem.path;
+                  });
+                  deletePost(problem, images);
+                }}
               >
                 <Image
                   source={require("../../assets/images/trash.png")}
