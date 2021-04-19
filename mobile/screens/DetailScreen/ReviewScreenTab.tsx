@@ -1,25 +1,18 @@
 import React, { useEffect, useState } from "react";
 import {
-  Alert,
-  FlatList,
   Image,
-  ListRenderItem,
   StyleSheet,
   TextInput,
   TouchableOpacity,
   View,
 } from "react-native";
-import ReviewItem from "../../components/deviceDetail/ReviewItem";
+import Reviews from "../../components/util/Reviews";
 import { useTheme } from "../../context/ThemeContext";
 import {
   Review,
   ReviewRating,
-  useCreateReportMutation,
   useCreateReviewMutation,
-  useDeleteImagesMutation,
-  useDeleteReviewMutation,
   useReviewsQuery,
-  useUpdateReviewMutation,
 } from "../../generated/graphql";
 import { ScreenNavigationProp } from "../../utils/types";
 
@@ -39,10 +32,6 @@ const ReviewScreenTab: React.FC<Props> = ({
   const { theme } = useTheme();
 
   const [createReviewMutation, {}] = useCreateReviewMutation();
-  const [updateReviewMutation, {}] = useUpdateReviewMutation();
-  const [deleteReviewMutation, {}] = useDeleteReviewMutation();
-  const [deleteImagesMutation, {}] = useDeleteImagesMutation();
-  const [createReportMutation] = useCreateReportMutation();
 
   const { data: reviewsData, error: reviewsError } = useReviewsQuery({
     variables: {
@@ -53,90 +42,12 @@ const ReviewScreenTab: React.FC<Props> = ({
     fetchPolicy: "cache-and-network",
   });
 
-  const renderReviewItem: ListRenderItem<Review> = ({ item }) => {
-    return (
-      <ReviewItem
-        review={item}
-        category={category}
-        updatePost={(review) => {
-          navigation.push("Compose", {
-            header: "Update review",
-            title: review.title,
-            content: review.content,
-            rating: review.rating,
-            category: category,
-            onCompose: (title, content, rating, images) => {
-              if (!title) return;
-              handleUpdateReview(review.id, title, content, rating, images);
-            },
-          });
-        }}
-        deletePost={(review, images) => {
-          createAlert("Delete post", "Do you want to delete this post?", () => {
-            handleDeleteReview(review.id, images);
-          });
-        }}
-        reportPost={(review) => {
-          navigation.push("Compose", {
-            header: "Report",
-            title: "",
-            content: "",
-            category: category,
-            onCompose: (title, content, rating, images) => {
-              if (!title) return;
-              handleCreateReport(review.id, title, content);
-            },
-          });
-        }}
-      />
-    );
-  };
-
   let reviewTimeout: NodeJS.Timeout;
   const handleSearchReview = (text: string) => {
     clearTimeout(reviewTimeout);
     reviewTimeout = setTimeout(() => {
       setReviewSearchValue(text);
     }, 700);
-  };
-
-  const createAlert = (
-    title: string,
-    content: string,
-    callback: () => void
-  ) => {
-    Alert.alert(
-      title,
-      content,
-      [
-        {
-          text: "Nope",
-          onPress: () => console.log("Cancel Pressed"),
-          style: "cancel",
-        },
-        { text: "Yes", onPress: () => callback() },
-      ],
-      { cancelable: false }
-    );
-  };
-
-  const handleCreateReport = (id: string, title: string, content: string) => {
-    createReportMutation({
-      variables: {
-        title,
-        content,
-        reviewId: id,
-      },
-    })
-      .then((response) => {
-        if (response.data?.createReport.status) {
-        } else {
-          throw new Error(response.data?.createReport.message);
-        }
-      })
-      .catch((error) => {
-        alert(error.message);
-      });
   };
 
   const handleCreateReview = async (
@@ -179,72 +90,6 @@ const ReviewScreenTab: React.FC<Props> = ({
       });
   };
 
-  const handleUpdateReview = (
-    id: string,
-    title: string,
-    content: string,
-    rating: any,
-    images: string[]
-  ) => {
-    updateReviewMutation({
-      variables: {
-        id,
-        title,
-        content,
-        overall: rating.overall,
-        display: rating.display,
-        processor: rating.processor,
-        battery: rating.battery,
-        software: rating.software,
-        camera: rating.camera,
-        gpu: rating.gpu,
-        memory: rating.memory,
-        thermals: rating.thermals,
-        ports: rating.ports,
-        images,
-      },
-      update: (cache) => {
-        cache.evict({ fieldName: "ratings" });
-      },
-    })
-      .then((res) => {
-        if (res.data?.updateReview?.status) {
-        } else {
-          throw new Error(res.data?.updateReview?.message);
-        }
-      })
-      .catch((error) => {
-        alert(error.message);
-      });
-  };
-
-  const handleDeleteReview = async (id: string, images: string[]) => {
-    try {
-      if (images.length !== 0) {
-        await deleteImagesMutation({
-          variables: {
-            imageIds: images,
-          },
-        });
-      }
-
-      await deleteReviewMutation({
-        variables: {
-          id,
-        },
-        update: (cache) => {
-          cache.evict({ fieldName: "reviews" });
-        },
-      }).then((res) => {
-        if (!res.data?.deleteReview.status) {
-          throw new Error(res.data?.deleteReview.message);
-        }
-      });
-    } catch (error) {
-      alert(error.message);
-    }
-  };
-
   useEffect(() => {
     const reviewArr = reviewsData?.reviews?.data as Review[];
 
@@ -276,12 +121,10 @@ const ReviewScreenTab: React.FC<Props> = ({
           style={styles.searchIcon}
         />
       </View>
-      <FlatList
-        style={{
-          paddingHorizontal: 15,
-        }}
-        data={reviews}
-        renderItem={renderReviewItem}
+      <Reviews
+        category={category}
+        navigation={navigation}
+        reviews={reviews ? reviews : []}
       />
       <View style={styles.floatingButtonContainer}>
         <TouchableOpacity

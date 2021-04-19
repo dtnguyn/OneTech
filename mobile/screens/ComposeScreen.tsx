@@ -42,7 +42,9 @@ const ComposeScreen: React.FC<Props> = ({ navigation, route }) => {
   const [images, setImages] = useState<Array<string>>([]);
   const [rating, setRating] = useState(route.params.rating);
   const [specsArr, setSpecsArr] = useState<Array<string>>([]);
-  const [overallRating, setOverallRating] = useState<number>(0);
+  const [overallRating, setOverallRating] = useState<number>(
+    route.params.rating?.overall ? route.params.rating.overall : 0
+  );
   const RichText = useRef<any>(); //reference to the RichEditor component
   const [uploadImageMutation, {}] = useUploadImageMutation();
   const [deleteImagesMutation, {}] = useDeleteImagesMutation();
@@ -265,10 +267,10 @@ const ComposeScreen: React.FC<Props> = ({ navigation, route }) => {
           }
           onPress={() => {
             if (rating) {
-              const finalRating = rating;
-              (finalRating as any).overall = overallRating;
+              let finalRating = rating;
+              if (finalRating.overall !== overallRating)
+                finalRating.overall = overallRating;
             }
-
             route.params.onCompose(
               compose.title,
               compose.content,
