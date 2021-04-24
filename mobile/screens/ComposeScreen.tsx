@@ -1,6 +1,6 @@
 import Slider from "@react-native-community/slider";
 import React, { useEffect, useRef, useState } from "react";
-import { StatusBar, StyleSheet, View } from "react-native";
+import { Dimensions, StatusBar, StyleSheet, View } from "react-native";
 import {
   ScrollView,
   TextInput,
@@ -79,12 +79,10 @@ const ComposeScreen: React.FC<Props> = ({ navigation, route }) => {
       },
     })
       .then((res) => {
-        console.log(res.data?.uploadImage);
         if (res.data?.uploadImage.status) {
-          setImages([...images, imageId]);
+          images.push(imageId);
           success(res.data.uploadImage.data![0] as string);
         } else {
-          console.log(res.data?.uploadImage);
           failure(res.data?.uploadImage.message!);
         }
       })
@@ -137,14 +135,13 @@ const ComposeScreen: React.FC<Props> = ({ navigation, route }) => {
 
   useEffect(() => {
     BackHandler.addEventListener("hardwareBackPress", () => {
-      console.log("here");
+      console.log("delete image: ", images);
       handleDeleteImages(images);
       navigation.pop();
       return true;
     });
     return () => {
       BackHandler.removeEventListener("hardwareBackPress", () => {
-        console.log("here remove");
         return true;
       });
     };
@@ -193,16 +190,9 @@ const ComposeScreen: React.FC<Props> = ({ navigation, route }) => {
         ) : null}
 
         <CustomText style={styles.label}>Content</CustomText>
-        {/* <TextInput
-          style={styles.contentInput}
-          multiline={true}
-          value={compose?.content}
-          textAlignVertical="top"
-          onChangeText={(text) => setCompose({ ...compose, content: text })}
-        /> */}
 
         <RichToolbar
-          style={{ width: "90%" }}
+          style={{ width: Dimensions.get("window").width - 30 }}
           editor={RichText}
           disabled={false}
           selectedIconTint={"#017BFE"}
@@ -211,11 +201,16 @@ const ComposeScreen: React.FC<Props> = ({ navigation, route }) => {
               {
                 mediaType: "photo",
                 includeBase64: true,
+                // maxWidth: 300,
+                // maxHeight: 300,
+                quality: 1,
               },
               (response) => {
+                if (response.didCancel) return;
                 handleUploadImage(
                   response,
                   (url) => {
+                    console.log("success: ", images);
                     RichText.current.insertImage(url);
                   },
                   (errMsg, _) => {
@@ -242,7 +237,9 @@ const ComposeScreen: React.FC<Props> = ({ navigation, route }) => {
           disabled={false}
           // containerStyle={styles.contentInput}
           ref={RichText}
-          style={styles.contentInput}
+          style={styles.inputContainer}
+          editorStyle={styles.inputContent}
+          // containerStyle={styles.inputContent}
           placeholder={"Start Writing Here"}
           initialContentHTML={compose.content}
           onChange={(text) => setCompose({ ...compose, content: text })}
@@ -289,7 +286,6 @@ const ComposeScreen: React.FC<Props> = ({ navigation, route }) => {
             marginTop: 10,
           }}
           onPress={() => {
-            console.log(images);
             handleDeleteImages(images);
             navigation.pop();
           }}
@@ -329,17 +325,17 @@ const styles = StyleSheet.create({
     display: "flex",
     alignItems: "center",
   },
-  contentInput: {
+  inputContainer: {
     marginBottom: 20,
-    width: "90%",
+    width: Dimensions.get("window").width - 30,
     minHeight: 500,
     fontFamily: "MMedium",
     borderColor: "gray",
     backgroundColor: "#fff",
     borderWidth: 0.2,
     borderRadius: 5,
-    padding: 10,
   },
+  inputContent: {},
   buttonContainer: {
     width: "90%",
     borderRadius: 15,

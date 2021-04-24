@@ -24,6 +24,7 @@ import SolutionItem from "../solution/SolutionItem";
 import EmptyPlaceholder from "./EmptyPlaceholder";
 
 interface Props {
+  emptyPlaceHolderText?: string;
   flatListStyle: StyleProp<ViewStyle>;
   solutions: Solution[];
   checkAvailable: boolean;
@@ -31,6 +32,7 @@ interface Props {
 }
 
 const Solutions: React.FC<Props> = ({
+  emptyPlaceHolderText,
   solutions,
   navigation,
   checkAvailable,
@@ -50,6 +52,9 @@ const Solutions: React.FC<Props> = ({
       <SolutionItem
         solution={item}
         starred={isStarred(item.stars!)}
+        goToAccount={(userId) => {
+          navigation.push("Account", { userId });
+        }}
         checkPost={
           checkAvailable
             ? (solution) => {
@@ -251,7 +256,11 @@ const Solutions: React.FC<Props> = ({
     return false;
   };
 
-  if (!solutions.length) return <EmptyPlaceholder />;
+  if (!solutions.length) {
+    if (emptyPlaceHolderText)
+      return <EmptyPlaceholder title={emptyPlaceHolderText} content=" " />;
+    else return <EmptyPlaceholder />;
+  }
 
   return (
     <FlatList

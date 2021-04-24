@@ -75,7 +75,7 @@ const SettingsScreenTab: React.FC<Props> = ({}) => {
 
   useEffect(() => {
     if (error && user) {
-      alert(error);
+      alert(error.message);
     }
   }, [error]);
 

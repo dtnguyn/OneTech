@@ -1,5 +1,7 @@
 import React from "react";
 import { Image, StyleSheet, View } from "react-native";
+import HTML from "react-native-render-html";
+import { useTheme } from "../../context/ThemeContext";
 import CustomText from "./CustomText";
 
 interface Props {
@@ -8,8 +10,13 @@ interface Props {
 }
 
 const EmptyPlaceholder: React.FC<Props> = ({ title, content }) => {
+  const { theme } = useTheme();
+
   return (
     <View style={styles.container}>
+      {/* For some reason, this line of code fix the flickering issue with react-native tab view */}
+      <HTML source={{ html: " " }} />
+
       <CustomText>{title ? title : `No posts yet!`}</CustomText>
       <CustomText>
         {content ? content : `Be the first one to post something.`}

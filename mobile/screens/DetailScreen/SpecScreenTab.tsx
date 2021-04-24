@@ -28,7 +28,7 @@ const SpecScreenTab: React.FC<Props> = ({ deviceId }) => {
     fetchPolicy: "cache-and-network",
   });
 
-  const { data: ratingData } = useDeviceRatingsQuery({
+  const { data: ratingData, error: ratingError } = useDeviceRatingsQuery({
     variables: {
       deviceId,
     },
@@ -50,6 +50,18 @@ const SpecScreenTab: React.FC<Props> = ({ deviceId }) => {
       setDevice(devices[0]);
     }
   }, [data]);
+
+  useEffect(() => {
+    if (error) {
+      alert(error.message);
+    }
+  }, [error]);
+
+  useEffect(() => {
+    if (ratingError) {
+      alert(ratingError.message);
+    }
+  }, [ratingError]);
 
   if (!device || !rating) return null;
 

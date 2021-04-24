@@ -80,6 +80,12 @@ const SolutionScreen: React.FC<Props> = ({ route, navigation }) => {
     }
   }, [data]);
 
+  useEffect(() => {
+    if (error) {
+      alert(error.message);
+    }
+  }, [error]);
+
   return (
     <View style={styles.container}>
       <Solutions

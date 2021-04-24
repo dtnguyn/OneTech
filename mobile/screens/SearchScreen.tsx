@@ -66,6 +66,12 @@ const SearchScreen: React.FC<Props> = ({ navigation }) => {
     }
   }, [data]);
 
+  useEffect(() => {
+    if (error) {
+      alert(error.message);
+    }
+  }, [error]);
+
   return (
     <SafeAreaView>
       <View style={styles.container}>

@@ -99,6 +99,12 @@ const ProblemScreenTab: React.FC<Props> = ({ deviceId, navigation }) => {
     }
   }, [problemsData]);
 
+  useEffect(() => {
+    if (problemsError) {
+      alert(problemsError.message);
+    }
+  }, [problemsError]);
+
   return (
     <View style={styles.container}>
       <View style={styles.textInputContainer}>

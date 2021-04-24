@@ -38,12 +38,12 @@ const ProblemItem: React.FC<Props> = ({
   const { user } = useAuth();
   const { theme } = useTheme();
 
+  // return null;
   return (
     <View style={{ width: "100%" }}>
       <View style={styles.container}>
         <View style={styles.left}>
           <TouchableOpacity
-            activeOpacity={1}
             onPress={() => {
               goToAccount(problem.author?.id!);
             }}

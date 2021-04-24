@@ -29,17 +29,18 @@ import SearchScreen from "./screens/SearchScreen";
 import SolutionScreen from "./screens/SolutionScreen";
 import WebScreen from "./screens/WebScreen";
 import { RootStackParamList } from "./utils/types";
+import SplashScreen from "react-native-splash-screen";
+
 import {
   Appearance,
   AppearanceProvider,
   useColorScheme,
 } from "react-native-appearance";
 import { CustomDarkTheme } from "./utils/themes";
-import { getStringData } from "./utils/storageHelper";
+import { getStringData, storeStringData } from "./utils/storageHelper";
 import { ThemeContext } from "./context/ThemeContext";
-import CookieManager from "@react-native-cookies/cookies";
-import * as Linking from "expo-linking";
 import { createUploadLink } from "apollo-upload-client";
+import CookieManager from "@react-native-cookies/cookies";
 
 const { manifest } = Constants;
 
@@ -81,6 +82,10 @@ export default function App() {
     fetchPolicy: "cache-and-network",
   });
 
+  CookieManager.get("https://onetech.guru").then((cookies) => {
+    console.log("CookieManager.get =>", cookies);
+  });
+
   useEffect(() => {
     const users = data?.me?.data as User[];
     if (users && users.length != 0) {
@@ -99,25 +104,10 @@ export default function App() {
       }
     });
   }, []);
+  useEffect(() => {
+    SplashScreen.hide();
+  }, []);
 
-  // Get cookies for a url
-
-  // CookieManager.get("https://onetech.guru").then((cookies) => {
-  //   console.log("CookieManager.get =>", cookies);
-  // });
-
-  // CookieManager.getAll().then((cookies) => {
-  //   console.log("CookieManager.getAll =>", cookies);
-  // });
-
-  // CookieManager.clearAll().then((success) => {
-  //   console.log("CookieManager.clearAll =>", success);
-  // });
-
-  // console.log("Hello debugApp");
-
-  // if (!fontsLoaded) return null;
-  // return null;
   return (
     <ApolloProvider client={client}>
       <AuthContext.Provider value={{ user, setUser }}>

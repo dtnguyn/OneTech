@@ -102,6 +102,12 @@ const ReviewScreenTab: React.FC<Props> = ({
     }
   }, [reviewsData]);
 
+  useEffect(() => {
+    if (reviewsError) {
+      alert(reviewsError.message);
+    }
+  }, [reviewsError]);
+
   return (
     <View style={styles.container}>
       <View style={styles.textInputContainer}>

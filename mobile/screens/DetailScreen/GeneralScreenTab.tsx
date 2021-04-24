@@ -71,6 +71,12 @@ const GeneralScreenTab: React.FC<Props> = ({ deviceId }) => {
     }
   }, [data]);
 
+  useEffect(() => {
+    if (error) {
+      alert(error.message);
+    }
+  }, [error]);
+
   if (!device) return null;
 
   return (

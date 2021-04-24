@@ -12,6 +12,8 @@ import SpecTable from "./SpecTable";
 interface Props {
   category: string;
   review: Review;
+  goToAccount: (userId: string) => void;
+
   deletePost: (review: Review, images: string[]) => void;
   updatePost: (review: Review) => void;
   reportPost: (review: Review) => void;
@@ -20,6 +22,7 @@ interface Props {
 const ReviewItem: React.FC<Props> = ({
   review,
   category,
+  goToAccount,
   deletePost,
   updatePost,
   reportPost,
@@ -45,7 +48,12 @@ const ReviewItem: React.FC<Props> = ({
   return (
     <View style={styles.container}>
       <View style={styles.header}>
-        <Image style={styles.userIcon} source={{ uri: review.author.avatar }} />
+        <TouchableOpacity onPress={() => goToAccount(review.author?.id!)}>
+          <Image
+            style={styles.userIcon}
+            source={{ uri: review.author.avatar }}
+          />
+        </TouchableOpacity>
         <View style={{ marginStart: 10 }}>
           <CustomText fontFamily="MSemiBold" fontSize={18}>
             {review.author.username}
@@ -92,6 +100,7 @@ const ReviewItem: React.FC<Props> = ({
           <CustomText>{review.title}</CustomText>
           <HTML
             source={{ html: review.content }}
+            containerStyle={{ width: "90%" }}
             baseFontStyle={{
               fontFamily: "MMedium",
               color: theme === "light" ? "#000" : "#fafafa",
@@ -116,7 +125,7 @@ const ReviewItem: React.FC<Props> = ({
             style={styles.buttonIcon}
           />
         </TouchableOpacity>
-        {(user && user.id === review.author?.id) || true ? (
+        {user && user.id === review.author?.id ? (
           <TouchableOpacity
             style={styles.buttonIconContainer}
             onPress={() => {
@@ -130,7 +139,7 @@ const ReviewItem: React.FC<Props> = ({
           </TouchableOpacity>
         ) : null}
 
-        {(user && user.id === review.author?.id) || true ? (
+        {user && user.id === review.author?.id ? (
           <TouchableOpacity
             style={styles.buttonIconContainer}
             onPress={() => {

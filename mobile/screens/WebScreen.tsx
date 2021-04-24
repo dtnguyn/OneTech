@@ -1,13 +1,10 @@
-import React, { useEffect, useState } from "react";
+import CookieManager from "@react-native-cookies/cookies";
+import React, { useEffect } from "react";
 import { Button, StyleSheet, View } from "react-native";
-import { WebView } from "react-native-webview";
-import * as Linking from "expo-linking";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { WebView } from "react-native-webview";
 import { useMeQuery } from "../generated/graphql";
 import { ScreenNavigationProp, WebRouteProp } from "../utils/types";
-import { TouchableOpacity } from "react-native-gesture-handler";
-import CustomText from "../components/util/CustomText";
-import CookieManager from "@react-native-cookies/cookies";
 
 interface Props {
   navigation: ScreenNavigationProp;
@@ -15,13 +12,25 @@ interface Props {
 }
 
 const WebScreen: React.FC<Props> = ({ navigation, route }) => {
-  const { data, refetch } = useMeQuery({
+  const { data, error, refetch } = useMeQuery({
     variables: {},
   });
 
   useEffect(() => {
     if (data?.me?.status) {
-      navigation.popToTop();
+      CookieManager.get("https://onetech.guru").then((cookies) => {
+        console.log("CookieManager.get =>", cookies);
+        if (cookies.__gads) {
+          CookieManager.set("https://onetech.guru", cookies.__gads)
+            .then((done) => {
+              console.log("CookieManager.set =>", done);
+              navigation.popToTop();
+            })
+            .catch((error) => {
+              alert(error.message);
+            });
+        }
+      });
     }
   }, [data]);
 
@@ -30,6 +39,12 @@ const WebScreen: React.FC<Props> = ({ navigation, route }) => {
       console.log("CookieManager.clearAll =>", success);
     });
   }, []);
+
+  useEffect(() => {
+    if (error) {
+      alert(error.message);
+    }
+  }, [error]);
 
   return (
     <SafeAreaView style={styles.container}>
@@ -58,6 +73,8 @@ const WebScreen: React.FC<Props> = ({ navigation, route }) => {
           uri: route.params.url,
         }}
         sharedCookiesEnabled={true}
+        thirdPartyCookiesEnabled={true}
+        cacheEnabled={true}
         userAgent="Mozilla/5.0 (Windows NT 6.1; WOW64; Trident/7.0; AS; rv:11.0) like Gecko"
         style={{ width: "100%", height: "100%", marginTop: 0 }}
       />

@@ -10,6 +10,8 @@ import CustomText from "../util/CustomText";
 interface Props {
   solution: Solution;
   starred: boolean;
+  goToAccount: (userId: string) => void;
+
   checkPost: ((solution: Solution) => void) | null;
   toggleStar: (solution: Solution) => void;
   updatePost: (solution: Solution) => void;
@@ -20,6 +22,7 @@ interface Props {
 const SolutionItem: React.FC<Props> = ({
   solution,
   starred,
+  goToAccount,
   checkPost,
   toggleStar,
   updatePost,
@@ -42,10 +45,18 @@ const SolutionItem: React.FC<Props> = ({
             color="yellow"
           />
         </View>
-        <Image
-          source={{ uri: solution.author.avatar }}
-          style={styles.userIcon}
-        />
+        <TouchableOpacity
+          style={styles.userIconContainer}
+          onPress={() => {
+            goToAccount(solution.author?.id!);
+          }}
+        >
+          <Image
+            source={{ uri: solution.author.avatar }}
+            style={styles.userIcon}
+          />
+        </TouchableOpacity>
+
         <View style={styles.headerText}>
           <CustomText fontFamily="MSemiBold">
             {solution.author.username}
@@ -174,12 +185,17 @@ const styles = StyleSheet.create({
   statsBoxContainer: {
     width: "15%",
   },
-  userIcon: {
+  userIconContainer: {
     width: "15%",
     aspectRatio: 1,
     marginStart: 10,
     borderRadius: 300,
     backgroundColor: "#C4C4C4",
+  },
+  userIcon: {
+    width: "100%",
+    height: "100%",
+    borderRadius: 300,
   },
   checkIcon: {
     width: "10%",

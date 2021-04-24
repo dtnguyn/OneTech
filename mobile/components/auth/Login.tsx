@@ -84,7 +84,7 @@ const Login: React.FC<Props> = ({ navigation }) => {
           //   native: Linking.createURL("/"),
           // });
           // await AuthSession.startAsync({
-          //   authUrl: `https://api.onetech.guru/auth/login?method=google&from=${url}`,
+          //   authUrl: `https://api.onetech.guru/auth/login?method=google&redirect=https://onetech.guru/redirect/auth/login/mobile/success&failureRedirect=https://onetech.guru/redirect/auth/login/mobile/error`,
           //   returnUrl: url,
           // }).catch((error) => {
           //   console.log(error.message);
@@ -96,9 +96,7 @@ const Login: React.FC<Props> = ({ navigation }) => {
           // );
           // try {
           //   let authResult = await WebBrowser.openAuthSessionAsync(
-          //     `https://api.onetech.guru/auth/login?method=google&from=${Linking.createURL(
-          //       "/"
-          //     )}`,
+          //     `https://api.onetech.guru/auth/login?method=google&redirect=https://onetech.guru/redirect/auth/login/mobile/success&failureRedirect=https://onetech.guru/redirect/auth/login/mobile/error`,
           //     // "https://onetech.guru"
           //     Linking.createURL("/")
           //   );

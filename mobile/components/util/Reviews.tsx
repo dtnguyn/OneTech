@@ -32,6 +32,7 @@ const Reviews: React.FC<Props> = ({ category, navigation, reviews }) => {
       <ReviewItem
         review={item}
         category={category}
+        goToAccount={(userId) => navigation.push("Account", { userId })}
         updatePost={(review) => {
           navigation.push("Compose", {
             header: "Update review",
@@ -148,7 +149,7 @@ const Reviews: React.FC<Props> = ({ category, navigation, reviews }) => {
   const handleDeleteReview = async (id: string, images: string[]) => {
     try {
       if (images.length !== 0) {
-        await deleteImagesMutation({
+        deleteImagesMutation({
           variables: {
             imageIds: images,
           },

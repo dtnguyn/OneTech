@@ -1,5 +1,5 @@
-import React, { useEffect, useState } from "react";
-import { Dimensions, StatusBar, StyleSheet, Text, View } from "react-native";
+import React, { useState } from "react";
+import { Dimensions, StyleSheet, Text, View } from "react-native";
 import {
   NavigationState,
   SceneMap,
@@ -10,13 +10,6 @@ import {
 import CustomText from "../../components/util/CustomText";
 import { useAuth } from "../../context/AuthContext";
 import { useTheme } from "../../context/ThemeContext";
-import {
-  Device,
-  ReviewRating,
-  useDeviceDetailQuery,
-  useDeviceRatingsQuery,
-  useSettingQuery,
-} from "../../generated/graphql";
 import { AccountRouteProp, ScreenNavigationProp } from "../../utils/types";
 import NotificationsScreen from "./NotificationsScreenTab";
 import PostsScreenTab from "./PostsScreenTab";
@@ -51,13 +44,6 @@ const AccountScreen: React.FC<Props> = ({ route, navigation }) => {
     user && user.id === route.params.userId ? authUserRoute : userRoute
   );
   const { theme } = useTheme();
-
-  // const { data, error } = useSettingQuery({
-  //   variables: {
-  //     userId: user?.id!,
-  //   },
-  //   fetchPolicy: "cache-and-network",
-  // });
 
   const initialLayout = { width: Dimensions.get("window").width };
 

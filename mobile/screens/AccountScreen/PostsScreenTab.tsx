@@ -74,6 +74,24 @@ const PostsScreenTab: React.FC<Props> = ({ userId, navigation }) => {
     }
   }, [settingsData]);
 
+  useEffect(() => {
+    if (error) {
+      alert(error.message);
+    }
+  }, [error]);
+
+  useEffect(() => {
+    if (solutionsError) {
+      alert(solutionsError.message);
+    }
+  }, [solutionsError]);
+
+  useEffect(() => {
+    if (problemsError) {
+      alert(problemsError.message);
+    }
+  }, [problemsError]);
+
   if (isPrivate === undefined) return null;
   if (isPrivate === true) return <PrivatePlaceHolder />;
 
@@ -89,6 +107,7 @@ const PostsScreenTab: React.FC<Props> = ({ userId, navigation }) => {
 
       {currentOption === "Problems" ? (
         <Problems
+          emptyPlaceHolderText={"You have no problem posts!"}
           flatListStyle={{
             width: "100%",
             paddingHorizontal: 10,
@@ -98,6 +117,7 @@ const PostsScreenTab: React.FC<Props> = ({ userId, navigation }) => {
         />
       ) : (
         <Solutions
+          emptyPlaceHolderText={"You have no solutions posts!"}
           navigation={navigation}
           checkAvailable={false}
           solutions={solutions}

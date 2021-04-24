@@ -103,6 +103,12 @@ const HomeScreen: React.FC<Props> = ({ navigation }) => {
     };
   }, [devices]);
 
+  useEffect(() => {
+    if (error) {
+      alert(error.message);
+    }
+  }, [error]);
+
   if (!devices) return null;
 
   return (

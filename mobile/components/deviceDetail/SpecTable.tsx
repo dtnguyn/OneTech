@@ -35,7 +35,6 @@ const SpecTable: React.FC<Props> = ({
   }, []);
 
   if (!rating) return null;
-
   return (
     <View style={styles.container}>
       {specsArr.map((title) => (

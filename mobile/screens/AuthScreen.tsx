@@ -9,9 +9,8 @@ import Register from "../components/auth/Register";
 import CustomText from "../components/util/CustomText";
 import { useMeQuery } from "../generated/graphql";
 import { ScreenNavigationProp } from "../utils/types";
-import * as Linking from "expo-linking";
 import { useTheme } from "../context/ThemeContext";
-import CookieManager from "@react-native-cookies/cookies";
+
 interface Props {
   navigation: ScreenNavigationProp;
 }
@@ -19,7 +18,7 @@ interface Props {
 const AuthScreen: React.FC<Props> = ({ navigation }) => {
   const [currentOption, setCurrentOption] = useState("Log in");
   const { theme } = useTheme();
-  const { data } = useMeQuery({
+  const { data, error } = useMeQuery({
     variables: {},
     fetchPolicy: "cache-and-network",
   });
@@ -31,13 +30,11 @@ const AuthScreen: React.FC<Props> = ({ navigation }) => {
     }
   }, [data]);
 
-  // CookieManager.get("https://onetech.guru").then((cookies) => {
-  //   console.log("CookieManager.get =>", cookies);
-  // });
-
-  // CookieManager.getAll().then((cookies) => {
-  //   console.log("CookieManager.getAll =>", cookies);
-  // });
+  useEffect(() => {
+    if (error) {
+      alert(error.message);
+    }
+  }, [error]);
 
   return (
     <SafeAreaView>

@@ -89,6 +89,18 @@ const ProfileScreenTab: React.FC<Props> = ({ userId, navigation }) => {
     }
   }, [userData]);
 
+  useEffect(() => {
+    if (userError) {
+      alert(userError.message);
+    }
+  }, [userError]);
+
+  useEffect(() => {
+    if (followedDevicesError) {
+      alert(followedDevicesError.message);
+    }
+  }, [followedDevicesError]);
+
   if (!user) return null;
 
   return (

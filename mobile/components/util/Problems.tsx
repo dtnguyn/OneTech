@@ -23,12 +23,18 @@ import ProblemItem from "../deviceDetail/ProblemItem";
 import EmptyPlaceholder from "./EmptyPlaceholder";
 
 interface Props {
+  emptyPlaceHolderText?: string;
   problems: DeviceProblem[];
   flatListStyle?: StyleProp<ViewStyle>;
   navigation: ScreenNavigationProp;
 }
 
-const Problems: React.FC<Props> = ({ problems, flatListStyle, navigation }) => {
+const Problems: React.FC<Props> = ({
+  emptyPlaceHolderText,
+  problems,
+  flatListStyle,
+  navigation,
+}) => {
   const { user } = useAuth();
 
   const [toggleProblemStarMutation, {}] = useToggleProblemStarMutation();
@@ -207,7 +213,11 @@ const Problems: React.FC<Props> = ({ problems, flatListStyle, navigation }) => {
       });
   };
 
-  if (!problems.length) return <EmptyPlaceholder />;
+  if (!problems.length) {
+    if (emptyPlaceHolderText)
+      return <EmptyPlaceholder title={emptyPlaceHolderText} content=" " />;
+    else return <EmptyPlaceholder />;
+  }
   return (
     <FlatList
       style={flatListStyle}

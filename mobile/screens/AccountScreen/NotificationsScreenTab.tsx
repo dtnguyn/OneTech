@@ -67,6 +67,12 @@ const NotificationsScreen: React.FC<Props> = ({}) => {
     } else setNotifications([]);
   }, [data]);
 
+  useEffect(() => {
+    if (error) {
+      alert(error.message);
+    }
+  }, [error]);
+
   if (!notifications.length)
     return (
       <EmptyPlaceholder title="Empty!" content="You have no notifications!" />

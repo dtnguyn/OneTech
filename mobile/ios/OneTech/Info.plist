@@ -69,8 +69,8 @@
 		<key>UIRequiresFullScreen</key>
 		<true/>
 		<key>CFBundleDisplayName</key>
-		<string>mobile</string>
+		<string>OneTech</string>
 		<key>NSPhotoLibraryUsageDescription</key>
-		<string>mobile</string>
+		<string>OneTech</string>
 	</dict>
 </plist>
