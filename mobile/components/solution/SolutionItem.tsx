@@ -2,6 +2,7 @@ import moment from "moment";
 import React, { useState } from "react";
 import { Image, StyleSheet, TouchableOpacity, View } from "react-native";
 import HTML from "react-native-render-html";
+import { useAuth } from "../../context/AuthContext";
 import { useTheme } from "../../context/ThemeContext";
 import { DeviceProblem, Solution } from "../../generated/graphql";
 import StatsBox from "../deviceDetail/StatsBox";
@@ -34,6 +35,7 @@ const SolutionItem: React.FC<Props> = ({
     starsCount: solution.stars?.length ? solution.stars.length : 0,
   });
   const { theme } = useTheme();
+  const { user } = useAuth();
 
   return (
     <View style={styles.container}>
@@ -103,6 +105,10 @@ const SolutionItem: React.FC<Props> = ({
         <TouchableOpacity
           style={styles.buttonIconContainer}
           onPress={() => {
+            if (!user) {
+              alert("You have to log in first.");
+              return;
+            }
             if (starState)
               setStatsState({
                 ...statsState,

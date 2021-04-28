@@ -41,7 +41,11 @@ const ProblemItem: React.FC<Props> = ({
   // return null;
   return (
     <View style={{ width: "100%" }}>
-      <View style={styles.container}>
+      <TouchableOpacity
+        style={styles.container}
+        activeOpacity={0.8}
+        onPress={() => clickAction(problem.id)}
+      >
         <View style={styles.left}>
           <TouchableOpacity
             onPress={() => {
@@ -66,16 +70,13 @@ const ProblemItem: React.FC<Props> = ({
           />
         </View>
         <View style={styles.right}>
-          <TouchableOpacity onPress={() => clickAction(problem.id)}>
-            <CustomText
-              fontFamily="MSemiBold"
-              style={{ color: "#E35427" }}
-              fontSize={18}
-            >
-              {problem.title}
-            </CustomText>
-          </TouchableOpacity>
-
+          <CustomText
+            fontFamily="MSemiBold"
+            style={{ color: "#E35427" }}
+            fontSize={18}
+          >
+            {problem.title}
+          </CustomText>
           <CustomText fontFamily="MLight">
             {moment(problem.createdAt).format("LL")}
           </CustomText>
@@ -94,73 +95,77 @@ const ProblemItem: React.FC<Props> = ({
               marginBottom: 30,
             }}
           />
-          <View style={styles.buttonsContainer}>
-            <TouchableOpacity
-              style={styles.buttonIconContainer}
-              onPress={() => {
-                if (starState)
-                  setStatsState({
-                    ...statsState,
-                    starsCount: statsState.starsCount - 1,
-                  });
-                else
-                  setStatsState({
-                    ...statsState,
-                    starsCount: statsState.starsCount + 1,
-                  });
-
-                setStarState(!starState);
-                toggleStar(problem);
-              }}
-            >
-              <Image
-                source={
-                  starState
-                    ? require("../../assets/images/starred.png")
-                    : require("../../assets/images/star.png")
-                }
-                style={styles.buttonIcon}
-              />
-            </TouchableOpacity>
-            <TouchableOpacity
-              style={styles.buttonIconContainer}
-              onPress={() => reportPost(problem)}
-            >
-              <Image
-                source={require("../../assets/images/flag.png")}
-                style={styles.buttonIcon}
-              />
-            </TouchableOpacity>
-            {user && user.id === problem.author?.id ? (
-              <TouchableOpacity
-                style={styles.buttonIconContainer}
-                onPress={() => updatePost(problem)}
-              >
-                <Image
-                  source={require("../../assets/images/pencil.png")}
-                  style={styles.buttonIcon}
-                />
-              </TouchableOpacity>
-            ) : null}
-
-            {user && user.id === problem.author?.id ? (
-              <TouchableOpacity
-                style={styles.buttonIconContainer}
-                onPress={() => {
-                  const images = problem.images.map((problem) => {
-                    return problem.path;
-                  });
-                  deletePost(problem, images);
-                }}
-              >
-                <Image
-                  source={require("../../assets/images/trash.png")}
-                  style={styles.buttonIcon}
-                />
-              </TouchableOpacity>
-            ) : null}
-          </View>
         </View>
+      </TouchableOpacity>
+      <View style={styles.buttonsContainer}>
+        <TouchableOpacity
+          style={styles.buttonIconContainer}
+          onPress={() => {
+            if (!user) {
+              alert("You have to log in first.");
+              return;
+            }
+            if (starState)
+              setStatsState({
+                ...statsState,
+                starsCount: statsState.starsCount - 1,
+              });
+            else
+              setStatsState({
+                ...statsState,
+                starsCount: statsState.starsCount + 1,
+              });
+
+            setStarState(!starState);
+            toggleStar(problem);
+          }}
+        >
+          <Image
+            source={
+              starState
+                ? require("../../assets/images/starred.png")
+                : require("../../assets/images/star.png")
+            }
+            style={styles.buttonIcon}
+          />
+        </TouchableOpacity>
+        <TouchableOpacity
+          style={styles.buttonIconContainer}
+          onPress={() => reportPost(problem)}
+        >
+          <Image
+            source={require("../../assets/images/flag.png")}
+            style={styles.buttonIcon}
+          />
+        </TouchableOpacity>
+        {user && user.id === problem.author?.id ? (
+          <TouchableOpacity
+            style={styles.buttonIconContainer}
+            onPress={() => updatePost(problem)}
+          >
+            <Image
+              source={require("../../assets/images/pencil.png")}
+              style={styles.buttonIcon}
+            />
+          </TouchableOpacity>
+        ) : null}
+
+        {user && user.id === problem.author?.id ? (
+          <TouchableOpacity
+            style={styles.buttonIconContainer}
+            onPress={() => {
+              const images = problem.images.map((problem) => {
+                return problem.path;
+              });
+              deletePost(problem, images);
+            }}
+          >
+            <Image
+              source={require("../../assets/images/trash.png")}
+              style={styles.buttonIcon}
+            />
+          </TouchableOpacity>
+        ) : null}
       </View>
       <View style={styles.divider} />
     </View>
@@ -195,6 +200,8 @@ const styles = StyleSheet.create({
     position: "absolute",
     bottom: 0,
     display: "flex",
+    marginBottom: 10,
+    marginLeft: "22%",
     flexDirection: "row",
   },
   buttonIconContainer: {

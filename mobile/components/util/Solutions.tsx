@@ -68,6 +68,10 @@ const Solutions: React.FC<Props> = ({
             : null
         }
         toggleStar={(solution) => {
+          if (!user) {
+            alert("You have to log in first.");
+            return;
+          }
           handleToggleSolutionStar(user!.id, solution.id);
         }}
         updatePost={(solution) => {

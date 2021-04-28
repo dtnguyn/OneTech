@@ -136,7 +136,11 @@ const ProblemScreenTab: React.FC<Props> = ({ deviceId, navigation }) => {
       <View style={styles.floatingButtonContainer}>
         <TouchableOpacity
           style={styles.floatingButton}
-          onPress={() =>
+          onPress={() => {
+            if (!user) {
+              alert("You have to log in first.");
+              return;
+            }
             navigation.push("Compose", {
               header: "Add a problem",
               title: "",
@@ -146,8 +150,8 @@ const ProblemScreenTab: React.FC<Props> = ({ deviceId, navigation }) => {
                 if (!title || !content) return;
                 handleCreateProblem(deviceId, title, content, images);
               },
-            })
-          }
+            });
+          }}
         >
           <Image
             style={styles.floatingIcon}
@@ -175,7 +179,7 @@ const styles = StyleSheet.create({
     height: 50,
     color: "#FAFAFA",
     borderColor: "gray",
-    borderWidth: 0.2,
+    borderWidth: 1,
     borderRadius: 5,
     padding: 5,
     paddingEnd: 40,

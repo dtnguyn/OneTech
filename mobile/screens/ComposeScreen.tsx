@@ -27,6 +27,7 @@ import {
 } from "../generated/graphql";
 import { ReactNativeFile } from "apollo-upload-client";
 import { BackHandler } from "react-native";
+import uuid from "react-native-uuid";
 
 interface Props {
   navigation: ScreenNavigationProp;
@@ -60,7 +61,8 @@ const ComposeScreen: React.FC<Props> = ({ navigation, route }) => {
       return;
     }
 
-    const str = "img_" + Date().toString();
+    const imgUUID = uuid.v4();
+    const str = imgUUID + Date().toString();
     let imageId = "";
     for (let i = 0; i < str.length; i++) {
       if (str[i] === " ") {
@@ -158,6 +160,7 @@ const ComposeScreen: React.FC<Props> = ({ navigation, route }) => {
           <TextInput
             style={styles.titleInput}
             value={compose?.title}
+            placeholder="Enter the title here..."
             onChangeText={(text) => setCompose({ ...compose, title: text })}
           />
         ) : null}

@@ -7,6 +7,7 @@ import {
   View,
 } from "react-native";
 import Reviews from "../../components/util/Reviews";
+import { useAuth } from "../../context/AuthContext";
 import { useTheme } from "../../context/ThemeContext";
 import {
   Review,
@@ -30,6 +31,7 @@ const ReviewScreenTab: React.FC<Props> = ({
   const [reviews, setReviews] = useState<Array<Review>>();
   const [reviewSearchValue, setReviewSearchValue] = useState("");
   const { theme } = useTheme();
+  const { user } = useAuth();
 
   const [createReviewMutation, {}] = useCreateReviewMutation();
 
@@ -136,6 +138,10 @@ const ReviewScreenTab: React.FC<Props> = ({
         <TouchableOpacity
           style={styles.floatingButton}
           onPress={() => {
+            if (!user) {
+              alert("You have to log in first.");
+              return;
+            }
             navigation.push("Compose", {
               header: "Add a review",
               title: "",
@@ -185,7 +191,7 @@ const styles = StyleSheet.create({
     fontFamily: "MMedium",
     height: 50,
     borderColor: "gray",
-    borderWidth: 0.2,
+    borderWidth: 1,
     borderRadius: 5,
     padding: 5,
     paddingEnd: 40,

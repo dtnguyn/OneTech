@@ -5,6 +5,8 @@ import {
   StyleSheet,
   useColorScheme,
   View,
+  Dimensions,
+  Platform,
 } from "react-native";
 import AnimatedLoader from "react-native-animated-loader";
 import { ScrollView } from "react-native-gesture-handler";
@@ -23,6 +25,9 @@ import { ScreenNavigationProp } from "../utils/types";
 import { useAuth } from "../context/AuthContext";
 import { useTheme } from "../context/ThemeContext";
 import { StatusBar } from "expo-status-bar";
+import EmptyPlaceholder from "../components/util/EmptyPlaceholder";
+import CustomText from "../components/util/CustomText";
+import { useSafeArea } from "react-native-safe-area-context";
 
 interface Props {
   navigation: ScreenNavigationProp;
@@ -35,6 +40,7 @@ const HomeScreen: React.FC<Props> = ({ navigation }) => {
   const [searchBoxExpand, setSearchBoxExpand] = useState(false);
   const [currentCategory, setCurrentCategory] = useState("phone");
   const { theme } = useTheme();
+  const insets = useSafeArea();
 
   const { data, error, loading } = useDevicesQuery({
     variables: {
@@ -57,13 +63,25 @@ const HomeScreen: React.FC<Props> = ({ navigation }) => {
     if (!devices) return null;
     else
       return (
-        <SearchBox
-          searchBoxExpand={searchBoxExpand}
-          setSearchBoxExpand={setSearchBoxExpand}
-          currentCategory={currentCategory}
-          setCurrentCategory={setCurrentCategory}
-          searchPress={() => navigation.push("Search")}
-        />
+        <View>
+          <AppBar
+            moveToAuth={() => navigation.push("Auth")}
+            moveToAccount={(userId) => navigation.push("Account", { userId })}
+          />
+          <SearchBox
+            searchBoxExpand={searchBoxExpand}
+            setSearchBoxExpand={setSearchBoxExpand}
+            currentCategory={currentCategory}
+            setCurrentCategory={setCurrentCategory}
+            searchPress={() => navigation.push("Search")}
+          />
+          {devicesArr?.length ? null : (
+            <EmptyPlaceholder
+              title={`No devices available for ${currentCategory}`}
+              content="More devices coming soon!"
+            />
+          )}
+        </View>
       );
   }
 
@@ -75,7 +93,7 @@ const HomeScreen: React.FC<Props> = ({ navigation }) => {
 
   useEffect(() => {
     if (error) {
-      // Handle error
+      alert(error.message);
     }
   }, [error]);
 
@@ -110,37 +128,28 @@ const HomeScreen: React.FC<Props> = ({ navigation }) => {
   }, [error]);
 
   if (!devices) return null;
-
   return (
-    <SafeAreaView>
-      <View style={styles.container}>
-        <AppBar
-          moveToAuth={() => navigation.push("Auth")}
-          moveToAccount={(userId) => navigation.push("Account", { userId })}
-        />
+    <SafeAreaView style={{ flex: 1, paddingBottom: -insets.bottom }}>
+      <View>
+        <View style={styles.container}>
+          <FlatList
+            ListHeaderComponent={renderHeader}
+            data={devicesArr}
+            renderItem={renderDevices}
+            keyExtractor={(_, index) => index + ""}
+          />
+        </View>
 
-        {/* <AnimatedLoader
-          visible={loading}
-          source={require("../assets/others/loader.json")}
-          animationStyle={styles.lottie}
-          speed={1}
-        /> */}
-        <FlatList
-          style={{ marginBottom: 120 }}
-          ListHeaderComponent={renderHeader}
-          data={devicesArr}
-          renderItem={renderDevices}
-          keyExtractor={(_, index) => index + ""}
-        />
+        <StatusBar style={theme === "light" ? "dark" : "light"} />
       </View>
-
-      <StatusBar style={theme === "light" ? "dark" : "light"} />
     </SafeAreaView>
   );
 };
 
 const styles = StyleSheet.create({
-  container: {},
+  container: {
+    height: "100%",
+  },
 
   carouselContainer: {
     marginVertical: 15,

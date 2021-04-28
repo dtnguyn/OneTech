@@ -67,6 +67,7 @@
     "react-native-splash-screen": "^3.2.0",
     "react-native-tab-view": "^2.16.0",
     "react-native-unimodules": "~0.12.0",
+    "react-native-uuid": "^2.0.1",
     "react-native-web": "~0.13.12",
     "react-native-webview": "^11.3.2",
     "react-native-zss-rich-text-editor": "^1.1.0",

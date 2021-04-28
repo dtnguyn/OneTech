@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { Image, StatusBar, StyleSheet, View } from "react-native";
 import { TouchableOpacity } from "react-native-gesture-handler";
 import Solutions from "../components/util/Solutions";
+import { useAuth } from "../context/AuthContext";
 import { useTheme } from "../context/ThemeContext";
 import {
   DeviceProblem,
@@ -24,8 +25,10 @@ const SolutionScreen: React.FC<Props> = ({ route, navigation }) => {
     },
     fetchPolicy: "cache-and-network",
   });
+
   const [createSolutionMutation, {}] = useCreateSolutionMutation();
   const { theme } = useTheme();
+  const { user } = useAuth();
 
   const handleCreateSolution = async (
     problemId: string,
@@ -100,7 +103,11 @@ const SolutionScreen: React.FC<Props> = ({ route, navigation }) => {
       <View style={styles.floatingButtonContainer}>
         <TouchableOpacity
           style={styles.floatingButton}
-          onPress={() =>
+          onPress={() => {
+            if (!user) {
+              alert("You have to log in first.");
+              return;
+            }
             navigation.push("Compose", {
               header: "Add a solution",
               title: null,
@@ -110,8 +117,8 @@ const SolutionScreen: React.FC<Props> = ({ route, navigation }) => {
                 if (!content) return;
                 handleCreateSolution(route.params.problemId, content, images);
               },
-            })
-          }
+            });
+          }}
         >
           <Image
             style={styles.floatingIcon}
