@@ -20,6 +20,8 @@
   <a href="#license">License</a>
 </p>
 
+![screenshot](https://github.com/dtnguyn/OneTech/blob/master/web/public/images/preview.gif?raw=true)
+
 
 ## Key Features
 
