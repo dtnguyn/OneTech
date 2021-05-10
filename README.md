@@ -14,7 +14,7 @@
 
 <p align="center">
   <a href="#key-features">Key Features</a> •
-  <a href="#tech-stack">tech stack</a> •
+  <a href="#tech-stack">Tech Stack</a> •
   <a href="#source-code">Source Code</a> •
   <a href="#support">Support</a> •
   <a href="#license">License</a>
@@ -31,7 +31,7 @@
 * Mobile friendly
 * Available on Android and iOS
 
-## Key Features
+## Tech Stack
 
 * Web
   - Next.js (framework for React.js)
